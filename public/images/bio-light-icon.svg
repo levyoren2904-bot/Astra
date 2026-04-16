@@ -1,0 +1,21 @@
+<svg preserveAspectRatio="none" width="100%" height="100%" overflow="visible" style="display: block;" viewBox="0 0 58 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Right Icon Container 2">
+<circle id="Ellipse 115" cx="15" cy="16" r="7" fill="var(--fill-0, #03C794)"/>
+<g id="sun" clip-path="url(#clip0_0_10)">
+<path id="Vector" d="M38 21C40.7614 21 43 18.7614 43 16C43 13.2386 40.7614 11 38 11C35.2386 11 33 13.2386 33 16C33 18.7614 35.2386 21 38 21Z" stroke="var(--stroke-0, #111122)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+<path id="Vector_2" d="M38 5V7" stroke="var(--stroke-0, #111122)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+<path id="Vector_3" d="M38 25V27" stroke="var(--stroke-0, #111122)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+<path id="Vector_4" d="M30.2202 8.21997L31.6402 9.63997" stroke="var(--stroke-0, #111122)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+<path id="Vector_5" d="M44.3599 22.3601L45.7799 23.7801" stroke="var(--stroke-0, #111122)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+<path id="Vector_6" d="M27 16H29" stroke="var(--stroke-0, #111122)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+<path id="Vector_7" d="M47 16H49" stroke="var(--stroke-0, #111122)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+<path id="Vector_8" d="M30.2202 23.7801L31.6402 22.3601" stroke="var(--stroke-0, #111122)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+<path id="Vector_9" d="M44.3599 9.63997L45.7799 8.21997" stroke="var(--stroke-0, #111122)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+</g>
+</g>
+<defs>
+<clipPath id="clip0_0_10">
+<rect width="24" height="24" fill="white" transform="translate(26 4)"/>
+</clipPath>
+</defs>
+</svg>

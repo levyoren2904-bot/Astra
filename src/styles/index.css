@@ -1,0 +1,32 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Rubik — self-hosted via @fontsource */
+@import '@fontsource/rubik/400.css';
+@import '@fontsource/rubik/500.css';
+@import '@fontsource/rubik/600.css';
+@import '@fontsource/rubik/700.css';
+
+/* Audiowide — used for ASTRA logotype */
+@import '@fontsource/audiowide/400.css';
+
+@layer base {
+  *, *::before, *::after {
+    box-sizing: border-box;
+  }
+
+  html, body, #root {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+  }
+
+  body {
+    font-family: 'Rubik', sans-serif;
+    font-size: 1rem;
+    color: #111122;
+    direction: rtl;
+    -webkit-font-smoothing: antialiased;
+  }
+}
