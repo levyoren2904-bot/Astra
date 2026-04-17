@@ -15,6 +15,11 @@ npm run preview  # serve the built dist/ locally
 
 React 19 + TypeScript (strict mode), Vite 8, React Router 7, Tailwind CSS 3, Zustand 5. TypeScript enforces `noUnusedLocals`, `noUnusedParameters`, and `noUncheckedSideEffectImports`.
 
+## Performance Conventions
+
+- **Code splitting**: All route-level pages in `App.tsx` are loaded via `React.lazy()` + `<Suspense>` to keep the initial bundle small.
+- **Image loading**: All `<img>` tags use `loading="lazy"` to prevent unnecessary network requests on first render.
+
 ## Code Architecture
 
 ```
@@ -24,7 +29,7 @@ src/
   styles/index.css          # @fontsource imports THEN @tailwind directives (order matters)
   pages/
     HomePage.tsx + .styles.ts   # flat file — home screen
-    AdminPage.tsx               # flat file — placeholder
+    AdminPage/                  # folder pattern (same as WizardPage)
     WizardPage/                 # folder pattern
       WizardPage.tsx + .styles.ts
       constants.ts              # ALL image paths + shared constants (FROSTED_STYLE, FP_SETS, etc.)
@@ -241,7 +246,7 @@ SSO — user pre-authenticated at OS level. No login screen. App opens directly 
 | WizardPage — step 5 (הנפקה) | Complete (scanner idle/success/failure states + issued card panel) |
 | WizardBulkPage — steps 1–3 layout + completion modal | Complete |
 | WizardAcquisitionPage — steps 1–3 (ID / personal / biometrics) | Complete |
-| AdminPage | Placeholder only |
+| AdminPage | Complete (all 3 tabs: עמדות / סוגי כרטיסים / אגרות) |
 
 ## Empty States
 

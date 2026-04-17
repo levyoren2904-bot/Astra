@@ -60,15 +60,15 @@ const CARD_FIELDS = [
 
 type FieldKey = (typeof CARD_FIELDS)[number]['key']
 
-// ── Card preview assets (replace with bundled files before production) ────────
+// ── Card preview assets ───────────────────────────────────────────────────────
 
-const CARD_STROKE_1 = 'https://www.figma.com/api/mcp/asset/dd77cd91-fa9a-4371-97a2-765378308669'
-const CARD_STROKE_2 = 'https://www.figma.com/api/mcp/asset/7e8d6ace-40fb-4e9e-a693-f482c8e22559'
-const CARD_STROKE_3 = 'https://www.figma.com/api/mcp/asset/10efb80e-913f-49bf-8e07-f0d61f36b29a'
-const CARD_FLAG = 'https://www.figma.com/api/mcp/asset/fcd19e71-54a2-4dc7-a221-bcc075f832e3'
-const CARD_PERSON_THUMB = 'https://www.figma.com/api/mcp/asset/78068f88-5544-44fd-b113-e484a43afd27'
-const CARD_PHOTO_RECT = 'https://www.figma.com/api/mcp/asset/539bbf65-047b-4c74-8371-6c353fa739e7'
-const CARD_BARCODE = 'https://www.figma.com/api/mcp/asset/eaed97e0-682a-43b6-b3e0-e73d032043a0'
+const CARD_STROKE_1 = '/images/card-stroke-1.svg'
+const CARD_STROKE_2 = '/images/card-stroke-2.svg'
+const CARD_STROKE_3 = '/images/card-stroke-3.svg'
+const CARD_FLAG = '/images/card-flag.png'
+const CARD_PERSON_THUMB = '/images/card-person-thumb.png'
+const CARD_PHOTO_RECT = '/images/card-photo-rect.jpg'
+const CARD_BARCODE = '/images/card-barcode.svg'
 
 const MOCK_STATIONS: StationRow[] = [
   { id: 1, name: 'AYVERTUL150', site: 'נציגות קלנדיה', ip: '100.0.1.1', status: 'פעיל' },
