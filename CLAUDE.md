@@ -19,28 +19,49 @@ React 19 + TypeScript (strict mode), Vite 8, React Router 7, Tailwind CSS 3, Zus
 
 ```
 src/
-  main.tsx          # entry — BrowserRouter wraps App
-  App.tsx           # route table only (Routes/Route)
-  index.css         # Tailwind directives + @fontsource imports
-  pages/            # one file per route
-    HomePage.tsx    # home screen (video bg, logo, ID field, menu)
-    WizardPage.tsx          # regular 5-step issuance wizard (most complete)
-    WizardBulkPage.tsx      # bulk issuance (כרטיסים מיוחדים)
-    WizardAcquisitionPage.tsx # dedicated acquisition (הרכשה ייעודית)
-    AdminPage.tsx           # system management (admin only)
+  main.tsx                  # entry — BrowserRouter wraps App
+  App.tsx                   # route table only (Routes/Route)
+  styles/index.css          # @fontsource imports THEN @tailwind directives (order matters)
+  pages/
+    HomePage.tsx + .styles.ts   # flat file — home screen
+    AdminPage.tsx               # flat file — placeholder
+    WizardPage/                 # folder pattern
+      WizardPage.tsx + .styles.ts
+      constants.ts              # ALL image paths + shared constants (FROSTED_STYLE, FP_SETS, etc.)
+      mockData.ts
+      index.ts
+      components/               # WizardPage sub-components (each a folder)
+        BiometricsContent/ EligibilityContent/ FeesContent/ IssuanceContent/
+        PersonalDetailsPanel/ PermitsPanel/ ProhibitionsPanel/ CardHistoryPanel/
+        QuestionnaireModal/ ExclusionModal/ WizardStepper/ CloseIcon/
+    WizardBulkPage/             # same folder pattern
+      WizardBulkPage.tsx + .styles.ts + index.ts
+    WizardAcquisitionPage/      # same folder pattern
+      WizardAcquisitionPage.tsx + .styles.ts + index.ts
   components/
-    ui/             # VideoBackground, Tooltip (Button/TextField/Checkbox planned but not yet built)
-    layout/         # shared layout shells (empty — ready for implementation)
-  store/            # Zustand stores (empty — Zustand installed but no stores yet)
+    ui/                     # VideoBackground, Tooltip, Chip, IdCardPreview, PanelHeader
+    layout/                 # ErrorBoundary
+  store/                    # Zustand stores (installed, no stores yet)
   assets/
-    Homepage_vid.mp4  # background video (all screens)
+    Homepage_vid.mp4        # background video (all screens)
 public/
-  Logo.svg          # Astra logotype
-  icons/            # SVG and PNG icons loaded via <img src="/icons/name.svg|png">
-                    # Note: some icons from Figma download as PNG despite .svg extension — always run `file` to verify format
+  Logo.svg
+  icons/                    # small action/badge SVG+PNG icons: <img src="/icons/name.svg">
+                            # Note: Figma sometimes downloads PNG with .svg extension — run `file` to verify
+  images/                   # larger imagery loaded via WizardPage/constants.ts:
+                            # bio-* (biometrics panel assets), card-* (ID card preview),
+                            # fees-* (fee step), fingerprint_scanner.png
 ```
 
 Routes: `/` → HomePage, `/wizard` → WizardPage, `/wizard-bulk` → WizardBulkPage, `/wizard-acquisition` → WizardAcquisitionPage, `/admin` → AdminPage.
+
+## Styling Rules
+
+**Iron-clad**: All styles live in a co-located `.styles.ts` file using styled-components. No inline `style={{}}` props anywhere. Tailwind utility classes are used only for layout helpers inside JSX className (flex, gap, overflow, etc.) when a full styled component would be overkill.
+
+**CSS import order**: `@import` statements in `src/styles/index.css` must come **before** `@tailwind` directives — PostCSS will warn and fonts may silently fail to load if the order is reversed.
+
+**Shared image constants**: `WizardPage/constants.ts` exports all `/public/images/` paths and layout constants (FROSTED_STYLE, FP_SETS, FINGER_LEFTS_4/2, etc.). Other pages that reuse biometric assets import from `@/pages/WizardPage/constants` rather than duplicating paths.
 
 ### WizardPage Architecture
 
@@ -83,14 +104,36 @@ WizardPage is a single-file page with all sub-components defined inline. Key com
 - `FROSTED_STYLE` constant: `backdropFilter: blur(15.35px), background: rgba(255,255,255,0.6)` — used for inactive panel overlay and post-capture face overlay.
 - Dev toggles: `mockAngleFail` (angle check fail) and `fpError` (fingerprint scanner error), guarded by `import.meta.env.DEV`.
 
+### WizardBulkPage Architecture
+
+3-step wizard: file upload → template mapping → issuance status table.
+
+- **Step 1** — file upload section (buttons side-by-side + instruction text + illustration) + manual ID entry table. `FileUploadRow` uses `dir="ltr"` flex: buttons left, instruction center, illustration right.
+- **Step 2** — template + data source selection (placeholder).
+- **Step 3** — issuance status table. `table-layout: fixed` prevents column-width recalculation when row content changes (prevents layout jump). Status cell uses `justifyContent: 'flex-start'` inside RTL flex so status text stays right-aligned.
+- **`CompletionModal`** — triggered by eye icon on error rows. `dir="ltr"` container: close button left, title + resident name right. Two side-by-side fields (marital status select with custom SVG arrow via `appearance: none` + `backgroundImage`).
+
+### WizardAcquisitionPage Architecture
+
+3-step wizard: ת.ז → פרטי תושב → ביומטריה.
+
+- **Step 1** — ID input (496px, right-aligned).
+- **Step 2** — Personal panel (photo circle + demographics grid + 8 badge icons) + 3 scrollable info panels (היתרים / מניעות / היסטוריה).
+- **Step 3** — Two 908px panels (`width: 908, height: '100%', flexShrink: 0`):
+  - **Left (fingerprints)**: Scanner image (`BIO_FP_SCAN_BG`) + set label at `right:16, top:66`. Initially covered by frosted overlay + "בצע הרכשה" card. After acquisition: overlay lifts, scanner revealed, bottom action bar with "נעל ועבור לסט הבא" / "חזור לסט קודם".
+  - **Right (face camera)**: Camera background (`BIO_CAM_BG`) + semi-transparent white overlay + header with cam/light/angle indicators + face circle (`BIO_FACE_GREEN`, 375×375 at `left:264, top:102`) + capture bar at bottom. After capture: frosted overlay + card with circular photo (`BIO_CAPTURED_PHOTO`, 138px) + "צלם שנית".
+- **Point of no return**: after face photo captured — "ביטול" disappears, "חזור" becomes a disabled gray button (`DisabledBtn`: `#f5f5f6` bg, `#8c8c8c` border/text).
+- **"סיום ומעבר לתושב הבא"**: resets all state back to step 1 for the next resident.
+- Both pages import biometric assets from `@/pages/WizardPage/constants`.
+
 ## Fonts
 
 Both fonts are self-hosted via `@fontsource` — **no CDN** (closed network).
 
 - **Rubik** — all UI text (`@fontsource/rubik` 400/500/600/700)
-- **Audiowide** — ASTRA logotype only (`@fontsource/audiowide` 400)
+- **Audiowide** — ASTRA logotype only (`@fontsource/audiowide` 400, single weight only)
 
-ASTRA wordmark uses `font-family: Audiowide`, `font-size: 80px`, `letter-spacing: 33.6px`, gradient text: `linear-gradient(236.09deg, #4E50AC 1.58%, #7E80F2 94.52%)`.
+ASTRA wordmark: `font-family: Audiowide`, `font-size: 80px`, `letter-spacing: 33.6px`, gradient text `linear-gradient(236.086deg, rgb(78,80,172) 1.5768%, rgb(126,128,242) 94.516%)`, `WebkitFontSmoothing: 'auto'` (prevents antialiased thinning).
 
 ## Figma Asset URLs
 
@@ -196,8 +239,8 @@ SSO — user pre-authenticated at OS level. No login screen. App opens directly 
 | WizardPage — step 3 (fees) | Complete (paid / checking / unpaid states) |
 | WizardPage — step 4 (biometrics — face + fingerprints) | Complete |
 | WizardPage — step 5 (הנפקה) | Complete (scanner idle/success/failure states + issued card panel) |
-| WizardBulkPage | Placeholder only |
-| WizardAcquisitionPage | Placeholder only |
+| WizardBulkPage — steps 1–3 layout + completion modal | Complete |
+| WizardAcquisitionPage — steps 1–3 (ID / personal / biometrics) | Complete |
 | AdminPage | Placeholder only |
 
 ## Empty States

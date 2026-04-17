@@ -95,6 +95,7 @@ export const LogoWordmark = styled.p({
   WebkitBackgroundClip: 'text',
   WebkitTextFillColor: 'transparent',
   backgroundClip: 'text',
+  WebkitFontSmoothing: 'auto',
 })
 
 // ── ID input row ───────────────────────────────────────────────────────────────

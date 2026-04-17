@@ -1,0 +1,1 @@
+export { WizardAcquisitionPage } from './WizardAcquisitionPage'
