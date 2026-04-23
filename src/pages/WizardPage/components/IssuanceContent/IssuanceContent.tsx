@@ -1,4 +1,5 @@
 import { useState, type FC } from 'react'
+import { isDevMode } from '@/utils/devtools'
 import { IdCardPreview } from '@/components/ui/IdCardPreview'
 import { BIO_HEADER_BG } from '@/pages/WizardPage/constants'
 import { MOCK_ELIGIBILITY } from '@/pages/WizardPage/mockData'
@@ -93,7 +94,7 @@ export const IssuanceContent: FC = () => {
             </ScanResultState>
           )}
 
-          {import.meta.env.DEV && (
+          {isDevMode && (
             <IssuanceDevBar>
               <IssuanceDevBtn
                 $active={scanState === 'idle'}

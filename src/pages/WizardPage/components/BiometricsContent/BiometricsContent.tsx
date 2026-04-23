@@ -1,4 +1,5 @@
 import { useState, type FC } from 'react'
+import { isDevMode } from '@/utils/devtools'
 import {
   BIO_HEADER_BG,
   BIO_FP_ICON,
@@ -241,7 +242,7 @@ export const BiometricsContent: FC<BiometricsContentProps> = ({ onExclusion }) =
       </FacePanel>
 
       {/* DEV toggles */}
-      {import.meta.env.DEV && (
+      {isDevMode && (
         <DevPanel>
           <DevBtnBio $active={mockAngleFail} onClick={() => setMockAngleFail((f) => !f)}>
             {mockAngleFail ? 'angle FAIL' : 'angle OK'}

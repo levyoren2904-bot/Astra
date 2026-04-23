@@ -1,4 +1,5 @@
 import { useState, useEffect, type FC } from 'react'
+import { isDevMode } from '@/utils/devtools'
 import { IdCardPreview } from '@/components/ui/IdCardPreview'
 import {
   FEES_TICK,
@@ -69,7 +70,7 @@ export const FeesContent: FC<FeesContentProps> = ({ onExclusion, onClose }) => {
 
   return (
     <div className="flex flex-1 flex-col items-center justify-center min-h-0 w-full relative">
-      {import.meta.env.DEV && (
+      {isDevMode && (
         <DevBar>
           <DevBtn
             $active={mockUnpaid}

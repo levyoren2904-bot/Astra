@@ -1,4 +1,5 @@
 import { useState, type FC } from 'react'
+import { isDevMode } from '@/utils/devtools'
 import { useNavigate } from 'react-router-dom'
 import { VideoBackground } from '@/components/ui/VideoBackground'
 import { CloseIcon } from '../WizardPage/components/CloseIcon'
@@ -690,7 +691,7 @@ export const WizardAcquisitionPage: FC = () => {
         </div>
       </ModalBox>
 
-      {import.meta.env.DEV && (
+      {isDevMode && (
         <DevBar>
           <DevBtn onClick={() => { setStep(1); setIdInput(''); setFpAcquired(false); setFaceState('idle') }}>
             reset

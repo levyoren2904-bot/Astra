@@ -1,4 +1,5 @@
 import { useState, type FC } from 'react'
+import { isDevMode } from '@/utils/devtools'
 import { CloseIcon } from '@/pages/WizardPage/components/CloseIcon'
 import { MOCK_ADMIN_CODE } from '@/pages/WizardPage/mockData'
 import {
@@ -126,7 +127,7 @@ export const ExclusionModal: FC<ExclusionModalProps> = ({
                   ? 'קוד שגוי, נסה שוב'
                   : codeVerified
                     ? 'קוד אומת בהצלחה'
-                    : import.meta.env.DEV
+                    : isDevMode
                       ? `קוד פיתוח: ${MOCK_ADMIN_CODE}`
                       : ''}
               </CodeStatusMsg>

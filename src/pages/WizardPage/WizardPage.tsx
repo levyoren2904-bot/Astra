@@ -1,4 +1,5 @@
 import { useState, type FC } from 'react'
+import { isDevMode } from '@/utils/devtools'
 import { useNavigate, useLocation } from 'react-router-dom'
 import { VideoBackground } from '@/components/ui/VideoBackground'
 import { CloseIcon } from './components/CloseIcon'
@@ -87,7 +88,7 @@ export const WizardPage: FC = () => {
         {currentStep === 1 && (
           <>
             <PersonalDetailsBox className="shrink-0 w-full rounded-2xl overflow-hidden">
-              {import.meta.env.DEV && (
+              {isDevMode && (
                 <DevBarWizard>
                   <DevBtnWizard
                     $active={noPhoto}
