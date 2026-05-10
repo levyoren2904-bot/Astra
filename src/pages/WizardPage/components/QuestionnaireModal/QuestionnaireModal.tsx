@@ -1,5 +1,7 @@
-import { useState, type FC } from 'react'
-import { CloseIcon } from '@/pages/WizardPage/components/CloseIcon'
+import { useId, useRef, useState, type FC } from 'react'
+import { CloseIcon } from '@/components/ui/CloseIcon'
+import { useDialogAccessibility } from '@/hooks/useDialogAccessibility'
+import { advanceQuestionnaireState } from '@/lib/questionnaireAdvance'
 import { MOCK_QUESTIONS_SET1, MOCK_QUESTIONS_SET2 } from '@/pages/WizardPage/mockData'
 import {
   ModalOverlay,
@@ -39,6 +41,10 @@ export const QuestionnaireModal: FC<QuestionnaireModalProps> = ({
   const [wrongCount, setWrongCount] = useState(0)
   const [result, setResult] = useState<'success' | 'failure' | null>(null)
 
+  const dialogRef = useRef<HTMLDivElement>(null)
+  const titleId = useId()
+  useDialogAccessibility(dialogRef, onClose)
+
   const questions = set === 1 ? MOCK_QUESTIONS_SET1 : MOCK_QUESTIONS_SET2
   const q = questions[questionInSet]
   const answered = selected !== null
@@ -50,35 +56,17 @@ export const QuestionnaireModal: FC<QuestionnaireModalProps> = ({
   }
 
   function handleNext() {
-    if (!answered) return
-    const newWrong = wrongCount + (wasCorrect ? 0 : 1)
-
-    if (set === 1) {
-      if (questionInSet < 3) {
-        setWrongCount(newWrong)
-        setQuestionInSet((i) => i + 1)
-        setSelected(null)
-      } else {
-        if (newWrong === 0) {
-          setResult('success')
-        } else {
-          setWrongCount(newWrong)
-          setSet(2)
-          setQuestionInSet(0)
-          setSelected(null)
-        }
-      }
-    } else {
-      if (!wasCorrect) {
-        setWrongCount(newWrong)
-        setResult('failure')
-      } else if (questionInSet === 3) {
-        setResult('success')
-      } else {
-        setQuestionInSet((i) => i + 1)
-        setSelected(null)
-      }
-    }
+    if (!answered || selected === null) return
+    const next = advanceQuestionnaireState(
+      { set, questionInSet, wrongCount, result },
+      selected,
+      q.correctIndex,
+    )
+    setSet(next.set)
+    setQuestionInSet(next.questionInSet)
+    setWrongCount(next.wrongCount)
+    setResult(next.result)
+    if (next.resetSelection) setSelected(null)
   }
 
   function optionBg(idx: number) {
@@ -88,12 +76,25 @@ export const QuestionnaireModal: FC<QuestionnaireModalProps> = ({
 
   return (
     <ModalOverlay className="absolute inset-0 flex items-center justify-center z-30">
-      <ModalBox className="flex flex-col" dir="ltr">
+      <ModalBox
+        ref={dialogRef}
+        tabIndex={-1}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby={titleId}
+        className="flex flex-col outline-none"
+        dir="ltr"
+      >
         <ModalHeaderRow className="flex items-center shrink-0" dir="ltr">
-          <button onClick={onClose} className="shrink-0 hover:opacity-70 transition-opacity">
+          <button
+            type="button"
+            onClick={onClose}
+            className="shrink-0 hover:opacity-70 transition-opacity"
+            aria-label="סגור"
+          >
             <CloseIcon />
           </button>
-          <ModalTitle dir="auto" className="flex-1 text-right">
+          <ModalTitle id={titleId} dir="auto" className="flex-1 text-right">
             שאלון אימות נתונים
           </ModalTitle>
         </ModalHeaderRow>

@@ -15,7 +15,7 @@ export const PanelHeader: FC<PanelHeaderProps> = ({ title, count, icon }) => {
         {count !== undefined ? ` (${count})` : ''}
       </HeaderTitle>
       <IconBadge>
-        <img src={icon} alt="" width={24} height={24} />
+        <img src={icon} alt="" width={24} height={24} loading="lazy" />
       </IconBadge>
     </HeaderRoot>
   )

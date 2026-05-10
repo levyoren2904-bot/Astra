@@ -2,7 +2,7 @@ import { useState, type FC } from 'react'
 import { isDevMode } from '@/utils/devtools'
 import { IdCardPreview } from '@/components/ui/IdCardPreview'
 import { BIO_HEADER_BG } from '@/pages/WizardPage/constants'
-import { MOCK_ELIGIBILITY } from '@/pages/WizardPage/mockData'
+import { MOCK_ELIGIBILITY, MOCK_RESIDENT } from '@/pages/WizardPage/mockData'
 import {
   IssueRoot,
   IssueContentRow,
@@ -125,7 +125,7 @@ export const IssuanceContent: FC = () => {
         <IssuedCardPanel>
           <IssuedCardTitle dir="auto">הכרטיס שהונפק</IssuedCardTitle>
           <IssuedCardSubtitle dir="auto">{MOCK_ELIGIBILITY.cardType}</IssuedCardSubtitle>
-          <IdCardPreview />
+          <IdCardPreview resident={MOCK_RESIDENT} eligibility={MOCK_ELIGIBILITY} />
         </IssuedCardPanel>
       </IssueContentRow>
     </IssueRoot>

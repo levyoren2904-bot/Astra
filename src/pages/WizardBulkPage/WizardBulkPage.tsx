@@ -1,7 +1,7 @@
 import { useState, type FC } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { VideoBackground } from '@/components/ui/VideoBackground'
-import { CloseIcon } from '../WizardPage/components/CloseIcon'
+import { CloseIcon } from '@/components/ui/CloseIcon'
 import {
   PageRoot,
   Backdrop,
@@ -19,6 +19,7 @@ import {
   StepText,
   ConnectorOuter,
   ConnectorLine,
+  StepCheckSvg,
   IdEntrySection,
   IdEntryTitle,
   RadioPill,
@@ -148,13 +149,7 @@ const StepCircle: FC<{ num: number; state: 'active' | 'completed' | 'inactive' }
     return (
       <StepCircleOuter className="flex items-center justify-center">
         <StepInnerCircle />
-        <svg
-          width="12"
-          height="10"
-          viewBox="0 0 12 10"
-          fill="none"
-          style={{ position: 'relative', zIndex: 1 }}
-        >
+        <StepCheckSvg width="12" height="10" viewBox="0 0 12 10" fill="none">
           <path
             d="M1 5L4.5 8.5L11 1.5"
             stroke="white"
@@ -162,7 +157,7 @@ const StepCircle: FC<{ num: number; state: 'active' | 'completed' | 'inactive' }
             strokeLinecap="round"
             strokeLinejoin="round"
           />
-        </svg>
+        </StepCheckSvg>
       </StepCircleOuter>
     )
   }

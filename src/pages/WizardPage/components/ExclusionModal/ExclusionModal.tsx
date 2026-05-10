@@ -1,6 +1,7 @@
-import { useState, type FC } from 'react'
+import { useId, useRef, useState, type FC } from 'react'
 import { isDevMode } from '@/utils/devtools'
-import { CloseIcon } from '@/pages/WizardPage/components/CloseIcon'
+import { CloseIcon } from '@/components/ui/CloseIcon'
+import { useDialogAccessibility } from '@/hooks/useDialogAccessibility'
 import { MOCK_ADMIN_CODE } from '@/pages/WizardPage/mockData'
 import {
   ModalOverlay,
@@ -46,6 +47,10 @@ export const ExclusionModal: FC<ExclusionModalProps> = ({
   const [codeError, setCodeError] = useState(false)
   const [reason, setReason] = useState('')
 
+  const dialogRef = useRef<HTMLDivElement>(null)
+  const titleId = useId()
+  useDialogAccessibility(dialogRef, onClose)
+
   function verifyCode() {
     if (adminCode === MOCK_ADMIN_CODE) {
       setCodeVerified(true)
@@ -58,12 +63,25 @@ export const ExclusionModal: FC<ExclusionModalProps> = ({
 
   return (
     <ModalOverlay className="absolute inset-0 flex items-center justify-center z-30">
-      <ModalBox className="flex flex-col" dir="ltr">
+      <ModalBox
+        ref={dialogRef}
+        tabIndex={-1}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby={titleId}
+        className="flex flex-col outline-none"
+        dir="ltr"
+      >
         <ModalHeaderRow className="flex items-center shrink-0" dir="ltr">
-          <button onClick={onClose} className="shrink-0 hover:opacity-70 transition-opacity">
+          <button
+            type="button"
+            onClick={onClose}
+            className="shrink-0 hover:opacity-70 transition-opacity"
+            aria-label="סגור"
+          >
             <CloseIcon />
           </button>
-          <ModalTitle dir="auto" className="flex-1 text-right">
+          <ModalTitle id={titleId} dir="auto" className="flex-1 text-right">
             החרגת תושב
           </ModalTitle>
         </ModalHeaderRow>
