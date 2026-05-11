@@ -1,0 +1,101 @@
+# Astra — repository rules
+
+You are working on **Astra**: a Hebrew RTL desktop web app (~1920×1080) for ID card (כר״ח) issuance. Apply these rules to every change unless the user overrides them for a specific task.
+
+## Commands
+
+- `npm run dev` — dev server (`:5173` or next free port)
+- `npm run build` — `tsc -b` + Vite → `dist/`
+- `npm run lint` — ESLint (flat config)
+- `npm run test` — Vitest (`src/**/*.test.ts`)
+- `npm run format` — Prettier on `src/`
+- `npm run preview` — serve `dist/`
+
+Before you finish **UI or logic** work: run **`npm run build`** and **`npm run test`** when the change could affect types, bundles, or tested code paths.
+
+## Stack (do not drift)
+
+- React 19, TypeScript ~5.9 **strict** (`noUnusedLocals`, `noUnusedParameters`, `noUncheckedSideEffectImports`).
+- Vite 8, React Router 7.
+- **styled-components** for primary UI styling via co-located `*.styles.ts`.
+- Tailwind 3 **only** for layout utilities in `className` (flex, gap, overflow, etc.) — not as the main styling system for screens.
+- Import alias: `@/` → `src/`.
+- Prefer **local/component state**. Do **not** add Zustand unless the user asks; `src/store/` is reserved for future global state.
+
+## Product constraints
+
+- **Closed network**: no CDN at runtime; fonts via **`@fontsource`** in CSS only.
+- **No in-app login**: SSO at OS level; app opens on Home.
+- **Background**: major screens use `Homepage_vid.mp4` (`autoPlay`, `loop`, `muted`, `playsInline`, `object-fit: cover`).
+- **Routes**: `/` Home · `/wizard` (5-step issuance) · `/wizard-bulk` · `/wizard-acquisition` · `/admin`.
+- **Wizard steps**: (1) זיהוי תושב (2) בדיקת זכאות (3) אגרות (4) ביומטריה (5) הנפקה — step **5** is **point of no return** (no back/cancel in UI).
+- **Acquisition**: after **face photo captured**, cancel is hidden and back is disabled; “next resident” resets to step 1.
+- **Exclusion**: questionnaire failure, unpaid fees, FP error feed the shared exclusion modal flow (warning → code → reason when applicable).
+- **Assets**: ship **bundled files under `public/`**; never rely on long-lived `figma.com/api/mcp/asset/…` URLs for production. If design sources conflict, **prefer the Astra product spec** over a generic design system.
+
+## Where code lives
+
+- Pages: `src/pages/` — flat `Page.tsx` + `Page.styles.ts` **or** folder with `index.ts`.
+- Shared UI: `src/components/ui/` (`CloseIcon`, `IdCardPreview`, `PanelHeader`, `VideoBackground`, …).
+- Layout: `src/components/layout/` (`ErrorBoundary`, `AppErrorFallback`, `RouteLoadingFallback`).
+- Shared biometrics layout tokens: `src/components/biometrics/BiometricsPrimitives.styles.ts`.
+- Wizard image paths and shared constants: **`src/pages/WizardPage/constants.ts`** — import from here; **never duplicate** `/public/images/` path strings elsewhere.
+- Pure logic + unit tests: `src/lib/` (e.g. `questionnaireAdvance.ts`, `*.test.ts`).
+- Hooks: `src/hooks/` (e.g. `useDialogAccessibility.ts`).
+- Shared types: `src/types/`.
+
+## Styling rules
+
+- **Always** put visual styles in **`*.styles.ts`** (styled-components object syntax is the norm).
+- **Never** use inline **`style={{}}`** on DOM nodes.
+- **Always** keep **`src/styles/index.css`** order: **`@import` / font imports before `@tailwind`**.
+- Prefer **`100dvh`** over **`100vh`** for full viewport height where relevant.
+- For colors, align with **`tailwind.config.js`** tokens when touching palette-driven UI (e.g. chips).
+
+## Images
+
+- **Default**: `<img loading="lazy" />` with explicit dimensions where layout needs them.
+- **Exception**: above-the-fold / LCP assets (e.g. home logo) may use `loading="eager"` and optionally `fetchPriority="high"`.
+
+## Data vs presentation
+
+- **Never** import `mockData` inside reusable presentational components.
+- **Example**: `IdCardPreview` **must** receive **`resident`** and **`eligibility`** props typed from `@/types`; callers supply mocks or API data.
+
+## Biometrics
+
+- **Extend** `BiometricsPrimitives.styles.ts` for shared 908px panel chrome instead of copy-pasting duplicate styled blocks across wizard and acquisition.
+
+## RTL / LTR
+
+- Global **`dir="rtl"`** stays on `<html>`.
+- Use **`dir="ltr"`** on wizard chrome and structural rows where DOM order follows LTR layout specs.
+- Use **`dir="auto"`** on Hebrew (or mixed) text inside those LTR shells.
+
+## Fonts
+
+- **Rubik** — all UI text.
+- **Audiowide** — ASTRA wordmark only.
+
+## Loading, errors, modals
+
+- Route suspense **must** use `RouteLoadingFallback` (not an empty fallback).
+- Root `ErrorBoundary` **must** default to `AppErrorFallback` unless a custom `fallback` is intentional.
+- **New modal dialogs** must match existing patterns: `role="dialog"`, `aria-modal="true"`, `aria-labelledby`, container `tabIndex={-1}`, initial focus, Escape handling via **`useDialogAccessibility`**, icon-only close buttons **`type="button"`** with **`aria-label="סגור"`**.
+
+## Questionnaire logic
+
+- **Single source of truth**: `advanceQuestionnaireState` in `src/lib/questionnaireAdvance.ts`. If you change questionnaire behavior, **update tests** in `src/lib/questionnaireAdvance.test.ts`.
+
+## Performance
+
+- **Always** lazy-load route pages with `React.lazy` + `Suspense` in `App.tsx` (keep doing this for new routes).
+
+## Quality
+
+- Satisfy ESLint + TypeScript; **no unused** imports/locals/parameters.
+- Keep diffs **surgical** — change only what the task requires; do not refactor unrelated files.
+
+## Copy parity
+
+This file is mirrored as **`PROJECT_INSTRUCTIONS.md`** for readable Markdown browsing; keep them in sync when editing rules.
