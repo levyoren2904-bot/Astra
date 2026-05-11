@@ -1,5 +1,5 @@
 import type { FC } from 'react'
-import { MOCK_RESIDENT, MOCK_ELIGIBILITY } from '@/pages/WizardPage/mockData'
+import type { Eligibility, Resident } from '@/types'
 import {
   CARD_EMBLEM_LEFT,
   CARD_EMBLEM_RIGHT,
@@ -54,10 +54,15 @@ import {
 
 interface IdCardPreviewProps {
   variant?: 'physical' | 'digital'
+  resident: Resident
+  eligibility: Eligibility
 }
 
-export const IdCardPreview: FC<IdCardPreviewProps> = ({ variant = 'physical' }) => {
-  const r = MOCK_RESIDENT
+export const IdCardPreview: FC<IdCardPreviewProps> = ({
+  variant = 'physical',
+  resident: r,
+  eligibility: e,
+}) => {
   const nameFields: [string, string, string, string][] = [
     ['שם פרטי', 'اسم خاص', r.nameHe, 'أبو مروان'],
     ['שם האב', 'اسم الأب', 'מוחמד', 'محمد'],
@@ -67,8 +72,8 @@ export const IdCardPreview: FC<IdCardPreviewProps> = ({ variant = 'physical' }) 
     ['תאריך לידה', 'تاريخ الميلاد', r.birthDate, ''],
   ]
   const dateFields: [string, string, string][] = [
-    ['ת. הנפקה', 'أ. الإصدار', MOCK_ELIGIBILITY.issuedDate],
-    ['תום תוקף', 'البراءة صحة', MOCK_ELIGIBILITY.expiryDate],
+    ['ת. הנפקה', 'أ. الإصدار', e.issuedDate],
+    ['תום תוקף', 'البراءة صحة', e.expiryDate],
   ]
 
   return (
@@ -138,7 +143,7 @@ export const IdCardPreview: FC<IdCardPreviewProps> = ({ variant = 'physical' }) 
       </CardBodyRow>
 
       <BarcodeImg src={CARD_BARCODE} alt="" loading="lazy" />
-      <SerialSpan dir="auto">{MOCK_ELIGIBILITY.serial}</SerialSpan>
+      <SerialSpan dir="auto">{e.serial}</SerialSpan>
     </CardRoot>
   )
 }

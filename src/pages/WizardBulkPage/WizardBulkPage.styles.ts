@@ -129,6 +129,11 @@ export const ConnectorLine = styled.div({
   background: '#878792',
 })
 
+export const StepCheckSvg = styled.svg({
+  position: 'relative',
+  zIndex: 1,
+})
+
 // ── Step 1 — ID Entry ────────────────────────────────────────────────────────
 
 export const IdEntrySection = styled.div({

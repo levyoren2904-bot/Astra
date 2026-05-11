@@ -2,7 +2,7 @@ import { useState, type FC } from 'react'
 import { isDevMode } from '@/utils/devtools'
 import { useNavigate } from 'react-router-dom'
 import { VideoBackground } from '@/components/ui/VideoBackground'
-import { CloseIcon } from '../WizardPage/components/CloseIcon'
+import { CloseIcon } from '@/components/ui/CloseIcon'
 import {
   BIO_HEADER_BG,
   BIO_FP_ICON,
@@ -35,6 +35,7 @@ import {
   StepText,
   ConnectorOuter,
   ConnectorLine,
+  StepCheckSvg,
   IdSection,
   IdSectionTitle,
   IdInput,
@@ -84,6 +85,7 @@ import {
   FpOverlayTitle,
   FpOverlaySub,
   FpIconArea,
+  FpOverlaySymbolImg,
   CamBgWrapper,
   CamBgImage,
   CamOverlayDiv,
@@ -100,6 +102,7 @@ import {
   CaptureBtnCircle,
   NextBtn,
   OutlinedBtn,
+  OutlinedBackBtn,
   GhostBtn,
   DisabledBtn,
   BtnLabel,
@@ -176,13 +179,7 @@ const StepCircle: FC<{ num: number; state: 'active' | 'completed' | 'inactive' }
     return (
       <StepCircleOuter className="flex items-center justify-center">
         <StepInnerCircle />
-        <svg
-          width="12"
-          height="10"
-          viewBox="0 0 12 10"
-          fill="none"
-          style={{ position: 'relative', zIndex: 1 }}
-        >
+        <StepCheckSvg width="12" height="10" viewBox="0 0 12 10" fill="none">
           <path
             d="M1 5L4.5 8.5L11 1.5"
             stroke="white"
@@ -190,7 +187,7 @@ const StepCircle: FC<{ num: number; state: 'active' | 'completed' | 'inactive' }
             strokeLinecap="round"
             strokeLinejoin="round"
           />
-        </svg>
+        </StepCheckSvg>
       </StepCircleOuter>
     )
   }
@@ -276,7 +273,7 @@ const InfoCard: FC<{
       <CardValidityRow dir="rtl">
         <CardDate dir="ltr">{date}</CardDate>
         <CardValidityLabel dir="auto">תוקף</CardValidityLabel>
-        <img src="/icons/calendar-union.svg" alt="" width={24} height={24} />
+        <img src="/icons/calendar-union.svg" alt="" width={24} height={24} loading="lazy" />
       </CardValidityRow>
     </CardDetails>
   </CardEntry>
@@ -331,35 +328,35 @@ const Step2Content: FC = () => (
       {/* 8 badge icons */}
       <BadgeRow dir="rtl">
         <BadgeItem>
-          <img src="/icons/card-tick.svg" alt="" width={24} height={24} />
+          <img src="/icons/card-tick.svg" alt="" width={24} height={24} loading="lazy" />
           <BadgeLabel dir="auto">כר"ח בתוקף</BadgeLabel>
         </BadgeItem>
         <BadgeItem>
-          <img src="/icons/arrest-vector.svg" alt="" width={24} height={24} />
+          <img src="/icons/arrest-vector.svg" alt="" width={24} height={24} loading="lazy" />
           <BadgeLabel dir="auto">מעצר</BadgeLabel>
         </BadgeItem>
         <BadgeItem>
-          <img src="/icons/user-octagon.svg" alt="" width={24} height={24} />
+          <img src="/icons/user-octagon.svg" alt="" width={24} height={24} loading="lazy" />
           <BadgeLabel dir="auto">{'בכיר רש"פ\n1'}</BadgeLabel>
         </BadgeItem>
         <BadgeItem>
-          <img src="/icons/book.svg" alt="" width={24} height={24} />
+          <img src="/icons/book.svg" alt="" width={24} height={24} loading="lazy" />
           <BadgeLabel dir="auto">{'בקשת היתר\nפתוחה'}</BadgeLabel>
         </BadgeItem>
         <BadgeItem>
-          <img src="/icons/user-octagon-broken.svg" alt="" width={24} height={24} />
+          <img src="/icons/user-octagon-broken.svg" alt="" width={24} height={24} loading="lazy" />
           <BadgeLabel dir="auto">{'חבר במנגנונים\nפלסטיניים'}</BadgeLabel>
         </BadgeItem>
         <BadgeItem>
-          <img src="/icons/user-octagon-broken.svg" alt="" width={24} height={24} />
+          <img src="/icons/user-octagon-broken.svg" alt="" width={24} height={24} loading="lazy" />
           <BadgeLabel dir="auto">אבחון בתוקף</BadgeLabel>
         </BadgeItem>
         <BadgeItem>
-          <img src="/icons/user-octagon.svg" alt="" width={24} height={24} />
+          <img src="/icons/user-octagon.svg" alt="" width={24} height={24} loading="lazy" />
           <BadgeLabel dir="auto">{'בכיר רש"פ\n1'}</BadgeLabel>
         </BadgeItem>
         <BadgeItem>
-          <img src="/icons/passport-group.svg" alt="" width={24} height={24} />
+          <img src="/icons/passport-group.svg" alt="" width={24} height={24} loading="lazy" />
           <BadgeLabel dir="auto">דרכונים</BadgeLabel>
         </BadgeItem>
       </BadgeRow>
@@ -372,7 +369,7 @@ const Step2Content: FC = () => (
         <InfoPanelHeader dir="rtl">
           <InfoPanelTitle dir="auto">היתרים ורישיונות (9)</InfoPanelTitle>
           <InfoPanelBadge>
-            <img src="/icons/panel-licenses.png" alt="" width={24} height={24} />
+            <img src="/icons/panel-licenses.png" alt="" width={24} height={24} loading="lazy" />
           </InfoPanelBadge>
         </InfoPanelHeader>
         <InfoPanelCards>
@@ -386,7 +383,7 @@ const Step2Content: FC = () => (
         <InfoPanelHeader dir="rtl">
           <InfoPanelTitle dir="auto">מניעות (8)</InfoPanelTitle>
           <InfoPanelBadge>
-            <img src="/icons/panel-history.png" alt="" width={24} height={24} />
+            <img src="/icons/panel-history.png" alt="" width={24} height={24} loading="lazy" />
           </InfoPanelBadge>
         </InfoPanelHeader>
         <InfoPanelCards>
@@ -400,7 +397,7 @@ const Step2Content: FC = () => (
         <InfoPanelHeader dir="rtl">
           <InfoPanelTitle dir="auto">היסטורית כר"חים</InfoPanelTitle>
           <InfoPanelBadge>
-            <img src="/icons/panel-history.png" alt="" width={24} height={24} />
+            <img src="/icons/panel-history.png" alt="" width={24} height={24} loading="lazy" />
           </InfoPanelBadge>
         </InfoPanelHeader>
         <InfoPanelCards>
@@ -449,7 +446,7 @@ const Step3Content: FC<Step3ContentProps> = ({
 
       {/* Set label */}
       <FpSetLabel>
-        <FpSetDotImg src={BIO_DOT_GREEN} alt="" />
+        <FpSetDotImg src={BIO_DOT_GREEN} alt="" loading="lazy" />
         <FpSetText dir="auto">4 אצבעות - יד ימין</FpSetText>
       </FpSetLabel>
 
@@ -476,7 +473,7 @@ const Step3Content: FC<Step3ContentProps> = ({
             <FpOverlayTitle dir="auto">טביעות אצבעות</FpOverlayTitle>
             <FpOverlaySub dir="auto">(לא חובה)</FpOverlaySub>
             <FpIconArea>
-              <img src={BIO_FP_SYMBOL} alt="" width={60} height={60} style={{ opacity: 0.5 }} />
+              <FpOverlaySymbolImg src={BIO_FP_SYMBOL} alt="" loading="lazy" />
             </FpIconArea>
             <NextBtn
               onClick={onAcquireFp}
@@ -517,7 +514,7 @@ const Step3Content: FC<Step3ContentProps> = ({
       {/* Face detection circle */}
       {faceState === 'idle' && (
         <FaceCircleWrap>
-          <FaceCircleImage src={BIO_FACE_GREEN} alt="" />
+          <FaceCircleImage src={BIO_FACE_GREEN} alt="" loading="lazy" />
         </FaceCircleWrap>
       )}
 
@@ -534,7 +531,7 @@ const Step3Content: FC<Step3ContentProps> = ({
             <FpOverlayTitle dir="auto">צילום פנים</FpOverlayTitle>
             <FpIconArea>
               <FaceCapturedThumb>
-                <FaceCapturedThumbImg src={BIO_CAPTURED_PHOTO} alt="" />
+                <FaceCapturedThumbImg src={BIO_CAPTURED_PHOTO} alt="" loading="lazy" />
               </FaceCapturedThumb>
             </FpIconArea>
             <NextBtn
@@ -652,13 +649,12 @@ export const WizardAcquisitionPage: FC = () => {
                   <BtnLabel $color="#8c8c8c" dir="auto">חזור</BtnLabel>
                 </DisabledBtn>
               ) : (
-                <OutlinedBtn
+                <OutlinedBackBtn
                   onClick={handleBack}
                   className="flex items-center justify-center rounded shrink-0"
-                  style={{ width: 70 }}
                 >
                   <BtnLabel $color="#5c5def" dir="auto">חזור</BtnLabel>
-                </OutlinedBtn>
+                </OutlinedBackBtn>
               )}
               {faceState !== 'captured' && (
                 <GhostBtn onClick={handleCancel} className="flex items-center justify-center rounded">
@@ -676,13 +672,12 @@ export const WizardAcquisitionPage: FC = () => {
               >
                 <BtnLabel dir="auto">הבא</BtnLabel>
               </NextBtn>
-              <OutlinedBtn
+              <OutlinedBackBtn
                 onClick={handleBack}
                 className="flex items-center justify-center rounded shrink-0"
-                style={{ width: 70 }}
               >
                 <BtnLabel $color="#5c5def" dir="auto">חזור</BtnLabel>
-              </OutlinedBtn>
+              </OutlinedBackBtn>
               <GhostBtn onClick={handleCancel} className="flex items-center justify-center rounded">
                 <BtnLabel $color="#5c5def" dir="auto">ביטול</BtnLabel>
               </GhostBtn>

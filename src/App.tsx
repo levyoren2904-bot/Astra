@@ -1,5 +1,6 @@
 import { lazy, Suspense, type FC } from 'react'
 import { Routes, Route } from 'react-router-dom'
+import { RouteLoadingFallback } from '@/components/layout/RouteLoadingFallback'
 
 const HomePage = lazy(() => import('./pages/HomePage').then((m) => ({ default: m.HomePage })))
 const WizardPage = lazy(() => import('./pages/WizardPage').then((m) => ({ default: m.WizardPage })))
@@ -13,7 +14,7 @@ const AdminPage = lazy(() => import('./pages/AdminPage').then((m) => ({ default:
 
 const App: FC = () => {
   return (
-    <Suspense fallback={null}>
+    <Suspense fallback={<RouteLoadingFallback />}>
       <Routes>
         <Route path="/" element={<HomePage />} />
         <Route path="/wizard" element={<WizardPage />} />

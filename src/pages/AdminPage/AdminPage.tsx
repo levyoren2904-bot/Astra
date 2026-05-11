@@ -110,7 +110,7 @@ const EditStationModal: FC<EditStationModalProps> = ({ station, onClose }) => {
       <S.ModalContainer dir="ltr">
         <S.ModalHeader>
           <S.ModalCloseBtn onClick={onClose} aria-label="סגור">
-            <img src="/icons/close.svg" alt="" width={11} height={11} />
+            <img src="/icons/close.svg" alt="" width={11} height={11} loading="lazy" />
           </S.ModalCloseBtn>
           <S.ModalTitle dir="auto">עריכת פרטי עמדה</S.ModalTitle>
         </S.ModalHeader>
@@ -314,7 +314,7 @@ const EditCardTypeModal: FC<EditCardTypeModalProps> = ({ cardType, onClose }) =>
       <S.CardTypeModalContainer dir="ltr">
         <S.ModalHeader>
           <S.ModalCloseBtn onClick={onClose} aria-label="סגור">
-            <img src="/icons/close.svg" alt="" width={11} height={11} />
+            <img src="/icons/close.svg" alt="" width={11} height={11} loading="lazy" />
           </S.ModalCloseBtn>
           <S.ModalTitle dir="auto">כרטיס חדש</S.ModalTitle>
         </S.ModalHeader>
@@ -451,10 +451,10 @@ const CardTypesTable: FC<CardTypesTableProps> = ({ onEdit }) => (
         <S.TableRow key={row.id}>
           <S.ActionCell>
             <S.ActionIconBtn aria-label="ערוך" onClick={() => onEdit(row)}>
-              <img src="/icons/edit.svg" alt="" width={20} height={22} />
+              <img src="/icons/edit.svg" alt="" width={20} height={22} loading="lazy" />
             </S.ActionIconBtn>
             <S.ActionIconBtn aria-label="מחק">
-              <img src="/icons/trash.svg" alt="" width={17} height={18} />
+              <img src="/icons/trash.svg" alt="" width={17} height={18} loading="lazy" />
             </S.ActionIconBtn>
           </S.ActionCell>
           <S.StatusCell>
@@ -513,10 +513,10 @@ const StationsTable: FC<StationsTableProps> = ({ onEdit }) => (
         <S.TableRow key={row.id}>
           <S.ActionCell>
             <S.ActionIconBtn aria-label="ערוך" onClick={() => onEdit(row)}>
-              <img src="/icons/edit.svg" alt="" width={20} height={22} />
+              <img src="/icons/edit.svg" alt="" width={20} height={22} loading="lazy" />
             </S.ActionIconBtn>
             <S.ActionIconBtn aria-label="מחק">
-              <img src="/icons/trash.svg" alt="" width={17} height={18} />
+              <img src="/icons/trash.svg" alt="" width={17} height={18} loading="lazy" />
             </S.ActionIconBtn>
           </S.ActionCell>
           <S.StatusCell>
@@ -640,14 +640,14 @@ export const AdminPage: FC = () => {
       <S.TableCard>
         <S.TableToolbar>
           <S.AddBtn aria-label="הוסף">
-            <img src="/icons/plus.svg" alt="" width={24} height={24} />
+            <img src="/icons/plus.svg" alt="" width={24} height={24} loading="lazy" />
           </S.AddBtn>
           <S.ToolbarRight>
             <S.FilterBtn aria-label="סנן">
-              <img src="/icons/filter.svg" alt="" width={24} height={24} />
+              <img src="/icons/filter.svg" alt="" width={24} height={24} loading="lazy" />
             </S.FilterBtn>
             <S.DatePicker>
-              <img src="/icons/calendar-union.svg" alt="" width={24} height={24} />
+              <img src="/icons/calendar-union.svg" alt="" width={24} height={24} loading="lazy" />
               <S.DatePickerText dir="auto">היום 14/01/2023</S.DatePickerText>
             </S.DatePicker>
           </S.ToolbarRight>

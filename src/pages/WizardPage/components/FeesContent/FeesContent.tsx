@@ -1,6 +1,7 @@
 import { useState, useEffect, type FC } from 'react'
 import { isDevMode } from '@/utils/devtools'
 import { IdCardPreview } from '@/components/ui/IdCardPreview'
+import { MOCK_ELIGIBILITY, MOCK_RESIDENT } from '@/pages/WizardPage/mockData'
 import {
   FEES_TICK,
   FEES_WARN,
@@ -110,7 +111,7 @@ export const FeesContent: FC<FeesContentProps> = ({ onExclusion, onClose }) => {
                   </CardTypeLabel>
                   <RB type={type} />
                 </CardTypeHeader>
-                <IdCardPreview variant={type} />
+                <IdCardPreview variant={type} resident={MOCK_RESIDENT} eligibility={MOCK_ELIGIBILITY} />
               </CardTypeCard>
             ))}
           </CardTypeRow>

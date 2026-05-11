@@ -177,7 +177,7 @@ export const HomePage: FC = () => {
       <div className="absolute inset-0 z-10 flex flex-col items-center justify-center gap-10">
         {/* Logo + ASTRA wordmark */}
         <div className="flex flex-col items-center">
-          <img src="/Logo.svg" alt="Astra" width={208} height={208} />
+          <img src="/Logo.svg" alt="Astra" width={208} height={208} loading="eager" fetchPriority="high" />
           <LogoWordmarkWrap>
             <LogoWordmark>ASTRA</LogoWordmark>
           </LogoWordmarkWrap>

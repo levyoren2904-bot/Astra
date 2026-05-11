@@ -1,4 +1,34 @@
 import styled from 'styled-components'
+import {
+  BioAngleChip,
+  BioAngleDotImg,
+  BioAngleIconImg,
+  BioCapturedThumb,
+  BioCapturedThumbImg,
+  BioCaptureBarArea,
+  BioCaptureBtnSimple,
+  BioFaceCamImg,
+  BioFaceCamTint,
+  BioFaceCamWrap,
+  BioFaceCircleImg,
+  BioFaceCircleWrap,
+  BioFaceHeaderIcons,
+  BioFpBottomBar,
+  BioFpSymbolMuted,
+  BioFrostedBackdrop,
+  BioHeaderBgImg,
+  BioHeaderIconRegion,
+  BioIconMedium,
+  BioPanel908,
+  BioPanelHeader,
+  BioPanelTitle,
+  BioResidentHint,
+  BioScannerImage,
+  BioScannerRegion,
+  BioSetDotImg,
+  BioSetLabelRow,
+  BioSetTitleText,
+} from '@/components/biometrics/BiometricsPrimitives.styles'
 
 const F = 'Rubik, sans-serif'
 
@@ -151,6 +181,11 @@ export const ConnectorLine = styled.div({
   width: 266,
   height: 1.5,
   background: '#878792',
+})
+
+export const StepCheckSvg = styled.svg({
+  position: 'relative',
+  zIndex: 1,
 })
 
 // ── Step 1 — ID Entry ─────────────────────────────────────────────────────────
@@ -458,7 +493,7 @@ export const CardValidityLabel = styled.p({
   whiteSpace: 'nowrap',
 })
 
-// ── Step 3 — Biometrics ───────────────────────────────────────────────────────
+// ── Step 3 — Biometrics (shared primitives + acquisition overlays) ────────────
 
 export const BioPanelsRow = styled.div({
   flex: 1,
@@ -470,119 +505,22 @@ export const BioPanelsRow = styled.div({
   width: '100%',
 })
 
-export const BioPanel = styled.div({
-  width: 908,
-  height: '100%',
-  borderRadius: 16,
-  position: 'relative',
-  overflow: 'hidden',
-  background: '#fff',
-  flexShrink: 0,
-})
+export const BioPanel = BioPanel908
+export const BioPanelHeaderRow = BioPanelHeader
+export { BioHeaderBgImg, BioPanelTitle }
+export const FpHeaderIconWrap = BioHeaderIconRegion
+export const BioIconImg = BioIconMedium
+export const FpScannerWrapper = BioScannerRegion
+export const FpScannerImage = BioScannerImage
+export const FpSetLabel = BioSetLabelRow
+export const FpSetDotImg = BioSetDotImg
+export const FpSetText = BioSetTitleText
 
-export const BioPanelHeaderRow = styled.div({
-  position: 'relative',
-  height: 68,
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'space-between',
-  padding: '0 16px',
-  overflow: 'hidden',
-})
-
-export const BioHeaderBgImg = styled.img({
-  position: 'absolute',
-  inset: 0,
-  width: '100%',
-  height: '100%',
-  objectFit: 'cover',
-  pointerEvents: 'none',
-})
-
-export const BioPanelTitle = styled.p({
-  fontFamily: F,
-  fontSize: 24,
-  fontWeight: 600,
-  color: '#242424',
-  margin: 0,
-  whiteSpace: 'nowrap',
-  position: 'relative',
-})
-
-// FP panel
-export const FpHeaderIconWrap = styled.div({
-  position: 'relative',
-  width: 449,
-})
-
-export const BioIconImg = styled.img({
-  width: 58,
-  height: 32,
-})
-
-export const FpScannerWrapper = styled.div({
-  position: 'absolute',
-  left: 0,
-  top: 107,
-  right: 0,
-  height: 339,
-  overflow: 'hidden',
-})
-
-export const FpScannerImage = styled.img({
-  width: '100%',
-  height: '100%',
-  objectFit: 'cover',
-  pointerEvents: 'none',
-})
-
-export const FpSetLabel = styled.div({
-  position: 'absolute',
-  top: 66,
-  right: 16,
-  display: 'flex',
-  gap: 7,
-  alignItems: 'center',
-})
-
-export const FpSetDotImg = styled.img({
-  width: 14,
-  height: 14,
-  flexShrink: 0,
-})
-
-export const FpSetText = styled.p({
-  fontFamily: F,
-  fontSize: 24,
-  fontWeight: 600,
-  color: '#242424',
-  margin: 0,
-  whiteSpace: 'nowrap',
-  position: 'relative',
-})
-
-export const FpBottomBar = styled.div({
-  position: 'absolute',
-  bottom: 0,
-  left: 0,
-  right: 0,
-  height: 68,
-  background: 'linear-gradient(to bottom, rgba(213,212,213,0), #d5d4d5)',
-  borderRadius: '0 0 16px 16px',
-  display: 'flex',
-  alignItems: 'center',
-  padding: '0 16px',
+export const FpBottomBar = styled(BioFpBottomBar)({
   gap: 16,
 })
 
-export const FpFrostedOverlay = styled.div({
-  position: 'absolute',
-  inset: 0,
-  backdropFilter: 'blur(15.35px)',
-  background: 'rgba(255,255,255,0.6)',
-  borderRadius: 16,
-  zIndex: 2,
-})
+export const FpFrostedOverlay = BioFrostedBackdrop
 
 export const FpOverlayCard = styled.div({
   position: 'absolute',
@@ -629,119 +567,22 @@ export const FpIconArea = styled.div({
   justifyContent: 'center',
 })
 
-// Face panel
-export const CamBgWrapper = styled.div({
-  position: 'absolute',
-  inset: 0,
-  borderRadius: 16,
-  overflow: 'hidden',
-})
+export const FpOverlaySymbolImg = BioFpSymbolMuted
 
-export const CamBgImage = styled.img({
-  position: 'absolute',
-  width: '100%',
-  height: '165.37%',
-  top: '-37.32%',
-  left: 0,
-  objectFit: 'cover',
-  pointerEvents: 'none',
-})
-
-export const CamOverlayDiv = styled.div({
-  position: 'absolute',
-  inset: 0,
-  background: 'rgba(255,255,255,0.2)',
-})
-
-export const FaceHeaderIconsLeft = styled.div({
-  position: 'relative',
-  display: 'flex',
-  gap: 16,
-  alignItems: 'center',
-  width: 449,
-})
-
-export const FaceAngleChip = styled.div({
-  display: 'flex',
-  gap: 4,
-  height: 32,
-  alignItems: 'center',
-  padding: '4px 8px',
-  borderRadius: 4,
-})
-
-export const FaceAngleDotImg = styled.img({
-  width: 14,
-  height: 14,
-})
-
-export const FaceAngleIconImg = styled.img({
-  width: 24,
-  height: 24,
-})
-
-export const FaceHint = styled.p({
-  position: 'absolute',
-  right: 16,
-  top: 76,
-  fontFamily: F,
-  fontSize: 12,
-  fontWeight: 400,
-  color: '#242424',
-  margin: 0,
-  whiteSpace: 'nowrap',
-})
-
-export const FaceCircleWrap = styled.div({
-  position: 'absolute',
-  left: 264,
-  top: 102,
-  width: 375,
-  height: 375,
-})
-
-export const FaceCircleImage = styled.img({
-  width: 375,
-  height: 375,
-})
-
-export const FaceCapturedThumb = styled.div({
-  width: 138,
-  height: 138,
-  borderRadius: '50%',
-  overflow: 'hidden',
-  boxShadow: '0 0 30.8px 5px rgba(0,0,0,0.25)',
-})
-
-export const FaceCapturedThumbImg = styled.img({
-  width: '100%',
-  height: '100%',
-  objectFit: 'cover',
-})
-
-export const BioCaptureBar = styled.div({
-  position: 'absolute',
-  bottom: 0,
-  left: 0,
-  right: 0,
-  height: 95,
-  background: 'linear-gradient(to bottom, rgba(0,0,0,0), rgba(0,0,0,0.25))',
-  borderRadius: '0 0 16px 16px',
-  display: 'flex',
-  alignItems: 'flex-end',
-  justifyContent: 'center',
-  paddingBottom: 10,
-})
-
-export const CaptureBtnCircle = styled.button({
-  width: 56,
-  height: 56,
-  borderRadius: '50%',
-  background: '#fff',
-  border: '4px solid rgba(255,255,255,0.5)',
-  cursor: 'pointer',
-  boxShadow: '0 2px 12px rgba(0,0,0,0.3)',
-})
+export const CamBgWrapper = BioFaceCamWrap
+export const CamBgImage = BioFaceCamImg
+export const CamOverlayDiv = BioFaceCamTint
+export const FaceHeaderIconsLeft = BioFaceHeaderIcons
+export const FaceAngleChip = BioAngleChip
+export const FaceAngleDotImg = BioAngleDotImg
+export const FaceAngleIconImg = BioAngleIconImg
+export const FaceHint = BioResidentHint
+export const FaceCircleWrap = BioFaceCircleWrap
+export const FaceCircleImage = BioFaceCircleImg
+export const FaceCapturedThumb = BioCapturedThumb
+export const FaceCapturedThumbImg = BioCapturedThumbImg
+export const BioCaptureBar = BioCaptureBarArea
+export const CaptureBtnCircle = BioCaptureBtnSimple
 
 // ── Action bar ────────────────────────────────────────────────────────────────
 
@@ -770,6 +611,10 @@ export const OutlinedBtn = styled.button({
   alignItems: 'center',
   justifyContent: 'center',
   flexShrink: 0,
+})
+
+export const OutlinedBackBtn = styled(OutlinedBtn)({
+  width: 70,
 })
 
 export const GhostBtn = styled.button({

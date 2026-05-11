@@ -1,6 +1,6 @@
 import type { FC } from 'react'
 import { IdCardPreview } from '@/components/ui/IdCardPreview'
-import { MOCK_ELIGIBILITY } from '@/pages/WizardPage/mockData'
+import { MOCK_ELIGIBILITY, MOCK_RESIDENT } from '@/pages/WizardPage/mockData'
 import {
   EligibilityRoot,
   EligibilityCard,
@@ -17,7 +17,7 @@ export const EligibilityContent: FC = () => {
           <EligibilityLabel dir="auto">סוג כרטיס זכאי</EligibilityLabel>
           <EligibilityValue dir="auto">{MOCK_ELIGIBILITY.cardType}</EligibilityValue>
         </EligibilityCardHeader>
-        <IdCardPreview />
+        <IdCardPreview resident={MOCK_RESIDENT} eligibility={MOCK_ELIGIBILITY} />
       </EligibilityCard>
     </EligibilityRoot>
   )
