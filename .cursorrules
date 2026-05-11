@@ -98,4 +98,4 @@ Before you finish **UI or logic** work: run **`npm run build`** and **`npm run t
 
 ## Copy parity
 
-This file is mirrored as **`PROJECT_INSTRUCTIONS.md`** for readable Markdown browsing; keep them in sync when editing rules.
+Keep these repository rules accurate and up to date when editing them.
