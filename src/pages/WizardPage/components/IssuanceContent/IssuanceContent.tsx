@@ -22,6 +22,8 @@ import {
   IssuedCardPanel,
   IssuedCardTitle,
   IssuedCardSubtitle,
+  ReprintFooter,
+  ReprintBtn,
 } from './IssuanceContent.styles'
 
 export const IssuanceContent: FC = () => {
@@ -126,6 +128,9 @@ export const IssuanceContent: FC = () => {
           <IssuedCardTitle dir="auto">הכרטיס שהונפק</IssuedCardTitle>
           <IssuedCardSubtitle dir="auto">{MOCK_ELIGIBILITY.cardType}</IssuedCardSubtitle>
           <IdCardPreview resident={MOCK_RESIDENT} eligibility={MOCK_ELIGIBILITY} />
+          <ReprintFooter>
+            <ReprintBtn onClick={() => {}} dir="auto">הדפס שנית</ReprintBtn>
+          </ReprintFooter>
         </IssuedCardPanel>
       </IssueContentRow>
     </IssueRoot>

@@ -135,15 +135,16 @@ export const IssuanceDevBtn = styled.button<{ $active: boolean; $activeBg: strin
 
 export const IssuedCardPanel = styled.div({
   flex: 1,
+  position: 'relative',
   border: '1px solid #BDBDC2',
   borderRadius: 8,
-  padding: 16,
+  padding: '16px 16px 84px',
   display: 'flex',
   flexDirection: 'column',
   alignItems: 'center',
   justifyContent: 'center',
   gap: 16,
-  overflow: 'auto',
+  overflow: 'hidden',
 })
 
 export const IssuedCardTitle = styled.span({
@@ -158,4 +159,35 @@ export const IssuedCardSubtitle = styled.span({
   fontSize: 18,
   fontWeight: 400,
   color: '#242424',
+})
+
+// ── Reprint footer (always visible in issued card panel) ──────────────────────
+
+export const ReprintFooter = styled.div({
+  position: 'absolute',
+  bottom: -1,
+  left: -1,
+  right: -1,
+  height: 68,
+  background: 'linear-gradient(to bottom, rgba(213,212,213,0), #d5d4d5)',
+  borderRadius: '0 0 8px 8px',
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'flex-start',
+  padding: '0 16px',
+})
+
+export const ReprintBtn = styled.button({
+  height: 32,
+  padding: '0 16px',
+  background: '#5c5def',
+  color: '#fff',
+  fontFamily: BF,
+  fontSize: 16,
+  fontWeight: 700,
+  borderRadius: 4,
+  border: 'none',
+  cursor: 'pointer',
+  boxShadow: '0px 2px 4px 0px rgba(0,0,0,0.3)',
+  whiteSpace: 'nowrap',
 })

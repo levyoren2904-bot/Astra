@@ -14,6 +14,8 @@ export interface Resident {
   district: string
   city: string
   street: string
+  email: string
+  phone: string
 }
 
 export interface Permit {

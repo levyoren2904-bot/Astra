@@ -84,7 +84,7 @@ export const CardTypeRow = styled.div({
   alignItems: 'flex-start',
 })
 
-export const CardTypeCard = styled.div({
+export const CardTypeCard = styled.div<{ $digital?: boolean }>(({ $digital }) => ({
   background: '#f5f5f6',
   borderRadius: 8,
   padding: 16,
@@ -92,6 +92,46 @@ export const CardTypeCard = styled.div({
   flexDirection: 'column',
   gap: 10,
   alignItems: 'flex-end',
+  position: 'relative',
+  ...($digital && { width: 343, height: 244, overflow: 'hidden' }),
+}))
+
+export const PhoneMockupWrap = styled.div({
+  position: 'relative',
+  width: '100%',
+  aspectRatio: '223 / 451',
+  flexShrink: 0,
+  minWidth: 0,
+})
+
+export const PhoneMockupClip = styled.div({
+  position: 'absolute',
+  inset: 0,
+  overflow: 'hidden',
+  pointerEvents: 'none',
+})
+
+export const PhoneMockupImg = styled.img({
+  position: 'absolute',
+  height: '151.44%',
+  left: '-126.01%',
+  maxWidth: 'none',
+  top: '-33.48%',
+  width: '459.19%',
+})
+
+export const PhoneCardOverlay = styled.div({
+  position: 'absolute',
+  left: 55,
+  top: 125,
+  width: 237,
+  height: 137,
+  overflow: 'hidden',
+})
+
+export const PhoneCardScale = styled.div({
+  transform: 'scale(0.762)',
+  transformOrigin: 'top left',
 })
 
 export const CardTypeHeader = styled.div({

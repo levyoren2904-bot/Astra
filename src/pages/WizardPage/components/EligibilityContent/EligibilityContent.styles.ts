@@ -42,3 +42,7 @@ export const EligibilityValue = styled.p({
   color: '#242424',
   margin: 0,
 })
+
+export const EligibilityBoldNote = styled.span({
+  fontWeight: 700,
+})

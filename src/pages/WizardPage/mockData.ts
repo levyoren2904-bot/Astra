@@ -10,6 +10,8 @@ export const MOCK_RESIDENT: Resident = {
   district: "ג'נין",
   city: "ג'נין",
   street: 'שקר 2',
+  email: 'Abu@gmail.com',
+  phone: '0501111111',
 }
 
 export const MOCK_PERMITS: Permit[] = [

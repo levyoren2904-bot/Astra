@@ -165,3 +165,82 @@ export const StartBtnLabel = styled.span({
   fontSize: 18,
   lineHeight: 'normal',
 })
+
+// ── Resident popup card ────────────────────────────────────────────────────────
+
+// popup right edge aligns with TextField right edge:
+// container right → speaker(40px) + gap(16px) = 56px offset
+export const ResidentPopup = styled.div({
+  position: 'absolute',
+  top: 'calc(100% + 8px)',
+  right: 56,
+  width: 320,
+  background: '#f6f6fe',
+  borderRadius: 12,
+  padding: 16,
+  boxShadow: '2px 2px 8px 0px rgba(101,102,240,0.25)',
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'space-between',
+  zIndex: 30,
+})
+
+export const ResidentPopupInfo = styled.div({
+  display: 'flex',
+  alignItems: 'center',
+  gap: 8,
+  flexShrink: 0,
+})
+
+export const ResidentPopupPhoto = styled.img({
+  width: 46,
+  height: 46,
+  borderRadius: '50%',
+  objectFit: 'cover',
+  flexShrink: 0,
+})
+
+export const ResidentPopupTexts = styled.div({
+  display: 'flex',
+  flexDirection: 'column',
+  alignItems: 'flex-end',
+  gap: 4,
+  height: 47,
+  justifyContent: 'flex-end',
+})
+
+export const ResidentPopupName = styled.span({
+  fontFamily: 'Rubik, sans-serif',
+  fontSize: 20,
+  fontWeight: 400,
+  color: '#1e1f33',
+  lineHeight: 'normal',
+  whiteSpace: 'nowrap',
+})
+
+export const ResidentPopupId = styled.span({
+  fontFamily: 'Rubik, sans-serif',
+  fontSize: 16,
+  fontWeight: 400,
+  color: '#5d607a',
+  lineHeight: 'normal',
+})
+
+export const QueueBadge = styled.div({
+  width: 72,
+  alignSelf: 'stretch',
+  background: '#d7d7da',
+  borderRadius: 16,
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  flexShrink: 0,
+})
+
+export const QueueNumber = styled.span({
+  fontFamily: 'Rubik, sans-serif',
+  fontSize: 20,
+  fontWeight: 600,
+  color: '#1e1f33',
+  lineHeight: 'normal',
+})

@@ -24,12 +24,20 @@ import {
   HandBtnImg,
   StartBtnArrow,
   StartBtnLabel,
+  ResidentPopup,
+  QueueBadge,
+  QueueNumber,
+  ResidentPopupInfo,
+  ResidentPopupTexts,
+  ResidentPopupName,
+  ResidentPopupId,
+  ResidentPopupPhoto,
 } from './HomePage.styles'
 
 const imgQuestion = '/icons/question.svg'
 const imgRedo = '/icons/redo.svg'
 const imgRefresh = '/icons/refresh.svg'
-const imgHand = '/icons/hand.svg'
+const imgSpeaker = '/icons/speaker.svg'
 const imgArrow = '/icons/arrow.svg'
 const imgMenuAcquisition = '/icons/menu-acquisition.svg'
 const imgMenuBulk = '/icons/menu-bulk.svg'
@@ -106,11 +114,23 @@ const MenuIcon: FC<{ type: (typeof menuItems)[number]['iconType'] }> = ({ type }
   )
 }
 
+const MOCK_QUEUE_RESIDENT = {
+  queueNumber: 134,
+  name: 'מוחמד בן סלמאן',
+  photo: '/images/bio-captured-photo.png',
+}
+
+function isValidId(value: string) {
+  return /^\d{9}$/.test(value)
+}
+
 export const HomePage: FC = () => {
   const navigate = useNavigate()
   const [menuOpen, setMenuOpen] = useState(false)
   const [idValue, setIdValue] = useState('')
   const inputRef = useRef<HTMLInputElement>(null)
+
+  const showPopup = isValidId(idValue)
 
   function handleCallNext() {
     // TODO: integrate with queue API — announce + inject ID
@@ -183,8 +203,8 @@ export const HomePage: FC = () => {
           </LogoWordmarkWrap>
         </div>
 
-        {/* Button group — LTR: [התחל תהליך] [TextField w/icons] [hand] */}
-        <div className="flex items-center gap-4" dir="ltr">
+        {/* Button group — LTR: [התחל תהליך] [TextField w/icons] [speaker] */}
+        <div className="relative flex items-center gap-4" dir="ltr">
           {/* "התחל תהליך" button */}
           <button
             onClick={handleStartProcess}
@@ -270,14 +290,35 @@ export const HomePage: FC = () => {
             />
           </TextField>
 
-          {/* Hand/call-next button — 40×40 blue square */}
+          {/* Speaker/call-next button — 40×40 blue square */}
           <HandBtn
             onClick={handleCallNext}
             title="קרא לתושב הבא"
             className="flex items-center justify-center rounded bg-[#5c5def] hover:brightness-110 border border-[#5c5def] shadow-[0px_2px_4px_0px_rgba(0,0,0,0.3)] transition-all shrink-0"
           >
-            <HandBtnImg src={imgHand} alt="קרא לתושב הבא" loading="lazy" className="object-contain" />
+            <HandBtnImg src={imgSpeaker} alt="קרא לתושב הבא" loading="lazy" className="object-contain" />
           </HandBtn>
+
+          {/* Resident popup — appears below the TextField when a valid 9-digit ID is typed */}
+          {showPopup && (
+            <ResidentPopup>
+              {/* LTR order: queue badge (left) | texts (middle) | photo (right) */}
+              <QueueBadge>
+                <QueueNumber>{MOCK_QUEUE_RESIDENT.queueNumber}</QueueNumber>
+              </QueueBadge>
+              <ResidentPopupInfo>
+                <ResidentPopupTexts>
+                  <ResidentPopupName dir="auto">{MOCK_QUEUE_RESIDENT.name}</ResidentPopupName>
+                  <ResidentPopupId dir="auto">{idValue}</ResidentPopupId>
+                </ResidentPopupTexts>
+                <ResidentPopupPhoto
+                  src={MOCK_QUEUE_RESIDENT.photo}
+                  alt=""
+                  loading="lazy"
+                />
+              </ResidentPopupInfo>
+            </ResidentPopup>
+          )}
         </div>
       </div>
     </PageRoot>

@@ -130,3 +130,59 @@ export const CancelBtnWizardLabel = styled.span({
   whiteSpace: 'nowrap',
   padding: '0 16px',
 })
+
+// ── Card-type warning popup ────────────────────────────────────────────────────
+
+export const WarningPopupOverlay = styled.div({
+  position: 'absolute',
+  inset: 0,
+  background: 'rgba(0,0,0,0.25)',
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  zIndex: 30,
+  borderRadius: 16,
+})
+
+export const WarningPopupCard = styled.div({
+  background: '#fbfbfb',
+  borderRadius: 12,
+  padding: 32,
+  display: 'flex',
+  flexDirection: 'column',
+  alignItems: 'center',
+  gap: 24,
+  boxShadow: '0px 4px 16px 0px rgba(0,0,0,0.2)',
+  maxWidth: 440,
+})
+
+export const WarningPopupText = styled.p({
+  fontFamily: BF,
+  fontSize: 18,
+  fontWeight: 400,
+  color: '#242424',
+  margin: 0,
+  textAlign: 'center',
+  lineHeight: 1.5,
+})
+
+export const WarningPopupBtn = styled.button({
+  background: '#5c5def',
+  borderRadius: 4,
+  height: 38,
+  padding: '0 32px',
+  border: 'none',
+  cursor: 'pointer',
+  boxShadow: '0px 2px 4px 0px rgba(0,0,0,0.3)',
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+})
+
+export const WarningPopupBtnLabel = styled.span({
+  fontFamily: BF,
+  fontSize: 16,
+  fontWeight: 700,
+  color: 'white',
+  whiteSpace: 'nowrap',
+})

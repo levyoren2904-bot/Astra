@@ -23,6 +23,7 @@ export const FEES_WARN = '/images/fees-warn.svg'
 export const FEES_EXCL = '/images/fees-excl.svg'
 export const FEES_ANIM = '/images/fees-anim.gif'
 export const FEES_RADIO_ON = '/images/fees-radio-on.svg'
+export const FEES_PHONE_MOCKUP = '/images/fees-phone-mockup.png'
 
 // ── Biometrics assets ─────────────────────────────────────────────────────────
 export const BIO_CAM_BG = '/images/bio-cam-bg.png'

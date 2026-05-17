@@ -14,6 +14,7 @@ import { EligibilityContent } from './components/EligibilityContent'
 import { FeesContent } from './components/FeesContent'
 import { BiometricsContent } from './components/BiometricsContent'
 import { IssuanceContent } from './components/IssuanceContent'
+import { PrintingContent } from './components/PrintingContent'
 import { MOCK_RESIDENT, MOCK_PROHIBITIONS } from './mockData'
 import {
   PageRoot,
@@ -33,6 +34,11 @@ import {
   BackBtnLabel,
   CancelBtnWizard,
   CancelBtnWizardLabel,
+  WarningPopupOverlay,
+  WarningPopupCard,
+  WarningPopupText,
+  WarningPopupBtn,
+  WarningPopupBtnLabel,
 } from './WizardPage.styles'
 
 export const WizardPage: FC = () => {
@@ -43,16 +49,28 @@ export const WizardPage: FC = () => {
   const [mockFail, setMockFail] = useState(false)
   const [showQuestionnaire, setShowQuestionnaire] = useState(false)
   const [showExclusion, setShowExclusion] = useState(false)
+  const [showCardTypeWarning, setShowCardTypeWarning] = useState(false)
+  const [printingDone, setPrintingDone] = useState(false)
 
   const idFromState = (location.state as { id?: string } | null)?.id ?? ''
   const displayId = idFromState || MOCK_RESIDENT.id
 
   function handleNext() {
+    if (currentStep === 2) {
+      setShowCardTypeWarning(true)
+      return
+    }
     if (currentStep < 5) setCurrentStep((s) => s + 1)
   }
   function handleBack() {
-    if (currentStep > 1) setCurrentStep((s) => s - 1)
-    else navigate('/')
+    if (currentStep === 5) {
+      setPrintingDone(false)
+      setCurrentStep(4)
+    } else if (currentStep > 1) {
+      setCurrentStep((s) => s - 1)
+    } else {
+      navigate('/')
+    }
   }
   function handleCancel() {
     navigate('/')
@@ -125,7 +143,10 @@ export const WizardPage: FC = () => {
           <FeesContent onExclusion={() => setShowExclusion(true)} onClose={() => navigate('/')} />
         )}
         {currentStep === 4 && <BiometricsContent onExclusion={() => setShowExclusion(true)} />}
-        {currentStep === 5 && <IssuanceContent />}
+        {currentStep === 5 && !printingDone && (
+          <PrintingContent onComplete={() => setPrintingDone(true)} />
+        )}
+        {currentStep === 5 && printingDone && <IssuanceContent />}
 
         {/* ── Exclusion flow (states 3→4→5) ── */}
         {showExclusion && (
@@ -152,6 +173,25 @@ export const WizardPage: FC = () => {
               setShowExclusion(true)
             }}
           />
+        )}
+
+        {/* ── Card-type warning popup (step 2 → 3) ── */}
+        {showCardTypeWarning && (
+          <WarningPopupOverlay>
+            <WarningPopupCard dir="rtl">
+              <WarningPopupText dir="auto">
+                שים לב שסוג הכרטיס במדפסת תואם את הזכאות
+              </WarningPopupText>
+              <WarningPopupBtn
+                onClick={() => {
+                  setShowCardTypeWarning(false)
+                  setCurrentStep((s) => s + 1)
+                }}
+              >
+                <WarningPopupBtnLabel dir="auto">אישור</WarningPopupBtnLabel>
+              </WarningPopupBtn>
+            </WarningPopupCard>
+          </WarningPopupOverlay>
         )}
 
         {/* ── Action buttons — LTR: הבא(left) | חזור | ביטול ── */}

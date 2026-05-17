@@ -1,0 +1,1 @@
+export { PrintingContent } from './PrintingContent'

@@ -8,6 +8,7 @@ import {
   FEES_EXCL,
   FEES_ANIM,
   FEES_RADIO_ON,
+  FEES_PHONE_MOCKUP,
 } from '@/pages/WizardPage/constants'
 import {
   DevBar,
@@ -27,6 +28,11 @@ import {
   RadioBtn,
   RadioImg,
   RadioCircle,
+  PhoneMockupWrap,
+  PhoneMockupClip,
+  PhoneMockupImg,
+  PhoneCardOverlay,
+  PhoneCardScale,
   UnpaidSection,
   UnpaidIconBox,
   FeeWarn,
@@ -104,14 +110,29 @@ export const FeesContent: FC<FeesContentProps> = ({ onExclusion, onClose }) => {
           </PaidInner>
           <CardTypeRow>
             {(['digital', 'physical'] as CardType[]).map((type) => (
-              <CardTypeCard key={type}>
+              <CardTypeCard key={type} $digital={type === 'digital'}>
                 <CardTypeHeader>
                   <CardTypeLabel dir="auto">
                     {type === 'digital' ? 'כר״ח דיגיטלי' : 'כר״ח פיזי'}
                   </CardTypeLabel>
                   <RB type={type} />
                 </CardTypeHeader>
-                <IdCardPreview variant={type} resident={MOCK_RESIDENT} eligibility={MOCK_ELIGIBILITY} />
+                {type === 'digital' ? (
+                  <>
+                    <PhoneMockupWrap>
+                      <PhoneMockupClip>
+                        <PhoneMockupImg src={FEES_PHONE_MOCKUP} alt="" loading="lazy" />
+                      </PhoneMockupClip>
+                    </PhoneMockupWrap>
+                    <PhoneCardOverlay>
+                      <PhoneCardScale>
+                        <IdCardPreview variant="digital" resident={MOCK_RESIDENT} eligibility={MOCK_ELIGIBILITY} />
+                      </PhoneCardScale>
+                    </PhoneCardOverlay>
+                  </>
+                ) : (
+                  <IdCardPreview variant={type} resident={MOCK_RESIDENT} eligibility={MOCK_ELIGIBILITY} />
+                )}
               </CardTypeCard>
             ))}
           </CardTypeRow>

@@ -198,6 +198,14 @@ export const PersonalDetailsPanel: FC<PersonalDetailsPanelProps> = ({
                 <PersonFieldValue dir="auto">{r.district}</PersonFieldValue>
                 <PersonFieldLabel dir="auto">נפה</PersonFieldLabel>
               </PersonFieldRow>
+              <PersonFieldRow className="flex gap-4 items-center justify-end">
+                <PersonFieldValue dir="auto">{r.phone}</PersonFieldValue>
+                <PersonFieldLabel dir="auto">טלפון</PersonFieldLabel>
+              </PersonFieldRow>
+              <PersonFieldRow className="flex gap-4 items-center justify-end">
+                <PersonFieldValue dir="auto">{r.email}</PersonFieldValue>
+                <PersonFieldLabel dir="auto">מייל</PersonFieldLabel>
+              </PersonFieldRow>
             </PersonFieldsGrid>
           </div>
           <div className="flex flex-1 flex-col items-end justify-center min-w-0">
