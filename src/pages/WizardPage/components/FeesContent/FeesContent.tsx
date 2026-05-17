@@ -46,7 +46,7 @@ import {
   ExclusionIcon,
 } from './FeesContent.styles'
 
-type FeeState = 'checking' | 'paid' | 'unpaid'
+type FeeState = 'checking' | 'paid' | 'unpaid' | 'mismatch'
 type CardType = 'digital' | 'physical'
 
 interface FeesContentProps {
@@ -56,14 +56,19 @@ interface FeesContentProps {
 
 export const FeesContent: FC<FeesContentProps> = ({ onExclusion, onClose }) => {
   const [feeState, setFeeState] = useState<FeeState>('checking')
-  const [mockUnpaid, setMockUnpaid] = useState(false)
+  const [mockOverride, setMockOverride] = useState<'paid' | 'unpaid' | 'mismatch'>('paid')
   const [cardType, setCardType] = useState<CardType>('digital')
 
   useEffect(() => {
     if (feeState !== 'checking') return
-    const t = setTimeout(() => setFeeState(mockUnpaid ? 'unpaid' : 'paid'), 2000)
+    const t = setTimeout(() => setFeeState(mockOverride), 2000)
     return () => clearTimeout(t)
-  }, [feeState, mockUnpaid])
+  }, [feeState, mockOverride])
+
+  function cycleOverride() {
+    setMockOverride((p) => (p === 'paid' ? 'unpaid' : p === 'unpaid' ? 'mismatch' : 'paid'))
+    setFeeState('checking')
+  }
 
   const RB = ({ type }: { type: CardType }) => (
     <RadioBtn onClick={() => setCardType(type)}>
@@ -79,14 +84,8 @@ export const FeesContent: FC<FeesContentProps> = ({ onExclusion, onClose }) => {
     <div className="flex flex-1 flex-col items-center justify-center min-h-0 w-full relative">
       {isDevMode && (
         <DevBar>
-          <DevBtn
-            $active={mockUnpaid}
-            onClick={() => {
-              setMockUnpaid((p) => !p)
-              setFeeState('checking')
-            }}
-          >
-            {mockUnpaid ? '✓ לא שולמה' : 'לא שולמה'}
+          <DevBtn $active={mockOverride !== 'paid'} onClick={cycleOverride}>
+            {mockOverride === 'paid' ? 'תקינה' : mockOverride === 'unpaid' ? '✓ לא שולמה' : '✓ לא תואמת'}
           </DevBtn>
         </DevBar>
       )}
@@ -157,6 +156,22 @@ export const FeesContent: FC<FeesContentProps> = ({ onExclusion, onClose }) => {
               <ExclusionIcon src={FEES_EXCL} alt="" loading="lazy" />
             </ExclusionBtnInner>
           </ExclusionBtn>
+        </UnpaidSection>
+      )}
+
+      {feeState === 'mismatch' && (
+        <UnpaidSection>
+          <FeeStatusTitle dir="auto">אגרה לא תואמת לסוג הטלפון</FeeStatusTitle>
+          <UnpaidIconBox>
+            <FeeWarn src={FEES_WARN} alt="" loading="lazy" />
+          </UnpaidIconBox>
+          <FeeNote dir="auto">יש לשלם תוספת אגרה לפני המשך התהליך</FeeNote>
+          <QueueBtn onClick={onClose}>
+            <QueueBtnLabel dir="auto">שלח חזרה לתור</QueueBtnLabel>
+          </QueueBtn>
+          <ReCheckBtn onClick={() => setFeeState('checking')}>
+            <ReCheckBtnLabel dir="auto">בדוק שנית</ReCheckBtnLabel>
+          </ReCheckBtn>
         </UnpaidSection>
       )}
     </div>

@@ -196,6 +196,7 @@ export const QueueBtn = styled.button({
   borderRadius: 4,
   height: 38,
   padding: '0 24px',
+  width: 168,
   border: 'none',
   cursor: 'pointer',
   boxShadow: '0px 2px 4px 0px rgba(0,0,0,0.3)',
@@ -212,8 +213,9 @@ export const QueueBtnLabel = styled.span({
 export const ReCheckBtn = styled.button({
   background: 'transparent',
   borderRadius: 4,
-  height: 32,
-  width: '100%',
+  height: 38,
+  padding: '0 24px',
+  width: 168,
   border: '1px solid #5c5def',
   cursor: 'pointer',
 })
