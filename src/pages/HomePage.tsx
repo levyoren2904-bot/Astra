@@ -2,6 +2,7 @@ import { useState, useRef, type FC } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { VideoBackground } from '@/components/ui/VideoBackground'
 import { Tooltip } from '@/components/ui/Tooltip'
+import { CardCheckModal } from './CardCheckModal'
 import {
   PageRoot,
   DropdownMenu,
@@ -43,6 +44,7 @@ const imgMenuAcquisition = '/icons/menu-acquisition.svg'
 const imgMenuBulk = '/icons/menu-bulk.svg'
 const imgMenuAdmin = '/icons/menu-admin.svg'
 const imgMenuQueries = '/icons/menu-queries.svg'
+const imgBarcode = '/icons/barcode-scan.svg'
 
 const menuItems = [
   {
@@ -54,6 +56,7 @@ const menuItems = [
   { label: 'כרטיסים מיוחדים', lines: ['כרטיסים מיוחדים'], iconType: 'bulk', path: '/wizard-bulk' },
   { label: 'ניהול מערכת', lines: ['ניהול', 'מערכת'], iconType: 'admin', path: '/admin' },
   { label: 'שאילתות', lines: ['שאילתות'], iconType: 'queries', path: null, external: true },
+  { label: 'בדיקת כרטיס', lines: ['בדיקת כרטיס'], iconType: 'cardcheck', path: null },
 ] as const
 
 const MenuIcon: FC<{ type: (typeof menuItems)[number]['iconType'] }> = ({ type }) => {
@@ -99,6 +102,18 @@ const MenuIcon: FC<{ type: (typeof menuItems)[number]['iconType'] }> = ({ type }
       </MenuIconWrap>
     )
   }
+  if (type === 'cardcheck') {
+    return (
+      <MenuIconWrap className="relative shrink-0">
+        <MenuIconImg
+          src={imgBarcode}
+          alt=""
+          loading="lazy"
+          className="absolute block w-full h-full"
+        />
+      </MenuIconWrap>
+    )
+  }
   // queries
   return (
     <MenuIconWrap className="relative shrink-0">
@@ -127,6 +142,7 @@ function isValidId(value: string) {
 export const HomePage: FC = () => {
   const navigate = useNavigate()
   const [menuOpen, setMenuOpen] = useState(false)
+  const [cardCheckOpen, setCardCheckOpen] = useState(false)
   const [idValue, setIdValue] = useState('')
   const inputRef = useRef<HTMLInputElement>(null)
 
@@ -144,6 +160,10 @@ export const HomePage: FC = () => {
 
   function handleMenuSelect(item: (typeof menuItems)[number]) {
     setMenuOpen(false)
+    if (item.iconType === 'cardcheck') {
+      setCardCheckOpen(true)
+      return
+    }
     if ('external' in item && item.external) {
       window.open('about:blank', '_blank') // TODO: replace with actual שאילתות URL
       return
@@ -155,6 +175,9 @@ export const HomePage: FC = () => {
     <PageRoot className="relative w-full overflow-hidden">
       {/* Video background — crossfade loop to avoid visible jump */}
       <VideoBackground />
+
+      {/* Card validity check modal */}
+      {cardCheckOpen && <CardCheckModal onClose={() => setCardCheckOpen(false)} />}
 
       {/* Hamburger menu button — top left (RTL) */}
       <button

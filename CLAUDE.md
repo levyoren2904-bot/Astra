@@ -8,6 +8,8 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 npm run dev      # start dev server (binds to :5173, or next available port)
 npm run build    # TypeScript check + Vite bundle → dist/
 npm run lint     # ESLint
+npm run test     # Vitest (run once, no watch)
+npm run format   # Prettier over src/
 npm run preview  # serve the built dist/ locally
 ```
 
@@ -36,7 +38,7 @@ src/
       mockData.ts
       index.ts
       components/               # WizardPage sub-components (each a folder)
-        BiometricsContent/ EligibilityContent/ FeesContent/ IssuanceContent/
+        BiometricsContent/ EligibilityContent/ FeesContent/ IssuanceContent/ PrintingContent/
         PersonalDetailsPanel/ PermitsPanel/ ProhibitionsPanel/ CardHistoryPanel/
         QuestionnaireModal/ ExclusionModal/ WizardStepper/ CloseIcon/
     WizardBulkPage/             # same folder pattern
@@ -81,7 +83,7 @@ WizardPage is a single-file page with all sub-components defined inline. Key com
 - Progress ring: SVG overlay, `r=125`, `CIRCUMFERENCE = 2π×125`. SVG positioned `top:-9, left:-3` (empirically calibrated to align with the 3px dashed border of the 253px circle).
 - On `fail`: "פתח שאלון אימות" button appears (same as `noPhoto` state).
 
-**Dev-only toggles**: `import.meta.env.DEV` guards a floating button bar (bottom-right of modal) that toggles `noPhoto` and `mockFail` states for testing abnormal flows without backend.
+**Dev-only toggles**: Import `isDevMode` from `@/utils/devtools` — it is `true` in Vite DEV mode OR when `?devtools` is in the URL (flag persists in `sessionStorage` for the session, enabling dev toggles in production builds). Always use `isDevMode`, never `import.meta.env.DEV` directly.
 
 **`QuestionnaireModal`** — State 1 overlay (8 questions, 2 sets of 4):
 - Set 1: all 4 correct → `result='success'`; any wrong → continue to set 2
@@ -96,7 +98,14 @@ WizardPage is a single-file page with all sub-components defined inline. Key com
 - State 5 (`reason`): textarea with `flex: 1` fills available space; "בצע החרגה" enabled only when text is non-empty.
 - Triggered from `QuestionnaireModal.onExclusion` and will be triggered from other abnormal states (fee unpaid, fingerprint error).
 
-**`IssuanceContent`** — Step 5, two side-by-side panels:
+**`src/lib/`** — pure logic extracted for unit testing. `questionnaireAdvance.ts` contains the questionnaire state machine as a pure function; `questionnaireAdvance.test.ts` covers all branch paths with Vitest. Extract any non-trivial state logic here so it can be tested without rendering.
+
+**`PrintingContent`** — Step 5a (before IssuanceContent), shown while the card is being written:
+- Two sequential progress bars: "קורא נתונים" runs first, "מדפיס נתונים" starts only after the first completes. Driven by a `phase: 1 | 2` React state, NOT CSS animation-delay — bar 2 has `$running={phase === 2}` and starts from 0% when phase flips.
+- `ProgressFill` uses styled-components tagged template literal syntax with the `css` helper for keyframe interpolation (required for styled-components v6 — object syntax cannot interpolate keyframes).
+- `WizardPage` shows `PrintingContent` until `onComplete` fires, then swaps to `IssuanceContent` via `printingDone` state.
+
+**`IssuanceContent`** — Step 5b (after PrintingContent completes), two side-by-side panels:
 - Left panel (908px): header + scanner area with 3 states (`idle` / `success` / `failure`). Idle shows barcode icon at `left:306, top:269`. Success/failure show a concentric-ring icon + message at `left:358, top:228`. DEV toggle buttons in panel bottom-left.
 - Right panel (flex:1): `justifyContent: center, alignItems: center` — title, card type subtitle, and `IdCardPreview` vertically centered.
 - Global action row: "הבא" becomes "סיום תהליך" (navigates to `/`), "חזור" is disabled, "ביטול" hidden.
@@ -204,7 +213,8 @@ ID field row (LTR flex order): [התחל תהליך btn] [TextField: icons + inp
 | 0 | Step 1 | No photo in system | Open questionnaire |
 | 0b | Step 1 | Photo exists, face recognition failed | Open questionnaire |
 | 1 | Step 1 | Verification questionnaire (4 Q × 4 options) | 4 correct → proceed / 4 wrong → exclusion |
-| 2 | Step 3 | Fee unpaid | Exclusion / re-check / return to queue / cancel |
+| 2a | Step 3 | Fee unpaid | Exclusion / re-check / return to queue |
+| 2b | Step 3 | Fee paid but wrong type (mismatch) | Re-check / return to queue (no exclusion) |
 | 3 | Anywhere | Exclusion + resident has מניעות | Warning |
 | 4 | Anywhere | Exclusion clicked | Admin code entry |
 | 5 | Anywhere | After admin code | Enter reason → proceed |
@@ -241,9 +251,10 @@ SSO — user pre-authenticated at OS level. No login screen. App opens directly 
 | WizardPage — state 1 (questionnaire modal) | Complete |
 | WizardPage — exclusion flow (states 3→4→5, shared modal) | Complete |
 | WizardPage — step 2 (eligibility) | Complete (assumed always pass) |
-| WizardPage — step 3 (fees) | Complete (paid / checking / unpaid states) |
+| WizardPage — step 3 (fees) | Complete (checking / paid / unpaid / mismatch states) |
 | WizardPage — step 4 (biometrics — face + fingerprints) | Complete |
-| WizardPage — step 5 (הנפקה) | Complete (scanner idle/success/failure states + issued card panel) |
+| WizardPage — step 5a (printing progress) | Complete (sequential progress bars) |
+| WizardPage — step 5b (הנפקה) | Complete (scanner idle/success/failure states + issued card panel) |
 | WizardBulkPage — steps 1–3 layout + completion modal | Complete |
 | WizardAcquisitionPage — steps 1–3 (ID / personal / biometrics) | Complete |
 | AdminPage | Complete (all 3 tabs: עמדות / סוגי כרטיסים / אגרות) |
