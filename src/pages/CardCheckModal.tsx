@@ -12,6 +12,10 @@ import {
   ScanResultState,
   ScanResultTitle,
   ScanResultNote,
+  FailureActions,
+  SecondaryActionBtn,
+  IdInput,
+  MarkInvalidBtn,
   DevBar,
   DevBtn,
 } from './CardCheckModal.styles'
@@ -22,6 +26,8 @@ interface Props {
 
 export const CardCheckModal: FC<Props> = ({ onClose }) => {
   const [scanState, setScanState] = useState<'idle' | 'success' | 'failure'>('idle')
+  const [idValue, setIdValue] = useState('')
+  const isIdValid = /^\d{9}$/.test(idValue)
 
   return (
     <Overlay onClick={onClose}>
@@ -88,6 +94,25 @@ export const CardCheckModal: FC<Props> = ({ onClose }) => {
               />
             </svg>
             <ScanResultNote dir="auto">הכרטיס לא תקין, נסה שנית</ScanResultNote>
+            <FailureActions>
+              <SecondaryActionBtn
+                dir="auto"
+                onClick={() => { setScanState('idle'); setIdValue('') }}
+              >
+                בדוק שנית
+              </SecondaryActionBtn>
+              <IdInput
+                dir="auto"
+                placeholder="הזן ת.ז"
+                value={idValue}
+                inputMode="numeric"
+                maxLength={9}
+                onChange={(e) => setIdValue(e.target.value.replace(/\D/g, ''))}
+              />
+              <MarkInvalidBtn dir="auto" disabled={!isIdValid} onClick={onClose}>
+                סמן כלא תקין
+              </MarkInvalidBtn>
+            </FailureActions>
           </ScanResultState>
         )}
 

@@ -101,6 +101,60 @@ export const ScanResultNote = styled.span({
   color: '#242424',
 })
 
+export const FailureActions = styled.div({
+  display: 'flex',
+  flexDirection: 'column',
+  alignItems: 'stretch',
+  gap: 12,
+  marginTop: 8,
+  width: 220,
+})
+
+export const SecondaryActionBtn = styled.button({
+  fontFamily: BF,
+  fontSize: 14,
+  fontWeight: 600,
+  color: '#5C5DEF',
+  background: 'transparent',
+  border: '1.5px solid #5C5DEF',
+  borderRadius: 8,
+  padding: '10px 20px',
+  cursor: 'pointer',
+  whiteSpace: 'nowrap',
+  ':hover': { background: 'rgba(92,93,239,0.06)' },
+})
+
+export const IdInput = styled.input({
+  fontFamily: BF,
+  fontSize: 14,
+  fontWeight: 400,
+  color: '#242424',
+  background: '#F5F5F6',
+  border: '1.5px solid #d0d0d0',
+  borderRadius: 8,
+  padding: '10px 12px',
+  outline: 'none',
+  textAlign: 'right',
+  ':focus': { borderColor: '#5C5DEF' },
+  '::placeholder': { color: '#999' },
+})
+
+export const MarkInvalidBtn = styled.button({
+  fontFamily: BF,
+  fontSize: 14,
+  fontWeight: 600,
+  color: '#ffffff',
+  background: '#5C5DEF',
+  border: 'none',
+  borderRadius: 8,
+  padding: '10px 20px',
+  cursor: 'pointer',
+  whiteSpace: 'nowrap',
+  boxShadow: '0 2px 4px rgba(0,0,0,0.3)',
+  ':hover:not(:disabled)': { background: '#4a4bcc' },
+  ':disabled': { background: '#d0d0d0', boxShadow: 'none', cursor: 'not-allowed' },
+})
+
 export const DevBar = styled.div({
   position: 'absolute',
   bottom: 12,
