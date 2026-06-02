@@ -151,8 +151,8 @@ export const MarkInvalidBtn = styled.button({
   cursor: 'pointer',
   whiteSpace: 'nowrap',
   boxShadow: '0 2px 4px rgba(0,0,0,0.3)',
-  ':hover:not(:disabled)': { background: '#4a4bcc' },
-  ':disabled': { background: '#d0d0d0', boxShadow: 'none', cursor: 'not-allowed' },
+  '&:hover:not(:disabled)': { background: '#4a4bcc' },
+  '&:disabled': { background: '#d0d0d0', boxShadow: 'none', cursor: 'not-allowed' },
 })
 
 export const DevBar = styled.div({
