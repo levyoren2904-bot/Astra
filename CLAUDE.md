@@ -13,6 +13,12 @@ npm run format   # Prettier over src/
 npm run preview  # serve the built dist/ locally
 ```
 
+**Deploying:** GitHub → Vercel auto-deploy is not working. After pushing, manually trigger with:
+```bash
+npx vercel deploy --prod
+```
+Project alias: `https://astra-system-nine.vercel.app`
+
 ## Stack
 
 React 19 + TypeScript (strict mode), Vite 8, React Router 7, Tailwind CSS 3, Zustand 5. TypeScript enforces `noUnusedLocals`, `noUnusedParameters`, and `noUncheckedSideEffectImports`.
@@ -65,6 +71,8 @@ Routes: `/` → HomePage, `/wizard` → WizardPage, `/wizard-bulk` → WizardBul
 ## Styling Rules
 
 **Iron-clad**: All styles live in a co-located `.styles.ts` file using styled-components. No inline `style={{}}` props anywhere. Tailwind utility classes are used only for layout helpers inside JSX className (flex, gap, overflow, etc.) when a full styled component would be overkill.
+
+**styled-components pseudo-selector rule**: In object syntax, pseudo-selectors that target the element itself **must** use the `&` prefix — e.g. `'&:disabled'`, `'&:hover'`, `'&:focus'`, `'&:hover:not(:disabled)'`. Without `&`, styled-components treats the selector as a descendant selector and it silently has no effect.
 
 **CSS import order**: `@import` statements in `src/styles/index.css` must come **before** `@tailwind` directives — PostCSS will warn and fonts may silently fail to load if the order is reversed.
 
