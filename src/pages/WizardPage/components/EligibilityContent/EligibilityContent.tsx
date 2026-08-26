@@ -36,6 +36,7 @@ export const EligibilityContent: FC = () => {
         <IdCardPreview
           color={variant.color}
           side={variant.side}
+          blank
           resident={MOCK_RESIDENT}
           eligibility={MOCK_ELIGIBILITY}
         />

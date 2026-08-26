@@ -118,10 +118,13 @@ WizardPage is a single-file page with all sub-components defined inline. Key com
 - Right panel (flex:1): `justifyContent: center, alignItems: center` — title, card type subtitle, and `IdCardPreview` vertically centered.
 - Global action row: "הבא" becomes "סיום תהליך" (navigates to `/`), "חזור" is disabled, "ביטול" hidden.
 
-**`IdCardPreview`** — the כר״ח artwork, used by EligibilityContent, FeesContent, PrintingContent and IssuanceContent. Three independent axes:
+**`IdCardPreview`** — the כר״ח artwork, used by EligibilityContent, FeesContent and IssuanceContent. Four independent axes:
 - `variant`: `physical` (solid fill) | `digital` (fill fades out to the left + noise overlay)
 - `color`: `default` (green `#a9e2d7`, the איו״ש card) | `seam` (orange `#f5c18d`, the תפר card) — fills live in `CARD_FILL` in the styles file
 - `side`: `front` (full artwork) | `back` (emblem + `#242424` magnetic stripe at `top:45`, `h:24`, full width — no personal data)
+- `blank`: draw the card as an unissued TYPE template — silhouette photo (`CARD_PHOTO_SILHOUETTE`), `---` for every personal value, `DD/MM/YYYY` for every date, `123456789` for the ID. The Arabic values stay, exactly as in Figma 11:4893.
+
+**The `blank` rule: does this card stand for a card TYPE, or for THIS person's card?** Steps 2 (סוג כרטיס זכאי) and 3 (choosing כר״ח דיגיטלי vs פיזי) are both answering "which card does this person get", so they pass `blank`. Step 5b (הכרטיס שהונפק) is that person's actual issued card, so it does not. Any new surface has to answer the same question before it picks.
 
 The four combinations of `color` × `side` are the Figma component set כר״ח (104:18208). `EligibilityContent` carries an `isDevMode` switcher (bottom-left) to page through all four; it sits in `EligibilityRoot`, deliberately NOT inside `EligibilityCard`, so the panel keeps its Figma geometry of exactly three children.
 

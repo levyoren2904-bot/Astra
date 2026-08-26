@@ -6,6 +6,7 @@ import {
   CARD_LOGO,
   CARD_BARCODE,
   CARD_PHOTO,
+  CARD_PHOTO_SILHOUETTE,
   DIGITAL_CIRCLE_LG,
   DIGITAL_CIRCLE_MD,
   DIGITAL_CIRCLE_SM,
@@ -53,12 +54,23 @@ import {
   SerialSpan,
 } from './IdCardPreview.styles'
 
+/** Placeholders used when the card stands for a card TYPE rather than a person (Figma 11:4893). */
+const BLANK_VALUE = '---'
+const BLANK_DATE = 'DD/MM/YYYY'
+const BLANK_ID = '123456789'
+
 interface IdCardPreviewProps {
   variant?: 'physical' | 'digital'
   /** Card family: the green איו״ש card (default) or the orange תפר card. */
   color?: CardColor
   /** Face shown. 'back' renders the blank reverse with the magnetic stripe. */
   side?: CardSide
+  /**
+   * Draw the card as an unissued TYPE template: silhouette photo, `---` for the
+   * personal values and `DD/MM/YYYY` for the dates. Use wherever the card stands
+   * for "which card does this person get", not "here is this person's card".
+   */
+  blank?: boolean
   resident: Resident
   eligibility: Eligibility
 }
@@ -67,20 +79,21 @@ export const IdCardPreview: FC<IdCardPreviewProps> = ({
   variant = 'physical',
   color = 'default',
   side = 'front',
+  blank = false,
   resident: r,
   eligibility: e,
 }) => {
   const nameFields: [string, string, string, string][] = [
-    ['שם פרטי', 'اسم خاص', r.nameHe, 'أبو مروان'],
-    ['שם האב', 'اسم الأب', 'מוחמד', 'محمد'],
-    ['שם הסב', 'اسم الجد', 'יוסוף', 'يوسف'],
-    ['שם משפחה', 'اسم العائلة', 'מרוואן', 'مروان'],
-    ['כתובת', 'عنوان', r.city, 'جنين'],
-    ['תאריך לידה', 'تاريخ الميلاد', r.birthDate, ''],
+    ['שם פרטי', 'اسم خاص', blank ? BLANK_VALUE : r.nameHe, 'أبو مروان'],
+    ['שם האב', 'اسم الأب', blank ? BLANK_VALUE : 'מוחמד', 'محمد'],
+    ['שם הסב', 'اسم الجد', blank ? BLANK_VALUE : 'יוסוף', 'يوسف'],
+    ['שם משפחה', 'اسم العائلة', blank ? BLANK_VALUE : 'מרוואן', 'مروان'],
+    ['כתובת', 'عنوان', blank ? BLANK_VALUE : r.city, 'جنين'],
+    ['תאריך לידה', 'تاريخ الميلاد', blank ? BLANK_DATE : r.birthDate, ''],
   ]
   const dateFields: [string, string, string][] = [
-    ['ת. הנפקה', 'أ. الإصدار', e.issuedDate],
-    ['תום תוקף', 'البراءة صحة', e.expiryDate],
+    ['ת. הנפקה', 'أ. الإصدار', blank ? BLANK_DATE : e.issuedDate],
+    ['תום תוקף', 'البراءة صحة', blank ? BLANK_DATE : e.expiryDate],
   ]
 
   const deco = (
@@ -155,10 +168,10 @@ export const IdCardPreview: FC<IdCardPreviewProps> = ({
         </DataSection>
         <PhotoSection>
           <PhotoBox>
-            <PhotoImg src={CARD_PHOTO} alt="" loading="lazy" />
+            <PhotoImg src={blank ? CARD_PHOTO_SILHOUETTE : CARD_PHOTO} alt="" loading="lazy" />
           </PhotoBox>
           <IdRow>
-            <IdNumber dir="auto">{r.id}</IdNumber>
+            <IdNumber dir="auto">{blank ? BLANK_ID : r.id}</IdNumber>
             <IdLabelCol>
               <IdLabelHe dir="auto">ת.ז</IdLabelHe>
               <IdLabelAr dir="auto">بطاقة الهوية</IdLabelAr>

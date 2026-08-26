@@ -125,12 +125,12 @@ export const FeesContent: FC<FeesContentProps> = ({ onExclusion, onClose }) => {
                     </PhoneMockupWrap>
                     <PhoneCardOverlay>
                       <PhoneCardScale>
-                        <IdCardPreview variant="digital" resident={MOCK_RESIDENT} eligibility={MOCK_ELIGIBILITY} />
+                        <IdCardPreview variant="digital" blank resident={MOCK_RESIDENT} eligibility={MOCK_ELIGIBILITY} />
                       </PhoneCardScale>
                     </PhoneCardOverlay>
                   </>
                 ) : (
-                  <IdCardPreview variant={type} resident={MOCK_RESIDENT} eligibility={MOCK_ELIGIBILITY} />
+                  <IdCardPreview variant={type} blank resident={MOCK_RESIDENT} eligibility={MOCK_ELIGIBILITY} />
                 )}
               </CardTypeCard>
             ))}

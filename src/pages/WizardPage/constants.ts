@@ -13,6 +13,8 @@ export const CARD_EMBLEM_RIGHT = '/images/card-emblem-right.png'
 export const CARD_LOGO = '/images/card-logo.svg'
 export const CARD_BARCODE = '/images/card-barcode.svg'
 export const CARD_PHOTO = '/images/card-photo.jpg'
+/** Anonymous silhouette used when the card is drawn as a TYPE template, not a person's card. */
+export const CARD_PHOTO_SILHOUETTE = '/images/card-photo-silhouette.jpg'
 export const DIGITAL_CIRCLE_LG = '/images/digital-circle-lg.svg'
 export const DIGITAL_CIRCLE_MD = '/images/digital-circle-md.svg'
 export const DIGITAL_CIRCLE_SM = '/images/digital-circle-sm.svg'

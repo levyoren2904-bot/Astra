@@ -252,7 +252,9 @@ export const NameValues = styled.div({
   flex: '1 0 0',
   display: 'flex',
   alignItems: 'center',
-  justifyContent: 'flex-end',
+  // Figma I49:15137;41:14497 — the Arabic value is pushed to the far edge of the
+  // value box, not packed against the Hebrew one.
+  justifyContent: 'space-between',
   gap: 4,
   color: '#242424',
   fontSize: 8.293,
