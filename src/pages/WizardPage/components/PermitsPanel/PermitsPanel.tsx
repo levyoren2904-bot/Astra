@@ -49,11 +49,6 @@ export const PermitsPanel: FC = () => {
                 </div>
               </div>
             </div>
-            <div className="flex gap-2 items-start justify-end shrink-0 w-full">
-              {p.chips.map((c) => (
-                <Chip key={c} label={c} variant="purple" />
-              ))}
-            </div>
             <div className="flex gap-4 items-end justify-end shrink-0 w-full">
               {p.destination && (
                 <PermitDestination dir="auto">

@@ -84,7 +84,7 @@ WizardPage is a single-file page with all sub-components defined inline. Key com
 
 - **`WizardStepper`** — 5-step progress bar. DOM order is reversed `[5,4,3,2,1]` inside `dir="ltr"` flex so step 1 renders rightmost, matching Figma.
 - **`PersonalDetailsPanel`** — face recognition left section + resident info right section. Props: `noPhoto` (state 0), `mockFail` (dev toggle for fail result), `onOpenQuestionnaire`.
-- **`PermitsPanel` / `ProhibitionsPanel` / `CardHistoryPanel`** — bottom 3 panels, each `flex-1 h-full min-h-0` inside an `overflow-hidden` row. Permits uses `shrink-0 minHeight:140` on cards so 2.x cards show with scroll indication.
+- **`PermitsPanel` / `ProhibitionsPanel` / `CardHistoryPanel`** — bottom 3 panels, each `flex-1 h-full min-h-0` inside an `overflow-hidden` row. Permits cards are `shrink-0 minHeight:106` — the card height in Figma 9:7091 (335px of panel body split across 3 cards + two 8px gaps) — so cards still overflow into a scroll rather than stretching. Each card has exactly TWO rows: status chip + id/type/icon, then תוקף/יעד. The purple metadata chip row (`רישיון פעיל בסגר`, `היתר למרות מניעתו`) was removed from the design 2026-08-26 and is gone from the type, the mock data and the markup. Permit text uses `lineHeight: 'normal'` because Tailwind preflight's `line-height: 1.5` on `html` otherwise inflates the rows past their Figma heights (19 / 24 / 19).
 - **`PanelHeader`** — shared header with title + icon badge (`#b2b3f7` bg, 32×32, `borderRadius:8`). Icon is on the RIGHT (last in LTR DOM order).
 
 **Face recognition state machine** (`FaceIdState`): `idle → scanning → success | fail`
@@ -117,6 +117,13 @@ WizardPage is a single-file page with all sub-components defined inline. Key com
 - Left panel (908px): header + scanner area with 3 states (`idle` / `success` / `failure`). Idle shows barcode icon at `left:306, top:269`. Success/failure show a concentric-ring icon + message at `left:358, top:228`. DEV toggle buttons in panel bottom-left.
 - Right panel (flex:1): `justifyContent: center, alignItems: center` — title, card type subtitle, and `IdCardPreview` vertically centered.
 - Global action row: "הבא" becomes "סיום תהליך" (navigates to `/`), "חזור" is disabled, "ביטול" hidden.
+
+**`IdCardPreview`** — the כר״ח artwork, used by EligibilityContent, FeesContent, PrintingContent and IssuanceContent. Three independent axes:
+- `variant`: `physical` (solid fill) | `digital` (fill fades out to the left + noise overlay)
+- `color`: `default` (green `#a9e2d7`, the איו״ש card) | `seam` (orange `#f5c18d`, the תפר card) — fills live in `CARD_FILL` in the styles file
+- `side`: `front` (full artwork) | `back` (emblem + `#242424` magnetic stripe at `top:45`, `h:24`, full width — no personal data)
+
+The four combinations of `color` × `side` are the Figma component set כר״ח (104:18208). `EligibilityContent` carries an `isDevMode` switcher (bottom-left) to page through all four; it sits in `EligibilityRoot`, deliberately NOT inside `EligibilityCard`, so the panel keeps its Figma geometry of exactly three children.
 
 **`BiometricsContent`** — Step 4, two side-by-side panels (fingerprints left, face camera right):
 - Outer wrapper: `flex: 1, minHeight: 0, alignItems: stretch` — fills remaining modal height so panels scale with viewport instead of overflowing.

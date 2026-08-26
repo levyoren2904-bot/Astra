@@ -24,7 +24,6 @@ export const MOCK_PERMITS: Permit[] = [
     validFrom: '12.4.2025',
     validTo: '13.4.2025',
     destination: null,
-    chips: ['רישיון פעיל בסגר'],
   },
   {
     id: '123456789',
@@ -35,7 +34,6 @@ export const MOCK_PERMITS: Permit[] = [
     validFrom: '12.4.2025',
     validTo: '13.4.2025',
     destination: 'ישראל',
-    chips: ['היתר פעיל בסגר', 'היתר למרות מניעתו'],
   },
   {
     id: '123456789',
@@ -46,7 +44,6 @@ export const MOCK_PERMITS: Permit[] = [
     validFrom: '12.4.2025',
     validTo: '13.4.2025',
     destination: 'ישראל',
-    chips: ['היתר פעיל בסגר', 'היתר למרות מניעתו'],
   },
 ]
 

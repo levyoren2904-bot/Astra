@@ -1,25 +1,47 @@
 import styled from 'styled-components'
 import { F } from '@/pages/WizardPage/constants'
+import type { CardColor } from '@/types'
 
-export const CardRoot = styled.div<{ $variant: 'physical' | 'digital' }>(({ $variant }) => ({
-  position: 'relative',
-  width: 311,
-  height: 182,
-  minHeight: 182,
-  maxHeight: 182,
-  boxSizing: 'border-box',
-  background:
-    $variant === 'digital'
-      ? 'linear-gradient(to left, rgba(169,226,215,0), #a9e2d7)'
-      : '#a9e2d7',
-  borderRadius: 8,
-  padding: 10,
-  overflow: 'hidden',
-  display: 'flex',
-  flexDirection: 'column',
-  gap: 4,
-  alignItems: 'flex-start',
-}))
+/** Card body fills, measured from the כר״ח component set (Figma 104:18208). */
+export const CARD_FILL: Record<CardColor, { solid: string; transparent: string }> = {
+  default: { solid: '#a9e2d7', transparent: 'rgba(169,226,215,0)' },
+  seam: { solid: '#f5c18d', transparent: 'rgba(245,193,141,0)' },
+}
+
+export const CardRoot = styled.div<{ $variant: 'physical' | 'digital'; $color: CardColor }>(
+  ({ $variant, $color }) => {
+    const fill = CARD_FILL[$color]
+    return {
+      position: 'relative',
+      width: 311,
+      height: 182,
+      minHeight: 182,
+      maxHeight: 182,
+      boxSizing: 'border-box',
+      background:
+        $variant === 'digital'
+          ? `linear-gradient(to left, ${fill.transparent}, ${fill.solid})`
+          : fill.solid,
+      borderRadius: 8,
+      padding: 10,
+      overflow: 'hidden',
+      display: 'flex',
+      flexDirection: 'column',
+      gap: 4,
+      alignItems: 'flex-start',
+    }
+  },
+)
+
+/** Magnetic stripe on the reverse face — Figma 104:18291: #242424, h24, full width, top 45. */
+export const CardBackStripe = styled.div({
+  position: 'absolute',
+  left: 0,
+  top: 45,
+  width: '100%',
+  height: 24,
+  background: '#242424',
+})
 
 export const DecoCircleGroup = styled.div({
   position: 'absolute',

@@ -4,6 +4,12 @@ export type StatusVariant = 'green' | 'orange' | 'purple' | 'red' | 'gray'
 
 export type PermitIconType = 'license' | 'work'
 
+/** כר״ח body fill — 'default' = the green איו״ש card, 'seam' = the orange תפר card. */
+export type CardColor = 'default' | 'seam'
+
+/** Which face of the כר״ח is shown — 'back' is the blank face with the magnetic stripe. */
+export type CardSide = 'front' | 'back'
+
 export interface Resident {
   id: string
   nameHe: string
@@ -27,7 +33,6 @@ export interface Permit {
   validFrom: string
   validTo: string
   destination: string | null
-  chips: string[]
 }
 
 export interface Prohibition {

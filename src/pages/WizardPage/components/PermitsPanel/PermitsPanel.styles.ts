@@ -6,10 +6,11 @@ export const PanelRoot = styled.div({
 
 export const PermitCard = styled.div({
   background: '#f6f6fe',
-  minHeight: 140,
+  minHeight: 106,
 })
 
 export const PermitId = styled.p({
+  lineHeight: 'normal',
   fontSize: 16,
   fontWeight: 400,
   color: '#5d607a',
@@ -20,6 +21,7 @@ export const PermitId = styled.p({
 })
 
 export const PermitType = styled.p({
+  lineHeight: 'normal',
   fontSize: 20,
   fontWeight: 600,
   color: '#1e1f33',
@@ -28,6 +30,7 @@ export const PermitType = styled.p({
 })
 
 export const PermitDestination = styled.p({
+  lineHeight: 'normal',
   flex: 1,
   fontSize: 16,
   fontWeight: 400,
@@ -36,6 +39,7 @@ export const PermitDestination = styled.p({
 })
 
 export const PermitValidity = styled.p({
+  lineHeight: 'normal',
   fontSize: 16,
   fontWeight: 400,
   color: '#5d607a',

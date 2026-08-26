@@ -1,5 +1,5 @@
 import type { FC } from 'react'
-import type { Eligibility, Resident } from '@/types'
+import type { CardColor, CardSide, Eligibility, Resident } from '@/types'
 import {
   CARD_EMBLEM_LEFT,
   CARD_EMBLEM_RIGHT,
@@ -12,6 +12,7 @@ import {
 } from '@/pages/WizardPage/constants'
 import {
   CardRoot,
+  CardBackStripe,
   DecoCircleGroup,
   DecoCircleLg,
   DecoCircleMd,
@@ -54,12 +55,18 @@ import {
 
 interface IdCardPreviewProps {
   variant?: 'physical' | 'digital'
+  /** Card family: the green איו״ש card (default) or the orange תפר card. */
+  color?: CardColor
+  /** Face shown. 'back' renders the blank reverse with the magnetic stripe. */
+  side?: CardSide
   resident: Resident
   eligibility: Eligibility
 }
 
 export const IdCardPreview: FC<IdCardPreviewProps> = ({
   variant = 'physical',
+  color = 'default',
+  side = 'front',
   resident: r,
   eligibility: e,
 }) => {
@@ -76,13 +83,31 @@ export const IdCardPreview: FC<IdCardPreviewProps> = ({
     ['תום תוקף', 'البراءة صحة', e.expiryDate],
   ]
 
+  const deco = (
+    <DecoCircleGroup>
+      <DecoCircleLg src={DIGITAL_CIRCLE_LG} alt="" loading="lazy" />
+      <DecoCircleMd src={DIGITAL_CIRCLE_MD} alt="" loading="lazy" />
+      <DecoCircleSm src={DIGITAL_CIRCLE_SM} alt="" loading="lazy" />
+    </DecoCircleGroup>
+  )
+
+  // Reverse face (Figma 104:18209) — emblem + magnetic stripe only, no personal data.
+  if (side === 'back') {
+    return (
+      <CardRoot $variant={variant} $color={color}>
+        {deco}
+        {variant === 'digital' && <NoiseOverlay />}
+        <CardHeaderRow>
+          <EmblemLeft src={CARD_EMBLEM_LEFT} alt="" loading="lazy" />
+        </CardHeaderRow>
+        <CardBackStripe />
+      </CardRoot>
+    )
+  }
+
   return (
-    <CardRoot $variant={variant}>
-      <DecoCircleGroup>
-        <DecoCircleLg src={DIGITAL_CIRCLE_LG} alt="" loading="lazy" />
-        <DecoCircleMd src={DIGITAL_CIRCLE_MD} alt="" loading="lazy" />
-        <DecoCircleSm src={DIGITAL_CIRCLE_SM} alt="" loading="lazy" />
-      </DecoCircleGroup>
+    <CardRoot $variant={variant} $color={color}>
+      {deco}
 
       {variant === 'digital' && <NoiseOverlay />}
 
