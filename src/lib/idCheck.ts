@@ -19,12 +19,20 @@ export function isIdComplete(value: string): boolean {
   return value.length === ID_LENGTH && /^\d+$/.test(value)
 }
 
-/** Drops every non-digit and caps the length — the field never holds anything else. */
+/**
+ * Drops every non-digit and caps the length — the field never holds anything else.
+ *
+ * This is also the ONLY length cap: the input deliberately carries no
+ * `maxLength`. Measured on production 2026-09-08 — a browser's `maxLength`
+ * truncates the RAW inserted string, so a bulk insertion (a paste, or a
+ * scanner injecting a whole line) of `12-34-5678` was cut to `12-34-567`
+ * before any filtering and silently became a 7-digit ID. Stripping first and
+ * slicing after keeps the first ID_LENGTH *digits*, whatever else came with them.
+ */
 export function sanitizeId(value: string): string {
   return value.replace(/\D/g, '').slice(0, ID_LENGTH)
 }
 
-/** MOCK verdict for a complete ID. An incomplete ID has no verdict at all. */
 export function resolveIdCheck(value: string, forceInvalid: boolean): IdCheckStatus {
   if (!isIdComplete(value)) return 'idle'
   return forceInvalid ? 'invalid' : 'valid'

@@ -36,6 +36,18 @@ describe('sanitizeId', () => {
     const clean = '1'.repeat(ID_LENGTH)
     expect(sanitizeId(clean)).toBe(clean)
   })
+
+  // The production bug: a DOM maxLength would have cut this to '12-34-567'
+  // BEFORE any filtering, silently yielding a 7-digit ID. Stripping first
+  // keeps all nine digits.
+  it('keeps all ID_LENGTH digits out of a bulk insertion carrying separators', () => {
+    expect(sanitizeId('12-34-56789')).toBe('123456789')
+    expect(isIdComplete(sanitizeId('12-34-56789'))).toBe(true)
+  })
+
+  it('keeps the FIRST ID_LENGTH digits when a bulk insertion carries more', () => {
+    expect(sanitizeId('1a2b3c4d5e6f7g8h9i0j1')).toBe('123456789')
+  })
 })
 
 describe('resolveIdCheck', () => {

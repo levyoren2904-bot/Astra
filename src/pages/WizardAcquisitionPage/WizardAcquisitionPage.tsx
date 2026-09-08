@@ -342,8 +342,11 @@ const Step1Content: FC<{
           type="text"
           placeholder="000000000"
           value={value}
+          // No maxLength on purpose — it truncates the RAW insertion, so a
+          // pasted or scanner-injected `12-34-5678` loses digits before any
+          // filtering runs. sanitizeId strips first and slices after, and it
+          // is the only length cap.
           onChange={(e) => onChange(e.target.value)}
-          maxLength={9}
           inputMode="numeric"
           $invalid={status === 'invalid'}
           dir="ltr"
