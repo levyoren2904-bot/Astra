@@ -1,5 +1,12 @@
-import { useState, type FC } from 'react'
+import { useEffect, useState, type FC } from 'react'
 import { isDevMode } from '@/utils/devtools'
+import {
+  ID_CHECK_DELAY,
+  isIdComplete,
+  resolveIdCheck,
+  sanitizeId,
+  type IdCheckStatus,
+} from '@/lib/idCheck'
 import { useNavigate } from 'react-router-dom'
 import { VideoBackground } from '@/components/ui/VideoBackground'
 import { CloseIcon } from '@/components/ui/CloseIcon'
@@ -38,6 +45,9 @@ import {
   StepCheckSvg,
   IdSection,
   IdSectionTitle,
+  IdRow,
+  IdStatusSlot,
+  IdSpinnerSvg,
   IdInput,
   PersonalPanel,
   PersonalInner,
@@ -235,21 +245,110 @@ const AcqStepper: FC<{ currentStep: AcqStep }> = ({ currentStep }) => {
 
 // ── Step 1 — ID Entry ─────────────────────────────────────────────────────────
 
-const Step1Content: FC<{ value: string; onChange: (v: string) => void }> = ({
-  value,
-  onChange,
-}) => (
+const ID_STATUS_LABEL: Record<IdCheckStatus, string> = {
+  idle: '',
+  checking: 'בודק תקינות ת.ז',
+  valid: 'הת.ז תקינה',
+  invalid: 'הת.ז לא תקינה',
+}
+
+/**
+ * Figma 742:5796 — a 20×20 box (18px of ink + a 1px stroke bleed) inside the
+ * 24px slot. All three icons share that footprint and a 2px round stroke, so
+ * nothing shifts when one replaces another.
+ */
+const IdStatusIcon: FC<{ status: IdCheckStatus }> = ({ status }) => {
+  if (status === 'checking') {
+    return (
+      <IdSpinnerSvg
+        width={20}
+        height={20}
+        viewBox="0 0 20 20"
+        fill="none"
+        role="img"
+        aria-label={ID_STATUS_LABEL.checking}
+      >
+        <path
+          d="M19 10.0004C18.9999 11.901 18.3981 13.7528 17.2809 15.2904C16.1637 16.8279 14.5885 17.9723 12.7809 18.5596C10.9733 19.1469 9.02619 19.1468 7.21864 18.5594C5.41109 17.9721 3.83588 16.8276 2.71876 15.29C1.60165 13.7523 0.999986 11.9005 1 9.99994C1.00001 8.09935 1.60171 6.24755 2.71884 4.70994C3.83598 3.17233 5.4112 2.02785 7.21877 1.44052C9.02633 0.853187 10.9734 0.85316 12.781 1.44044"
+          stroke="#1a1a1a"
+          strokeWidth={2}
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+      </IdSpinnerSvg>
+    )
+  }
+
+  if (status === 'valid') {
+    return (
+      <svg
+        width={20}
+        height={20}
+        viewBox="0 0 20 20"
+        fill="none"
+        role="img"
+        aria-label={ID_STATUS_LABEL.valid}
+      >
+        <circle cx="10" cy="10" r="9" stroke="#70c969" strokeWidth={2} />
+        <path
+          d="M7.3 10L9.1 11.8L12.7 8.2"
+          stroke="#70c969"
+          strokeWidth={2}
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+      </svg>
+    )
+  }
+
+  if (status === 'invalid') {
+    return (
+      <svg
+        width={20}
+        height={20}
+        viewBox="0 0 20 20"
+        fill="none"
+        role="img"
+        aria-label={ID_STATUS_LABEL.invalid}
+      >
+        <circle cx="10" cy="10" r="9" stroke="#f65e53" strokeWidth={2} />
+        <path
+          d="M12.7 7.3L7.3 12.7M7.3 7.3L12.7 12.7"
+          stroke="#f65e53"
+          strokeWidth={2}
+          strokeLinecap="round"
+        />
+      </svg>
+    )
+  }
+
+  return null
+}
+
+const Step1Content: FC<{
+  value: string
+  onChange: (v: string) => void
+  status: IdCheckStatus
+}> = ({ value, onChange, status }) => (
   <div className="flex flex-1 min-h-0 w-full items-start justify-end" dir="ltr">
     <IdSection>
       <IdSectionTitle dir="auto">הזנת ת.ז</IdSectionTitle>
-      <IdInput
-        type="text"
-        placeholder="000000000"
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
-        maxLength={9}
-        dir="ltr"
-      />
+      {/* LTR DOM order: status slot first → renders left of the field, per Figma */}
+      <IdRow>
+        <IdStatusSlot role="status">
+          <IdStatusIcon status={status} />
+        </IdStatusSlot>
+        <IdInput
+          type="text"
+          placeholder="000000000"
+          value={value}
+          onChange={(e) => onChange(e.target.value)}
+          maxLength={9}
+          inputMode="numeric"
+          $invalid={status === 'invalid'}
+          dir="ltr"
+        />
+      </IdRow>
     </IdSection>
   </div>
 )
@@ -554,8 +653,33 @@ export const WizardAcquisitionPage: FC = () => {
 
   const [step, setStep] = useState<AcqStep>(1)
   const [idInput, setIdInput] = useState('')
+  const [idVerdict, setIdVerdict] = useState<{ key: string; status: IdCheckStatus } | null>(null)
+  const [forceIdInvalid, setForceIdInvalid] = useState(false)
   const [fpAcquired, setFpAcquired] = useState(false)
   const [faceState, setFaceState] = useState<FaceState>('idle')
+
+  // A verdict belongs to the exact input it was resolved for, so the displayed
+  // status is DERIVED rather than stored: no ID → idle, an ID we have no
+  // verdict for yet → checking, otherwise the verdict itself. That keeps the
+  // effect from calling setState synchronously, and makes editing a resolved
+  // field fall straight back to checking.
+  const idKey = `${idInput}|${forceIdInvalid}`
+  const idStatus: IdCheckStatus = !isIdComplete(idInput)
+    ? 'idle'
+    : idVerdict?.key === idKey
+      ? idVerdict.status
+      : 'checking'
+
+  // The check fires on its own the moment the field holds a full ID — nothing
+  // is pressed. Flipping the dev switch on a full field re-runs it.
+  useEffect(() => {
+    if (!isIdComplete(idInput)) return
+    const timer = window.setTimeout(
+      () => setIdVerdict({ key: idKey, status: resolveIdCheck(idInput, forceIdInvalid) }),
+      ID_CHECK_DELAY,
+    )
+    return () => window.clearTimeout(timer)
+  }, [idInput, idKey, forceIdInvalid])
 
   function handleNext() {
     if (step < 3) setStep((s) => (s + 1) as AcqStep)
@@ -575,12 +699,16 @@ export const WizardAcquisitionPage: FC = () => {
     // Point of no return passed — reset to step 1 for next resident
     setStep(1)
     setIdInput('')
+    setIdVerdict(null)
     setFpAcquired(false)
     setFaceState('idle')
   }
 
   const atStep3 = step === 3
   const step3Done = fpAcquired || faceState === 'captured'
+  // Step 1 cannot be left until the check came back valid — an ID that failed
+  // never reaches step 2.
+  const nextBlocked = step === 1 && idStatus !== 'valid'
 
   return (
     <PageRoot className="relative w-full overflow-hidden">
@@ -612,7 +740,13 @@ export const WizardAcquisitionPage: FC = () => {
         <AcqStepper currentStep={step} />
 
         {/* ── Step content ── */}
-        {step === 1 && <Step1Content value={idInput} onChange={setIdInput} />}
+        {step === 1 && (
+          <Step1Content
+            value={idInput}
+            onChange={(v) => setIdInput(sanitizeId(v))}
+            status={idStatus}
+          />
+        )}
         {step === 2 && <Step2Content />}
         {step === 3 && (
           <Step3Content
@@ -665,8 +799,8 @@ export const WizardAcquisitionPage: FC = () => {
           ) : (
             <>
               <NextBtn
-                $disabled={step === 1 && idInput.trim() === ''}
-                disabled={step === 1 && idInput.trim() === ''}
+                $disabled={nextBlocked}
+                disabled={nextBlocked}
                 onClick={handleNext}
                 className="flex items-center justify-center rounded shrink-0"
               >
@@ -688,8 +822,11 @@ export const WizardAcquisitionPage: FC = () => {
 
       {isDevMode && (
         <DevBar>
-          <DevBtn onClick={() => { setStep(1); setIdInput(''); setFpAcquired(false); setFaceState('idle') }}>
+          <DevBtn onClick={() => { setStep(1); setIdInput(''); setIdVerdict(null); setForceIdInvalid(false); setFpAcquired(false); setFaceState('idle') }}>
             reset
+          </DevBtn>
+          <DevBtn onClick={() => setForceIdInvalid((v) => !v)}>
+            id check: {forceIdInvalid ? 'invalid' : 'valid'}
           </DevBtn>
           <DevBtn onClick={() => setStep(2)}>step 2</DevBtn>
           <DevBtn onClick={() => setStep(3)}>step 3</DevBtn>
