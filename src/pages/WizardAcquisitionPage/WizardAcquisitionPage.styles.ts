@@ -1,4 +1,4 @@
-import styled from 'styled-components'
+import styled, { keyframes } from 'styled-components'
 import {
   BioAngleChip,
   BioAngleDotImg,
@@ -206,10 +206,41 @@ export const IdSectionTitle = styled.p({
   textAlign: 'right',
 })
 
-export const IdInput = styled.input({
+// Figma 100:13343 — status slot first in LTR DOM order, so it renders to the
+// LEFT of the field (i.e. AFTER it in RTL reading order), 24px gap.
+export const IdRow = styled.div({
+  display: 'flex',
+  flexDirection: 'row',
+  alignItems: 'center',
+  gap: 24,
   width: '100%',
+})
+
+// Always 24 wide (Figma 742:5796 — 18px vector + 3px each side), whatever the
+// status is, so the field never moves between idle / checking / resolved.
+export const IdStatusSlot = styled.div({
+  width: 24,
   height: 40,
-  border: '1px solid #666',
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  flexShrink: 0,
+})
+
+const spin = keyframes`
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+`
+
+export const IdSpinnerSvg = styled.svg`
+  animation: ${spin} 900ms linear infinite;
+`
+
+export const IdInput = styled.input<{ $invalid?: boolean }>(({ $invalid }) => ({
+  flex: 1,
+  minWidth: 0,
+  height: 40,
+  border: `1px solid ${$invalid ? '#f65e53' : '#666'}`,
   borderRadius: 4,
   padding: '4px 8px',
   fontFamily: F,
@@ -218,9 +249,9 @@ export const IdInput = styled.input({
   outline: 'none',
   textAlign: 'right',
   background: '#fff',
-  '&:focus': { borderColor: '#5c5def' },
+  '&:focus': { borderColor: $invalid ? '#f65e53' : '#5c5def' },
   '&::placeholder': { color: '#b3b3b3' },
-})
+}))
 
 // ── Step 2 — Personal Details Panel ──────────────────────────────────────────
 
