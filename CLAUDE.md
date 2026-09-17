@@ -13,9 +13,15 @@ npm run format   # Prettier over src/
 npm run preview  # serve the built dist/ locally
 ```
 
-**Deploying:** GitHub → Vercel auto-deploy is not working. After pushing, manually trigger with:
+**Deploying:** the Vercel project was connected to this repo with `vercel git connect` on 2026-09-17, so a push to `main` should now build and deploy on its own. **It had never been connected before that**, which is what the previous version of this line meant by "auto-deploy is not working" - a push reported success at the git level and produced no deployment at all.
+
+**Until a push has been observed producing a deployment, verify rather than assume.** The manual path still works and is the fallback:
 ```bash
 npx vercel deploy --prod
+```
+And the check that actually settles it is the served bundle, not the CLI's success line or the deployment list:
+```bash
+curl -s https://astra-system-nine.vercel.app/ | grep -o 'assets/index-[A-Za-z0-9_-]*\.js'
 ```
 Project alias: `https://astra-system-nine.vercel.app`
 
