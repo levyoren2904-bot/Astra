@@ -892,3 +892,56 @@ export const FeeStatusIconBox = styled.div({
   justifyContent: 'center',
   flexShrink: 0,
 })
+
+// Note cell, Figma 633:7497 - a 21px bordered box hugging its own text inside a
+// standard TdCell, so the cell keeps the 8/9px padding every other cell has.
+export const FeeNoteInput = styled.input({
+  flex: '1 0 0',
+  minWidth: 0,
+  boxSizing: 'border-box',
+  height: 21,
+  padding: '0 8px',
+  border: '1px solid #111122',
+  borderRadius: 4,
+  background: 'white',
+  fontFamily: 'Rubik, sans-serif',
+  fontSize: 14,
+  color: '#242424',
+  textAlign: 'right',
+  lineHeight: 'normal',
+  outline: 'none',
+})
+
+// ── Toolbar search (אגרות tab only), Figma 760:5914 ───────────────────────────
+
+export const SearchField = styled.div({
+  width: 256,
+  height: 40,
+  border: '1px solid #666666',
+  borderRadius: 4,
+  background: 'white',
+  display: 'flex',
+  alignItems: 'center',
+  gap: 8,
+  padding: '4px 8px',
+  boxSizing: 'border-box',
+  flexShrink: 0,
+  overflow: 'hidden',
+})
+
+export const SearchInput = styled.input({
+  flex: '1 0 0',
+  minWidth: 0,
+  border: 'none',
+  background: 'transparent',
+  padding: 0,
+  fontFamily: 'Rubik, sans-serif',
+  fontSize: 16,
+  color: '#242424',
+  textAlign: 'right',
+  lineHeight: 'normal',
+  outline: 'none',
+  '&::placeholder': {
+    color: '#b3b3b3',
+  },
+})

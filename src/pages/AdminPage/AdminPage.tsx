@@ -1,5 +1,6 @@
 import { useState, Fragment, type FC } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { filterFees } from '../../lib/feeSearch'
 import * as S from './AdminPage.styles'
 
 // ── Types ─────────────────────────────────────────────────────────────────────
@@ -34,15 +35,16 @@ interface FeeRow {
   residentName: string
   idNumber: string
   feeNumber: string
+  note: string
   status: string
 }
 
 const MOCK_FEES: FeeRow[] = [
-  { id: 1, residentName: 'חמודי מוחמד בן סעמק', idNumber: '123456789', feeNumber: '987654321', status: 'שולם' },
-  { id: 2, residentName: 'שם תושב',              idNumber: '987654321', feeNumber: '123456789', status: 'שולם' },
-  { id: 3, residentName: 'שם תושב',              idNumber: '987654321', feeNumber: '123456789', status: 'שולם' },
-  { id: 4, residentName: 'שם תושב',              idNumber: '987654321', feeNumber: '123456789', status: 'שולם' },
-  { id: 5, residentName: 'שם תושב',              idNumber: '987654321', feeNumber: '123456789', status: 'שולם' },
+  { id: 1, residentName: 'חמודי מוחמד בן סעמק', idNumber: '123456789', feeNumber: '987654321', note: 'תוכן', status: 'שולם' },
+  { id: 2, residentName: 'שם תושב',              idNumber: '987654321', feeNumber: '123456789', note: 'תוכן', status: 'שולם' },
+  { id: 3, residentName: 'שם תושב',              idNumber: '987654321', feeNumber: '123456789', note: 'תוכן', status: 'שולם' },
+  { id: 4, residentName: 'שם תושב',              idNumber: '987654321', feeNumber: '123456789', note: 'תוכן', status: 'שולם' },
+  { id: 5, residentName: 'שם תושב',              idNumber: '987654321', feeNumber: '123456789', note: 'תוכן', status: 'שולם' },
 ]
 
 // ── Card type fields ──────────────────────────────────────────────────────────
@@ -546,17 +548,29 @@ const StationsTable: FC<StationsTableProps> = ({ onEdit }) => (
 const FEE_STATUS_OPTIONS = ['שולם', 'לא שולם', 'נוצל'] as const
 type FeeStatus = (typeof FEE_STATUS_OPTIONS)[number]
 
-const FeesTable: FC = () => {
+interface FeesTableProps {
+  query: string
+}
+
+const FeesTable: FC<FeesTableProps> = ({ query }) => {
   const [statuses, setStatuses] = useState<Record<number, FeeStatus>>(
     Object.fromEntries(MOCK_FEES.map((r) => [r.id, r.status as FeeStatus])),
   )
+  const [notes, setNotes] = useState<Record<number, string>>(
+    Object.fromEntries(MOCK_FEES.map((r) => [r.id, r.note])),
+  )
+
+  const rows = filterFees(MOCK_FEES, query)
 
   return (
     <S.TableContainer>
       <S.TableHeader>
-        {/* LTR order: סטטוס | מספר אגרה | ת.ז | שם תושב | # */}
+        {/* LTR order: סטטוס | הערה | מספר אגרה | ת.ז | שם תושב | # */}
         <S.ThCell $flex>
           <S.ThText>סטטוס</S.ThText>
+        </S.ThCell>
+        <S.ThCell $flex>
+          <S.ThText>הערה</S.ThText>
         </S.ThCell>
         <S.ThCell $flex>
           <S.ThText>מספר אגרה</S.ThText>
@@ -572,7 +586,7 @@ const FeesTable: FC = () => {
         </S.ThCell>
       </S.TableHeader>
       <S.TableBody>
-        {MOCK_FEES.map((row) => (
+        {rows.map((row) => (
           <S.TableRow key={row.id}>
             <S.FeeStatusCell>
               <S.FeeStatusIconBox>
@@ -590,6 +604,14 @@ const FeesTable: FC = () => {
                 ))}
               </S.FieldSelectOverlay>
             </S.FeeStatusCell>
+            <S.TdCell $flex>
+              <S.FeeNoteInput
+                dir="auto"
+                aria-label={`הערה לשורה ${row.id}`}
+                value={notes[row.id]}
+                onChange={(e) => setNotes((prev) => ({ ...prev, [row.id]: e.target.value }))}
+              />
+            </S.TdCell>
             <S.TdCell $flex>
               <S.TdText>{row.feeNumber}</S.TdText>
             </S.TdCell>
@@ -616,6 +638,8 @@ export const AdminPage: FC = () => {
   const [activeTab, setActiveTab] = useState<TabId>('stations')
   const [editingStation, setEditingStation] = useState<StationRow | null>(null)
   const [editingCardType, setEditingCardType] = useState<CardTypeRow | null>(null)
+  // The search field exists on the אגרות tab only (Figma 100:15628 has it, 2:504 does not)
+  const [feeQuery, setFeeQuery] = useState('')
 
   return (
     <S.PageRoot>
@@ -650,6 +674,19 @@ export const AdminPage: FC = () => {
               <img src="/icons/calendar-union.svg" alt="" width={24} height={24} loading="lazy" />
               <S.DatePickerText dir="auto">היום 14/01/2023</S.DatePickerText>
             </S.DatePicker>
+            {activeTab === 'fees' && (
+              <S.SearchField>
+                <img src="/icons/search.svg" alt="" width={24} height={24} loading="lazy" />
+                <S.SearchInput
+                  dir="auto"
+                  type="search"
+                  placeholder="חיפוש"
+                  aria-label="חיפוש אגרה"
+                  value={feeQuery}
+                  onChange={(e) => setFeeQuery(e.target.value)}
+                />
+              </S.SearchField>
+            )}
           </S.ToolbarRight>
         </S.TableToolbar>
 
@@ -657,7 +694,7 @@ export const AdminPage: FC = () => {
 
         {activeTab === 'stations' && <StationsTable onEdit={setEditingStation} />}
         {activeTab === 'card-types' && <CardTypesTable onEdit={setEditingCardType} />}
-        {activeTab === 'fees' && <FeesTable />}
+        {activeTab === 'fees' && <FeesTable query={feeQuery} />}
       </S.TableCard>
 
       {editingStation && (
