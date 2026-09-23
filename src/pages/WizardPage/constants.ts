@@ -28,7 +28,7 @@ export const FEES_RADIO_ON = '/images/fees-radio-on.svg'
 export const FEES_PHONE_MOCKUP = '/images/fees-phone-mockup.png'
 
 // ── Biometrics assets ─────────────────────────────────────────────────────────
-export const BIO_CAM_BG = '/images/bio-cam-bg.png'
+export const BIO_CAM_BG = '/images/bio-cam-bg.svg'
 export const BIO_FACE_GREEN = '/images/bio-face-green.png'
 export const BIO_FACE_RED = '/images/bio-face-red.png'
 export const BIO_DOT_GREEN = '/images/bio-dot-green.svg'
@@ -40,7 +40,7 @@ export const BIO_HEADER_BG = '/images/bio-header-bg.png'
 export const BIO_FP_SCAN_BG = '/images/fingerprint_scanner.png'
 export const BIO_FP_ICON = '/images/bio-fp-icon.svg'
 export const BIO_FP_SYMBOL = '/images/bio-fp-symbol.svg'
-export const BIO_CAPTURED_PHOTO = '/images/bio-captured-photo.png'
+export const BIO_CAPTURED_PHOTO = '/images/bio-captured-photo.svg'
 
 export const FP_SETS = [
   {

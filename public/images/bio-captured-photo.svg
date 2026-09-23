@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 533" width="800" height="533">
+  <defs><linearGradient id="cap" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#DADBDF"/><stop offset="1" stop-color="#C3C5CA"/></linearGradient></defs><rect width="800" height="533" fill="url(#cap)"/>
+  
+  <g transform="translate(400 215) scale(1.35)">
+  <path d="M-330 720 L-330 300 C-330 215 -270 180 -190 168 L-62 150 L62 150 L190 168 C270 180 330 215 330 300 L330 1500 Z" fill="#3B3C52"/>
+  <path d="M-62 150 C-40 196 40 196 62 150 L62 142 L-62 142 Z" fill="#2F3044"/>
+  <path d="M-44 70 L-44 150 C-30 184 30 184 44 150 L44 70 Z" fill="#C48F6E"/>
+  <ellipse cx="-90" cy="8" rx="17" ry="28" fill="#C48F6E"/>
+  <ellipse cx="90" cy="8" rx="17" ry="28" fill="#C48F6E"/>
+  <path d="M-88 -30 C-88 -110 -48 -128 0 -128 C48 -128 88 -110 88 -30 L88 20 C88 82 46 118 0 118 C-46 118 -88 82 -88 20 Z" fill="#D8A887"/>
+  <path d="M-96 -18 C-104 -100 -62 -142 0 -142 C62 -142 104 -100 96 -18 C92 -48 80 -70 62 -80 C30 -66 -20 -66 -60 -84 C-80 -70 -92 -48 -96 -18 Z" fill="#2E2B36"/>
+  <path d="M-56 -26 Q-40 -34 -22 -27" stroke="#2E2B36" stroke-width="7" stroke-linecap="round" fill="none"/>
+  <path d="M22 -27 Q40 -34 56 -26" stroke="#2E2B36" stroke-width="7" stroke-linecap="round" fill="none"/>
+  <ellipse cx="-39" cy="-2" rx="7" ry="8" fill="#3A2E2C"/>
+  <ellipse cx="39" cy="-2" rx="7" ry="8" fill="#3A2E2C"/>
+  <path d="M0 6 L-7 40 Q0 45 8 41" stroke="#C48F6E" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+  <path d="M-20 70 Q0 78 20 70" stroke="#3A2E2C" stroke-width="5" stroke-linecap="round" fill="none"/>
+</g>
+</svg>
