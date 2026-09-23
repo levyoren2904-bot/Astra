@@ -132,7 +132,7 @@ const MenuIcon: FC<{ type: (typeof menuItems)[number]['iconType'] }> = ({ type }
 const MOCK_QUEUE_RESIDENT = {
   queueNumber: 134,
   name: 'מוחמד בן סלמאן',
-  photo: '/images/bio-captured-photo.png',
+  photo: '/images/bio-captured-photo.svg',
 }
 
 function isValidId(value: string) {
