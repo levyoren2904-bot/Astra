@@ -794,21 +794,26 @@ const ChangeCardStatusModal: FC<ChangeCardStatusModalProps> = ({ row, onConfirm,
 
         <S.ReasonField>
           <S.FieldLabel dir="auto">סטטוס חדש</S.FieldLabel>
-          {/* LTR DOM order, so מבוטל (read first) is last = rightmost */}
-          <S.StatusTargetControl role="radiogroup" aria-label="סטטוס חדש">
-            {[...CARD_STATUS_TARGETS].reverse().map((opt) => (
-              <S.NationalityOption
-                key={opt}
-                role="radio"
-                aria-checked={target === opt}
-                $active={target === opt}
-                onClick={() => setTarget(opt)}
-                dir="auto"
-              >
-                {opt}
-              </S.NationalityOption>
+          {/* dir="rtl": first option (מבוטל) sits on the right, read first */}
+          <S.StatusRadioGroup role="radiogroup" aria-label="סטטוס חדש" dir="rtl">
+            {CARD_STATUS_TARGETS.map((opt) => (
+              <S.StatusRadioOpt key={opt}>
+                <S.StatusRadioInput
+                  type="radio"
+                  name="card-status-target"
+                  value={opt}
+                  checked={target === opt}
+                  onChange={() => setTarget(opt)}
+                />
+                <S.StatusRadioText $selected={target === opt} dir="auto">
+                  {opt}
+                </S.StatusRadioText>
+                <S.StatusRadioDot $selected={target === opt}>
+                  {target === opt && <S.StatusRadioDotInner />}
+                </S.StatusRadioDot>
+              </S.StatusRadioOpt>
             ))}
-          </S.StatusTargetControl>
+          </S.StatusRadioGroup>
         </S.ReasonField>
 
         <S.ReasonField>

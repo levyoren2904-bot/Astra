@@ -1038,9 +1038,59 @@ export const ModalSubtitle = styled.p({
   lineHeight: 'normal',
 })
 
-export const StatusTargetControl = styled(NationalityControl)({
-  flex: '0 0 auto',
+// Radio look copied from WizardBulkPage (RadioOpt / RadioDot), but on a real
+// <input type="radio"> so arrow keys and screen readers work.
+export const StatusRadioGroup = styled.div({
+  display: 'flex',
+  alignItems: 'center',
+  gap: 32,
+  height: 32,
   width: '100%',
+})
+
+export const StatusRadioOpt = styled.label({
+  display: 'flex',
+  alignItems: 'center',
+  gap: 6,
+  cursor: 'pointer',
+  userSelect: 'none',
+  position: 'relative',
+})
+
+export const StatusRadioInput = styled.input({
+  position: 'absolute',
+  opacity: 0,
+  width: 1,
+  height: 1,
+  margin: 0,
+})
+
+export const StatusRadioText = styled.span<{ $selected: boolean }>(({ $selected }) => ({
+  fontFamily: 'Rubik, sans-serif',
+  fontSize: 16,
+  fontWeight: $selected ? 600 : 400,
+  color: $selected ? '#5c5def' : '#242424',
+}))
+
+export const StatusRadioDot = styled.span<{ $selected: boolean }>(({ $selected }) => ({
+  width: 16,
+  height: 16,
+  borderRadius: '50%',
+  border: `2px solid ${$selected ? '#5c5def' : '#8c8c8c'}`,
+  background: $selected ? '#5c5def' : 'transparent',
+  flexShrink: 0,
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  boxSizing: 'border-box',
+  'input:focus-visible + * + &': { outline: '2px solid #5c5def', outlineOffset: 2 },
+}))
+
+export const StatusRadioDotInner = styled.span({
+  width: 6,
+  height: 6,
+  borderRadius: '50%',
+  background: '#fff',
 })
 
 export const ReasonField = styled.div({
