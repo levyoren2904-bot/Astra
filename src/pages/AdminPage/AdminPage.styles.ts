@@ -1084,7 +1084,7 @@ export const StatusRadioDot = styled.span<{ $selected: boolean }>(({ $selected }
   alignItems: 'center',
   justifyContent: 'center',
   boxSizing: 'border-box',
-  'input:focus-visible + * + &': { outline: '2px solid #5c5def', outlineOffset: 2 },
+  'input:focus-visible + &': { outline: '2px solid #5c5def', outlineOffset: 2 },
 }))
 
 export const StatusRadioDotInner = styled.span({

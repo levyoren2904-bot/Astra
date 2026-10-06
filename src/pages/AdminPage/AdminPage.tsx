@@ -818,12 +818,13 @@ const ChangeCardStatusModal: FC<ChangeCardStatusModalProps> = ({ row, onConfirm,
                   checked={target === opt}
                   onChange={() => setTarget(opt)}
                 />
-                <S.StatusRadioText $selected={target === opt} dir="auto">
-                  {opt}
-                </S.StatusRadioText>
+                {/* Dot first: in this RTL row it sits to the RIGHT of its label (Oren, 06.10) */}
                 <S.StatusRadioDot $selected={target === opt}>
                   {target === opt && <S.StatusRadioDotInner />}
                 </S.StatusRadioDot>
+                <S.StatusRadioText $selected={target === opt} dir="auto">
+                  {opt}
+                </S.StatusRadioText>
               </S.StatusRadioOpt>
             ))}
           </S.StatusRadioGroup>
