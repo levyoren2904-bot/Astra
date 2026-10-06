@@ -1,4 +1,4 @@
-import { useRef, useState, Fragment, type FC } from 'react'
+import { useEffect, useRef, useState, Fragment, type FC } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { filterFees } from '../../lib/feeSearch'
 import {
@@ -724,7 +724,10 @@ const ResidentCardsTable: FC<ResidentCardsTableProps> = ({ rows, query, onChange
             <S.ReasonCell $flex>
               {row.change && (
                 <Tooltip text={`${row.change.changedBy} · ${row.change.changedAt}`}>
-                  <S.ReasonText dir="auto">{row.change.reason}</S.ReasonText>
+                  {/* title: a long reason is ellipsized, this is the way to read all of it */}
+                  <S.ReasonText dir="auto" title={row.change.reason}>
+                    {row.change.reason}
+                  </S.ReasonText>
                 </Tooltip>
               )}
             </S.ReasonCell>
@@ -770,9 +773,14 @@ interface ChangeCardStatusModalProps {
 
 const ChangeCardStatusModal: FC<ChangeCardStatusModalProps> = ({ row, onConfirm, onClose }) => {
   const dialogRef = useRef<HTMLDivElement>(null)
+  // Captured at first render, BEFORE useDialogAccessibility moves focus into the dialog
+  const [opener] = useState(() => document.activeElement as HTMLElement | null)
   const [target, setTarget] = useState<CardStatusTarget | null>(null)
   const [reason, setReason] = useState('')
   useDialogAccessibility(dialogRef, onClose)
+
+  // Return focus to the row's "שינוי סטטוס" on close, not to <body>
+  useEffect(() => () => opener?.focus?.(), [opener])
 
   const ready = canConfirmStatusChange(target, reason)
 

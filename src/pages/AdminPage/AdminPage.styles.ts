@@ -1065,10 +1065,11 @@ export const StatusRadioInput = styled.input({
   margin: 0,
 })
 
+// Weight stays fixed: bolding the selected label shifted the other option by 2px (Lens)
 export const StatusRadioText = styled.span<{ $selected: boolean }>(({ $selected }) => ({
   fontFamily: 'Rubik, sans-serif',
   fontSize: 16,
-  fontWeight: $selected ? 600 : 400,
+  fontWeight: 500,
   color: $selected ? '#5c5def' : '#242424',
 }))
 
@@ -1141,8 +1142,10 @@ export const IrreversibleText = styled.p({
   lineHeight: 'normal',
 })
 
+// #c62828, not the #f65e53 error token: white on the token is 3.16:1 (Lens, 06.10),
+// this is 5.6:1 - the button that does the irreversible thing has to be the most legible.
 export const DestructiveBtn = styled(SaveBtn)({
-  background: '#f65e53',
+  background: '#c62828',
   '&:disabled': {
     background: '#d7d7da',
     color: '#8c8c8c',
