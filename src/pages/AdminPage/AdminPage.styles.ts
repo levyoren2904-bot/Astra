@@ -102,7 +102,7 @@ export const TabSeparator = styled.div({
 
 // ── Table card ────────────────────────────────────────────────────────────────
 
-export const TableCard = styled.div({
+export const TableCard = styled.div<{ $overflowVisible?: boolean }>(({ $overflowVisible }) => ({
   position: 'absolute',
   top: 148,
   left: 24,
@@ -115,7 +115,9 @@ export const TableCard = styled.div({
   gap: 24,
   padding: '24px 16px',
   direction: 'ltr',
-})
+  // The residents view shows a tooltip under the reason, which would be cut at the last row
+  ...($overflowVisible ? { overflow: 'visible' } : {}),
+}))
 
 // ── Table toolbar ─────────────────────────────────────────────────────────────
 
@@ -944,4 +946,161 @@ export const SearchInput = styled.input({
   '&::placeholder': {
     color: '#b3b3b3',
   },
+})
+
+// ── Card types tab: סוגי כרטיסים / תושבים switch ────────────────────────────────
+// No Figma node yet. Reuses the segmented control from the card-type modal
+// (NationalityControl) so the switch speaks the admin's existing visual language.
+
+export const ViewSwitch = styled(NationalityControl)({
+  flex: '0 0 auto',
+  width: 280,
+})
+
+// ── Resident cards table ──────────────────────────────────────────────────────
+
+const CARD_STATUS_COLOR: Record<string, string> = {
+  'פעיל': '#70c969',
+  'מבוטל': '#f65e53',
+  'לא תקין': '#f68a3c',
+}
+
+export const CardStatusDot = styled(StatusDot)<{ $status: string }>(({ $status }) => ({
+  background: CARD_STATUS_COLOR[$status] ?? '#d7d7da',
+}))
+
+// Text action, not an icon: the edit pencil in the sibling tables means "edit this
+// record", and this action is narrower and irreversible, so it says what it does.
+export const ChangeStatusBtn = styled.button({
+  background: 'none',
+  border: 'none',
+  padding: 0,
+  cursor: 'pointer',
+  fontFamily: 'Rubik, sans-serif',
+  fontSize: 14,
+  fontWeight: 500,
+  color: '#5c5def',
+  whiteSpace: 'nowrap',
+  textDecoration: 'underline',
+  textUnderlineOffset: 3,
+  '&:focus-visible': { outline: '2px solid #5c5def', outlineOffset: 2 },
+})
+
+export const ResidentActionCell = styled(ActionCell)({
+  width: 120,
+  justifyContent: 'flex-start',
+})
+
+export const ResidentThActionCell = styled(ThActionCell)({
+  width: 120,
+})
+
+// overflow visible so the who/when tooltip under the reason is not clipped by the cell;
+// the tooltip wrapper is capped to the cell width so a long reason still ellipsizes.
+export const ReasonCell = styled(TdCell)({
+  overflow: 'visible',
+  '& > div': { maxWidth: '100%', minWidth: 0 },
+})
+
+export const ReasonText = styled(TdText)({
+  overflow: 'hidden',
+  textOverflow: 'ellipsis',
+  whiteSpace: 'nowrap',
+  maxWidth: '100%',
+})
+
+export const EmptyRow = styled.div({
+  height: 96,
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  background: 'white',
+  fontFamily: 'Rubik, sans-serif',
+  fontSize: 16,
+  color: '#666666',
+})
+
+// ── Change card status modal ──────────────────────────────────────────────────
+
+export const StatusModalContainer = styled(ModalContainer)({
+  gap: 16,
+  '&:focus': { outline: 'none' },
+})
+
+export const ModalSubtitle = styled.p({
+  fontFamily: 'Rubik, sans-serif',
+  fontSize: 14,
+  color: '#666666',
+  margin: '-12px 0 0',
+  padding: '0 32px',
+  width: '100%',
+  textAlign: 'right',
+  lineHeight: 'normal',
+})
+
+export const StatusTargetControl = styled(NationalityControl)({
+  flex: '0 0 auto',
+  width: '100%',
+})
+
+export const ReasonField = styled.div({
+  display: 'flex',
+  flexDirection: 'column',
+  gap: 4,
+  padding: '0 32px',
+  width: '100%',
+})
+
+export const ReasonTextarea = styled.textarea({
+  width: '100%',
+  height: 96,
+  background: 'white',
+  border: '1px solid #666666',
+  borderRadius: 4,
+  padding: '6px 8px',
+  fontFamily: 'Rubik, sans-serif',
+  fontSize: 16,
+  color: '#111122',
+  resize: 'none',
+  outline: 'none',
+  textAlign: 'right',
+  boxSizing: 'border-box',
+  '&:focus': { borderColor: '#5c5def' },
+})
+
+export const IrreversibleNote = styled.div({
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'flex-end',
+  gap: 8,
+  margin: '0 32px',
+  padding: '8px 12px',
+  width: 'calc(100% - 64px)',
+  boxSizing: 'border-box',
+  background: '#fff1f0',
+  border: '1px solid #f65e53',
+  borderRadius: 4,
+})
+
+export const IrreversibleText = styled.p({
+  fontFamily: 'Rubik, sans-serif',
+  fontSize: 14,
+  color: '#242424',
+  margin: 0,
+  textAlign: 'right',
+  lineHeight: 'normal',
+})
+
+export const DestructiveBtn = styled(SaveBtn)({
+  background: '#f65e53',
+  '&:disabled': {
+    background: '#d7d7da',
+    color: '#8c8c8c',
+    boxShadow: 'none',
+    cursor: 'not-allowed',
+  },
+})
+
+export const DismissBtn = styled(CancelBtn)({
+  width: 'auto',
 })

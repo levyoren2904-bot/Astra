@@ -1,11 +1,25 @@
-import { useState, Fragment, type FC } from 'react'
+import { useRef, useState, Fragment, type FC } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { filterFees } from '../../lib/feeSearch'
+import {
+  CARD_STATUS_TARGETS,
+  applyStatusChange,
+  canChangeStatus,
+  canConfirmStatusChange,
+  filterResidentCards,
+  type CardStatusTarget,
+  type ResidentCardRow,
+} from '../../lib/residentCardStatus'
+import { useDialogAccessibility } from '../../hooks/useDialogAccessibility'
+import { Tooltip } from '../../components/ui/Tooltip'
 import * as S from './AdminPage.styles'
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
 type TabId = 'stations' | 'card-types' | 'fees'
+
+/** The סוגי כרטיסים tab holds two views: the card TYPES, and each resident's issued card. */
+type CardsView = 'types' | 'residents'
 
 interface StationRow {
   id: number
@@ -46,6 +60,27 @@ const MOCK_FEES: FeeRow[] = [
   { id: 4, residentName: 'שם תושב',              idNumber: '987654321', feeNumber: '123456789', note: 'תוכן', status: 'שולם' },
   { id: 5, residentName: 'שם תושב',              idNumber: '987654321', feeNumber: '123456789', note: 'תוכן', status: 'שולם' },
 ]
+
+// One row per resident = the LAST card issued to them (the requirement asks for that one only).
+const MOCK_RESIDENT_CARDS: ResidentCardRow[] = [
+  { id: 1, residentName: 'חמודי מוחמד בן סעמק', idNumber: '123456789', cardType: 'כר״ח איו״ש', issueDate: '14/01/2023', status: 'פעיל' },
+  { id: 2, residentName: 'יוסף ח׳ליל עבד',      idNumber: '204518337', cardType: 'כר״ח איו״ש', issueDate: '12/01/2023', status: 'פעיל' },
+  { id: 3, residentName: 'סמיר עודה נאסר',      idNumber: '311045692', cardType: 'כר״ח תפר',   issueDate: '09/01/2023', status: 'מבוטל',
+    change: { reason: 'התושב דיווח על אובדן הכרטיס', changedBy: 'מנהל מערכת', changedAt: '11/01/2023 09:12' } },
+  { id: 4, residentName: 'אחמד סאלח חסן',       idNumber: '408723115', cardType: 'כר״ח איו״ש', issueDate: '05/01/2023', status: 'פעיל' },
+  { id: 5, residentName: 'מוסטפא עלי דאוד',     idNumber: '512398004', cardType: 'כר״ח תפר',   issueDate: '02/01/2023', status: 'לא תקין',
+    change: { reason: 'השבב אינו נקרא בעמדת הבדיקה', changedBy: 'מנהל מערכת', changedAt: '04/01/2023 14:40' } },
+  { id: 6, residentName: 'ח׳אלד יאסין מנסור',   idNumber: '627154980', cardType: 'כר״ח איו״ש', issueDate: '28/12/2022', status: 'פעיל' },
+]
+
+/** SSO identity is not wired into the mock; this stands in for the logged-in admin. */
+const CURRENT_USER = 'מנהל מערכת'
+
+const formatNow = (): string => {
+  const d = new Date()
+  const p = (n: number) => String(n).padStart(2, '0')
+  return `${p(d.getDate())}/${p(d.getMonth() + 1)}/${d.getFullYear()} ${p(d.getHours())}:${p(d.getMinutes())}`
+}
 
 // ── Card type fields ──────────────────────────────────────────────────────────
 
@@ -631,6 +666,186 @@ const FeesTable: FC<FeesTableProps> = ({ query }) => {
   )
 }
 
+// ── ResidentCardsTable ────────────────────────────────────────────────────────
+
+interface ResidentCardsTableProps {
+  rows: ResidentCardRow[]
+  query: string
+  onChangeStatus: (row: ResidentCardRow) => void
+}
+
+const ResidentCardsTable: FC<ResidentCardsTableProps> = ({ rows, query, onChangeStatus }) => {
+  const visible = filterResidentCards(rows, query)
+
+  return (
+    <S.TableContainer>
+      <S.TableHeader>
+        {/* LTR order: פעולות | סיבה | סטטוס כרטיס | תאריך הנפקה | סוג כרטיס | ת.ז | שם תושב | # */}
+        <S.ResidentThActionCell>
+          <S.ThText>פעולות</S.ThText>
+        </S.ResidentThActionCell>
+        <S.ThCell $flex>
+          <S.ThText>סיבה</S.ThText>
+        </S.ThCell>
+        <S.ThCell $flex>
+          <S.ThText>סטטוס כרטיס</S.ThText>
+        </S.ThCell>
+        <S.ThCell $flex>
+          <S.ThText>תאריך הנפקה</S.ThText>
+        </S.ThCell>
+        <S.ThCell $flex>
+          <S.ThText>סוג כרטיס</S.ThText>
+        </S.ThCell>
+        <S.ThCell $flex>
+          <S.ThText>ת.ז</S.ThText>
+        </S.ThCell>
+        <S.ThCell $flex>
+          <S.ThText>שם תושב</S.ThText>
+        </S.ThCell>
+        <S.ThCell $width={39} $center>
+          <S.ThText>#</S.ThText>
+        </S.ThCell>
+      </S.TableHeader>
+      <S.TableBody>
+        {visible.length === 0 && <S.EmptyRow dir="auto">לא נמצא תושב התואם לחיפוש</S.EmptyRow>}
+        {visible.map((row) => (
+          <S.TableRow key={row.id}>
+            <S.ResidentActionCell>
+              {canChangeStatus(row) && (
+                <S.ChangeStatusBtn dir="auto" onClick={() => onChangeStatus(row)}>
+                  שינוי סטטוס
+                </S.ChangeStatusBtn>
+              )}
+            </S.ResidentActionCell>
+            <S.ReasonCell $flex>
+              {row.change && (
+                <Tooltip text={`${row.change.changedBy} · ${row.change.changedAt}`}>
+                  <S.ReasonText dir="auto">{row.change.reason}</S.ReasonText>
+                </Tooltip>
+              )}
+            </S.ReasonCell>
+            <S.StatusCell>
+              <S.StatusText dir="auto">{row.status}</S.StatusText>
+              <S.CardStatusDot $status={row.status} />
+            </S.StatusCell>
+            <S.TdCell $flex>
+              <S.TdText>{row.issueDate}</S.TdText>
+            </S.TdCell>
+            <S.TdCell $flex>
+              <S.TdText dir="auto">{row.cardType}</S.TdText>
+            </S.TdCell>
+            <S.TdCell $flex>
+              <S.TdText>{row.idNumber}</S.TdText>
+            </S.TdCell>
+            <S.TdCell $flex>
+              <S.TdText dir="auto">{row.residentName}</S.TdText>
+            </S.TdCell>
+            <S.TdCell $width={39} $center>
+              <S.TdText>{row.id}</S.TdText>
+            </S.TdCell>
+          </S.TableRow>
+        ))}
+      </S.TableBody>
+    </S.TableContainer>
+  )
+}
+
+// ── ChangeCardStatusModal ─────────────────────────────────────────────────────
+
+const CONFIRM_LABEL: Record<CardStatusTarget, string> = {
+  'מבוטל': 'ביטול הכרטיס',
+  'לא תקין': 'סימון כלא תקין',
+}
+
+interface ChangeCardStatusModalProps {
+  row: ResidentCardRow
+  onConfirm: (target: CardStatusTarget, reason: string) => void
+  onClose: () => void
+}
+
+const ChangeCardStatusModal: FC<ChangeCardStatusModalProps> = ({ row, onConfirm, onClose }) => {
+  const dialogRef = useRef<HTMLDivElement>(null)
+  const [target, setTarget] = useState<CardStatusTarget | null>(null)
+  const [reason, setReason] = useState('')
+  useDialogAccessibility(dialogRef, onClose)
+
+  const ready = canConfirmStatusChange(target, reason)
+
+  return (
+    <>
+      <S.ModalOverlay onClick={onClose} />
+      <S.StatusModalContainer
+        dir="ltr"
+        ref={dialogRef}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="card-status-title"
+        tabIndex={-1}
+      >
+        <S.ModalHeader>
+          <S.ModalCloseBtn onClick={onClose} aria-label="סגור">
+            <img src="/icons/close.svg" alt="" width={11} height={11} loading="lazy" />
+          </S.ModalCloseBtn>
+          <S.ModalTitle id="card-status-title" dir="auto">שינוי סטטוס כרטיס</S.ModalTitle>
+        </S.ModalHeader>
+        <S.ModalSubtitle dir="rtl">
+          {row.residentName} · ת.ז {row.idNumber} · {row.cardType}, הונפק {row.issueDate}
+        </S.ModalSubtitle>
+
+        <S.ReasonField>
+          <S.FieldLabel dir="auto">סטטוס חדש</S.FieldLabel>
+          {/* LTR DOM order, so מבוטל (read first) is last = rightmost */}
+          <S.StatusTargetControl role="radiogroup" aria-label="סטטוס חדש">
+            {[...CARD_STATUS_TARGETS].reverse().map((opt) => (
+              <S.NationalityOption
+                key={opt}
+                role="radio"
+                aria-checked={target === opt}
+                $active={target === opt}
+                onClick={() => setTarget(opt)}
+                dir="auto"
+              >
+                {opt}
+              </S.NationalityOption>
+            ))}
+          </S.StatusTargetControl>
+        </S.ReasonField>
+
+        <S.ReasonField>
+          <S.FieldLabel as="label" htmlFor="card-status-reason" dir="auto">
+            סיבת השינוי (חובה)
+          </S.FieldLabel>
+          <S.ReasonTextarea
+            id="card-status-reason"
+            dir="auto"
+            value={reason}
+            onChange={(e) => setReason(e.target.value)}
+          />
+        </S.ReasonField>
+
+        <S.IrreversibleNote dir="rtl">
+          <img src="/icons/warning.svg" alt="" width={20} height={20} loading="lazy" />
+          <S.IrreversibleText>
+            פעולה זו אינה הפיכה. הכרטיס לא יחזור לסטטוס פעיל.
+          </S.IrreversibleText>
+        </S.IrreversibleNote>
+
+        <S.ModalFooter>
+          <S.DestructiveBtn
+            dir="auto"
+            disabled={!ready}
+            onClick={() => ready && onConfirm(target, reason)}
+          >
+            {target ? CONFIRM_LABEL[target] : 'שינוי סטטוס'}
+          </S.DestructiveBtn>
+          {/* "סגירה", not "ביטול" - next to "ביטול הכרטיס" the word would mean both things */}
+          <S.DismissBtn dir="auto" onClick={onClose}>סגירה</S.DismissBtn>
+        </S.ModalFooter>
+      </S.StatusModalContainer>
+    </>
+  )
+}
+
 // ── AdminPage ─────────────────────────────────────────────────────────────────
 
 export const AdminPage: FC = () => {
@@ -640,6 +855,20 @@ export const AdminPage: FC = () => {
   const [editingCardType, setEditingCardType] = useState<CardTypeRow | null>(null)
   // The search field exists on the אגרות tab only (Figma 100:15628 has it, 2:504 does not)
   const [feeQuery, setFeeQuery] = useState('')
+  const [cardsView, setCardsView] = useState<CardsView>('types')
+  // Lives here, not in the table, so a status change survives switching views and tabs
+  const [residentCards, setResidentCards] = useState<ResidentCardRow[]>(MOCK_RESIDENT_CARDS)
+  const [residentQuery, setResidentQuery] = useState('')
+  const [statusRow, setStatusRow] = useState<ResidentCardRow | null>(null)
+
+  const showResidents = activeTab === 'card-types' && cardsView === 'residents'
+
+  const confirmStatusChange = (target: CardStatusTarget, reason: string) => {
+    if (!statusRow) return
+    const changed = applyStatusChange(statusRow, target, reason, CURRENT_USER, formatNow())
+    setResidentCards((prev) => prev.map((r) => (r.id === changed.id ? changed : r)))
+    setStatusRow(null)
+  }
 
   return (
     <S.PageRoot>
@@ -661,11 +890,14 @@ export const AdminPage: FC = () => {
         ))}
       </S.TabsBar>
 
-      <S.TableCard>
+      <S.TableCard $overflowVisible={showResidents}>
         <S.TableToolbar>
-          <S.AddBtn aria-label="הוסף">
-            <img src="/icons/plus.svg" alt="" width={24} height={24} loading="lazy" />
-          </S.AddBtn>
+          {/* No "add" in the residents view - cards are issued by the wizard, not created here */}
+          {!showResidents && (
+            <S.AddBtn aria-label="הוסף">
+              <img src="/icons/plus.svg" alt="" width={24} height={24} loading="lazy" />
+            </S.AddBtn>
+          )}
           <S.ToolbarRight>
             <S.FilterBtn aria-label="סנן">
               <img src="/icons/filter.svg" alt="" width={24} height={24} loading="lazy" />
@@ -687,13 +919,58 @@ export const AdminPage: FC = () => {
                 />
               </S.SearchField>
             )}
+            {showResidents && (
+              <S.SearchField>
+                <img src="/icons/search.svg" alt="" width={24} height={24} loading="lazy" />
+                <S.SearchInput
+                  dir="auto"
+                  type="search"
+                  placeholder="חיפוש לפי ת.ז או שם"
+                  aria-label="חיפוש תושב"
+                  value={residentQuery}
+                  onChange={(e) => setResidentQuery(e.target.value)}
+                />
+              </S.SearchField>
+            )}
+            {activeTab === 'card-types' && (
+              // LTR DOM order: תושבים left, סוגי כרטיסים right (the default, read first)
+              <S.ViewSwitch role="tablist" aria-label="תצוגת כרטיסים">
+                <S.NationalityOption
+                  role="tab"
+                  aria-selected={cardsView === 'residents'}
+                  $active={cardsView === 'residents'}
+                  onClick={() => setCardsView('residents')}
+                  dir="auto"
+                >
+                  תושבים
+                </S.NationalityOption>
+                <S.NationalityOption
+                  role="tab"
+                  aria-selected={cardsView === 'types'}
+                  $active={cardsView === 'types'}
+                  onClick={() => setCardsView('types')}
+                  dir="auto"
+                >
+                  סוגי כרטיסים
+                </S.NationalityOption>
+              </S.ViewSwitch>
+            )}
           </S.ToolbarRight>
         </S.TableToolbar>
 
         <S.TableDivider />
 
         {activeTab === 'stations' && <StationsTable onEdit={setEditingStation} />}
-        {activeTab === 'card-types' && <CardTypesTable onEdit={setEditingCardType} />}
+        {activeTab === 'card-types' && !showResidents && (
+          <CardTypesTable onEdit={setEditingCardType} />
+        )}
+        {showResidents && (
+          <ResidentCardsTable
+            rows={residentCards}
+            query={residentQuery}
+            onChangeStatus={setStatusRow}
+          />
+        )}
         {activeTab === 'fees' && <FeesTable query={feeQuery} />}
       </S.TableCard>
 
@@ -707,6 +984,13 @@ export const AdminPage: FC = () => {
         <EditCardTypeModal
           cardType={editingCardType}
           onClose={() => setEditingCardType(null)}
+        />
+      )}
+      {statusRow && (
+        <ChangeCardStatusModal
+          row={statusRow}
+          onConfirm={confirmStatusChange}
+          onClose={() => setStatusRow(null)}
         />
       )}
     </S.PageRoot>
