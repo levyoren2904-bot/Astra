@@ -76,10 +76,13 @@ const MOCK_RESIDENT_CARDS: ResidentCardRow[] = [
 /** SSO identity is not wired into the mock; this stands in for the logged-in admin. */
 const CURRENT_USER = 'מנהל מערכת'
 
+/** The mock's "today" is the date picker's 14/01/2023, so a change made now must carry that date too. */
+const MOCK_TODAY = '14/01/2023'
+
 const formatNow = (): string => {
   const d = new Date()
   const p = (n: number) => String(n).padStart(2, '0')
-  return `${p(d.getDate())}/${p(d.getMonth() + 1)}/${d.getFullYear()} ${p(d.getHours())}:${p(d.getMinutes())}`
+  return `${MOCK_TODAY} ${p(d.getHours())}:${p(d.getMinutes())}`
 }
 
 // ── Card type fields ──────────────────────────────────────────────────────────
@@ -680,7 +683,7 @@ const ResidentCardsTable: FC<ResidentCardsTableProps> = ({ rows, query, onChange
   return (
     <S.TableContainer>
       <S.TableHeader>
-        {/* LTR order: פעולות | סיבה | סטטוס כרטיס | תאריך הנפקה | סוג כרטיס | ת.ז | שם תושב | # */}
+        {/* LTR order: פעולות | סיבה | סטטוס כרטיס | תאריך הנפקה | כרטיס אחרון שהונפק | ת.ז | שם תושב | # */}
         <S.ResidentThActionCell>
           <S.ThText>פעולות</S.ThText>
         </S.ResidentThActionCell>
@@ -694,7 +697,8 @@ const ResidentCardsTable: FC<ResidentCardsTableProps> = ({ rows, query, onChange
           <S.ThText>תאריך הנפקה</S.ThText>
         </S.ThCell>
         <S.ThCell $flex>
-          <S.ThText>סוג כרטיס</S.ThText>
+          {/* Says the requirement's rule out loud: one row = the LAST card issued */}
+          <S.ThText>כרטיס אחרון שהונפק</S.ThText>
         </S.ThCell>
         <S.ThCell $flex>
           <S.ThText>ת.ז</S.ThText>
@@ -753,7 +757,8 @@ const ResidentCardsTable: FC<ResidentCardsTableProps> = ({ rows, query, onChange
 // ── ChangeCardStatusModal ─────────────────────────────────────────────────────
 
 const CONFIRM_LABEL: Record<CardStatusTarget, string> = {
-  'מבוטל': 'ביטול הכרטיס',
+  // Not "ביטול": next to the dismiss button it reads as "cancel" (Lazy, 06.10)
+  'מבוטל': 'סימון כמבוטל',
   'לא תקין': 'סימון כלא תקין',
 }
 
