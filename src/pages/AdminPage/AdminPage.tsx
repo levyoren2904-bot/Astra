@@ -123,7 +123,7 @@ const MOCK_STATIONS: StationRow[] = [
 // DOM order is right-to-left (עמדות rightmost in LTR flex-end layout)
 const TABS: { id: TabId; label: string }[] = [
   { id: 'fees', label: 'אגרות' },
-  { id: 'card-types', label: 'סוגי כרטיסים' },
+  { id: 'card-types', label: 'כרטיסים' },
   { id: 'stations', label: 'עמדות' },
 ]
 
