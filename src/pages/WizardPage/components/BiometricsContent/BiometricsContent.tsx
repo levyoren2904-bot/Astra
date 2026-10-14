@@ -9,8 +9,6 @@ import {
   BIO_DOT_RED,
   BIO_CAM_BG,
   BIO_CAM_ICON,
-  BIO_LIGHT_ICON,
-  BIO_ANGLE_ICON,
   BIO_FACE_GREEN,
   BIO_FACE_RED,
   BIO_CAPTURED_PHOTO,
@@ -48,9 +46,6 @@ import {
   CamBgImg,
   CamOverlay,
   FaceHeaderLeft,
-  AngleChip,
-  AngleDot,
-  AngleIcon,
   ResidentInstruction,
   FaceCircleWrap,
   FaceCircleImg,
@@ -179,11 +174,6 @@ export const BiometricsContent: FC<BiometricsContentProps> = ({ onExclusion }) =
           <HeaderBgImg src={BIO_HEADER_BG} alt="" loading="lazy" />
           <FaceHeaderLeft>
             <BioIcon src={BIO_CAM_ICON} alt="" loading="lazy" />
-            <BioIcon src={BIO_LIGHT_ICON} alt="" loading="lazy" />
-            <AngleChip>
-              <AngleDot src={allChecksOk ? BIO_DOT_GREEN : BIO_DOT_RED} alt="" loading="lazy" />
-              <AngleIcon src={BIO_ANGLE_ICON} alt="" loading="lazy" />
-            </AngleChip>
           </FaceHeaderLeft>
           <BioHeaderTitle dir="auto">צילום פנים</BioHeaderTitle>
         </BioHeader>

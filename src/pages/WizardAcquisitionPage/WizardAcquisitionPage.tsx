@@ -17,8 +17,6 @@ import {
   BIO_FP_SYMBOL,
   BIO_CAM_BG,
   BIO_CAM_ICON,
-  BIO_LIGHT_ICON,
-  BIO_ANGLE_ICON,
   BIO_FACE_GREEN,
   BIO_DOT_GREEN,
   BIO_CAPTURED_PHOTO,
@@ -100,9 +98,6 @@ import {
   CamBgImage,
   CamOverlayDiv,
   FaceHeaderIconsLeft,
-  FaceAngleChip,
-  FaceAngleDotImg,
-  FaceAngleIconImg,
   FaceHint,
   FaceCircleWrap,
   FaceCircleImage,
@@ -601,11 +596,6 @@ const Step3Content: FC<Step3ContentProps> = ({
         <BioHeaderBgImg src={BIO_HEADER_BG} alt="" loading="lazy" />
         <FaceHeaderIconsLeft>
           <BioIconImg src={BIO_CAM_ICON} alt="" loading="lazy" />
-          <BioIconImg src={BIO_LIGHT_ICON} alt="" loading="lazy" />
-          <FaceAngleChip>
-            <FaceAngleDotImg src={BIO_DOT_GREEN} alt="" loading="lazy" />
-            <FaceAngleIconImg src={BIO_ANGLE_ICON} alt="" loading="lazy" />
-          </FaceAngleChip>
         </FaceHeaderIconsLeft>
         <BioPanelTitle dir="auto">צילום פנים</BioPanelTitle>
       </BioPanelHeaderRow>
