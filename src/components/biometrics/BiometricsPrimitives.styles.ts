@@ -1,4 +1,4 @@
-import styled from 'styled-components'
+import styled, { keyframes } from 'styled-components'
 import { FROSTED_STYLE } from '@/pages/WizardPage/constants'
 
 const BF = 'Rubik, sans-serif'
@@ -242,3 +242,73 @@ export const BioFpSymbolMuted = styled.img({
   height: 60,
   opacity: 0.5,
 })
+
+/** Disconnected-hardware card: icon + title + sub + retry button, centered over BioFrostedBackdrop. */
+export const BioHwCard = styled.div({
+  position: 'absolute',
+  left: '50%',
+  top: '50%',
+  transform: 'translate(-50%, -50%)',
+  zIndex: 10,
+  display: 'flex',
+  flexDirection: 'column',
+  alignItems: 'center',
+  gap: 8,
+})
+
+export const BioHwIconArea = styled.div({
+  width: 64,
+  height: 64,
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  marginBottom: 4,
+})
+
+export const BioHwTitle = styled.p({
+  fontFamily: BF,
+  fontSize: 24,
+  fontWeight: 600,
+  color: '#242424',
+  margin: 0,
+  whiteSpace: 'nowrap',
+})
+
+export const BioHwSub = styled.p({
+  fontFamily: BF,
+  fontSize: 14,
+  fontWeight: 400,
+  color: '#666666',
+  margin: '0 0 8px',
+  whiteSpace: 'nowrap',
+})
+
+const hwSpin = keyframes`
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+`
+
+export const BioHwSpinnerSvg = styled.svg`
+  animation: ${hwSpin} 900ms linear infinite;
+`
+
+export const BioHwRetryBtn = styled.button<{ $checking?: boolean }>(({ $checking }) => ({
+  background: '#5c5def',
+  height: 32,
+  padding: '0 16px',
+  minWidth: 109,
+  borderRadius: 4,
+  border: 'none',
+  cursor: $checking ? 'default' : 'pointer',
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  gap: 8,
+  opacity: $checking ? 0.75 : 1,
+  boxShadow: '0px 2px 4px rgba(0,0,0,0.3)',
+  fontFamily: BF,
+  fontSize: 16,
+  fontWeight: 700,
+  color: '#fff',
+  whiteSpace: 'nowrap',
+}))

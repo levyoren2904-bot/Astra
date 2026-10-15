@@ -10,6 +10,7 @@ import {
 import { useNavigate } from 'react-router-dom'
 import { VideoBackground } from '@/components/ui/VideoBackground'
 import { CloseIcon } from '@/components/ui/CloseIcon'
+import { HardwareDisconnectedOverlay } from '@/components/biometrics/HardwareDisconnectedOverlay'
 import {
   BIO_HEADER_BG,
   BIO_FP_ICON,
@@ -20,6 +21,7 @@ import {
   BIO_FACE_GREEN,
   BIO_DOT_GREEN,
   BIO_CAPTURED_PHOTO,
+  HARDWARE_CHECK_DELAY,
 } from '@/pages/WizardPage/constants'
 import {
   PageRoot,
@@ -509,12 +511,18 @@ const Step2Content: FC = () => (
 
 // ── Step 3 — Biometrics ───────────────────────────────────────────────────────
 
+type HwStatus = 'connected' | 'disconnected' | 'checking'
+
 interface Step3ContentProps {
   fpAcquired: boolean
   faceState: FaceState
   onAcquireFp: () => void
   onCaptureFace: () => void
   onRetakePhoto: () => void
+  camHwStatus: HwStatus
+  fpHwStatus: HwStatus
+  onRetryCamHw: () => void
+  onRetryFpHw: () => void
 }
 
 const Step3Content: FC<Step3ContentProps> = ({
@@ -523,6 +531,10 @@ const Step3Content: FC<Step3ContentProps> = ({
   onAcquireFp,
   onCaptureFace,
   onRetakePhoto,
+  camHwStatus,
+  fpHwStatus,
+  onRetryCamHw,
+  onRetryFpHw,
 }) => (
   <BioPanelsRow dir="ltr">
     {/* ── Left — Fingerprints ── */}
@@ -536,49 +548,60 @@ const Step3Content: FC<Step3ContentProps> = ({
         <BioPanelTitle dir="auto">טביעות אצבעות</BioPanelTitle>
       </BioPanelHeaderRow>
 
-      {/* Scanner image */}
-      <FpScannerWrapper>
-        <FpScannerImage src={BIO_FP_SCAN_BG} alt="" loading="lazy" />
-      </FpScannerWrapper>
-
-      {/* Set label */}
-      <FpSetLabel>
-        <FpSetDotImg src={BIO_DOT_GREEN} alt="" loading="lazy" />
-        <FpSetText dir="auto">4 אצבעות - יד ימין</FpSetText>
-      </FpSetLabel>
-
-      {/* Bottom bar */}
-      <FpBottomBar dir="ltr">
-        <NextBtn
-          onClick={onAcquireFp}
-          disabled={fpAcquired}
-          $disabled={fpAcquired}
-          className="flex items-center justify-center rounded shrink-0"
-        >
-          <BtnLabel dir="auto">{fpAcquired ? 'הושלם ✓' : 'נעל ועבור לסט הבא'}</BtnLabel>
-        </NextBtn>
-        <OutlinedBtn className="flex items-center justify-center rounded shrink-0">
-          <BtnLabel $color="#5c5def" dir="auto">חזור לסט קודם</BtnLabel>
-        </OutlinedBtn>
-      </FpBottomBar>
-
-      {/* Frosted overlay + acquisition card when not yet acquired */}
-      {!fpAcquired && (
+      {fpHwStatus !== 'connected' ? (
+        <HardwareDisconnectedOverlay
+          device="fingerprint"
+          checking={fpHwStatus === 'checking'}
+          onRetry={onRetryFpHw}
+          optional
+        />
+      ) : (
         <>
-          <FpFrostedOverlay />
-          <FpOverlayCard>
-            <FpOverlayTitle dir="auto">טביעות אצבעות</FpOverlayTitle>
-            <FpOverlaySub dir="auto">(לא חובה)</FpOverlaySub>
-            <FpIconArea>
-              <FpOverlaySymbolImg src={BIO_FP_SYMBOL} alt="" loading="lazy" />
-            </FpIconArea>
+          {/* Scanner image */}
+          <FpScannerWrapper>
+            <FpScannerImage src={BIO_FP_SCAN_BG} alt="" loading="lazy" />
+          </FpScannerWrapper>
+
+          {/* Set label */}
+          <FpSetLabel>
+            <FpSetDotImg src={BIO_DOT_GREEN} alt="" loading="lazy" />
+            <FpSetText dir="auto">4 אצבעות - יד ימין</FpSetText>
+          </FpSetLabel>
+
+          {/* Bottom bar */}
+          <FpBottomBar dir="ltr">
             <NextBtn
               onClick={onAcquireFp}
+              disabled={fpAcquired}
+              $disabled={fpAcquired}
               className="flex items-center justify-center rounded shrink-0"
             >
-              <BtnLabel dir="auto">בצע הרכשה</BtnLabel>
+              <BtnLabel dir="auto">{fpAcquired ? 'הושלם ✓' : 'נעל ועבור לסט הבא'}</BtnLabel>
             </NextBtn>
-          </FpOverlayCard>
+            <OutlinedBtn className="flex items-center justify-center rounded shrink-0">
+              <BtnLabel $color="#5c5def" dir="auto">חזור לסט קודם</BtnLabel>
+            </OutlinedBtn>
+          </FpBottomBar>
+
+          {/* Frosted overlay + acquisition card when not yet acquired */}
+          {!fpAcquired && (
+            <>
+              <FpFrostedOverlay />
+              <FpOverlayCard>
+                <FpOverlayTitle dir="auto">טביעות אצבעות</FpOverlayTitle>
+                <FpOverlaySub dir="auto">(לא חובה)</FpOverlaySub>
+                <FpIconArea>
+                  <FpOverlaySymbolImg src={BIO_FP_SYMBOL} alt="" loading="lazy" />
+                </FpIconArea>
+                <NextBtn
+                  onClick={onAcquireFp}
+                  className="flex items-center justify-center rounded shrink-0"
+                >
+                  <BtnLabel dir="auto">בצע הרכשה</BtnLabel>
+                </NextBtn>
+              </FpOverlayCard>
+            </>
+          )}
         </>
       )}
     </BioPanel>
@@ -600,39 +623,49 @@ const Step3Content: FC<Step3ContentProps> = ({
         <BioPanelTitle dir="auto">צילום פנים</BioPanelTitle>
       </BioPanelHeaderRow>
 
-      {/* Resident instruction */}
-      <FaceHint dir="auto">*לתושב - אנא עמוד מול המצלמה.</FaceHint>
-
-      {/* Face detection circle */}
-      {faceState === 'idle' && (
-        <FaceCircleWrap>
-          <FaceCircleImage src={BIO_FACE_GREEN} alt="" loading="lazy" />
-        </FaceCircleWrap>
-      )}
-
-      {/* Capture bar */}
-      <BioCaptureBar>
-        <CaptureBtnCircle onClick={onCaptureFace} title="צלם" />
-      </BioCaptureBar>
-
-      {/* Captured overlay */}
-      {faceState === 'captured' && (
+      {camHwStatus !== 'connected' ? (
+        <HardwareDisconnectedOverlay
+          device="camera"
+          checking={camHwStatus === 'checking'}
+          onRetry={onRetryCamHw}
+        />
+      ) : (
         <>
-          <FpFrostedOverlay />
-          <FpOverlayCard>
-            <FpOverlayTitle dir="auto">צילום פנים</FpOverlayTitle>
-            <FpIconArea>
-              <FaceCapturedThumb>
-                <FaceCapturedThumbImg src={BIO_CAPTURED_PHOTO} alt="" loading="lazy" />
-              </FaceCapturedThumb>
-            </FpIconArea>
-            <NextBtn
-              onClick={onRetakePhoto}
-              className="flex items-center justify-center rounded shrink-0"
-            >
-              <BtnLabel dir="auto">צלם שנית</BtnLabel>
-            </NextBtn>
-          </FpOverlayCard>
+          {/* Resident instruction */}
+          <FaceHint dir="auto">*לתושב - אנא עמוד מול המצלמה.</FaceHint>
+
+          {/* Face detection circle */}
+          {faceState === 'idle' && (
+            <FaceCircleWrap>
+              <FaceCircleImage src={BIO_FACE_GREEN} alt="" loading="lazy" />
+            </FaceCircleWrap>
+          )}
+
+          {/* Capture bar */}
+          <BioCaptureBar>
+            <CaptureBtnCircle onClick={onCaptureFace} title="צלם" />
+          </BioCaptureBar>
+
+          {/* Captured overlay */}
+          {faceState === 'captured' && (
+            <>
+              <FpFrostedOverlay />
+              <FpOverlayCard>
+                <FpOverlayTitle dir="auto">צילום פנים</FpOverlayTitle>
+                <FpIconArea>
+                  <FaceCapturedThumb>
+                    <FaceCapturedThumbImg src={BIO_CAPTURED_PHOTO} alt="" loading="lazy" />
+                  </FaceCapturedThumb>
+                </FpIconArea>
+                <NextBtn
+                  onClick={onRetakePhoto}
+                  className="flex items-center justify-center rounded shrink-0"
+                >
+                  <BtnLabel dir="auto">צלם שנית</BtnLabel>
+                </NextBtn>
+              </FpOverlayCard>
+            </>
+          )}
         </>
       )}
     </BioPanel>
@@ -650,6 +683,10 @@ export const WizardAcquisitionPage: FC = () => {
   const [forceIdInvalid, setForceIdInvalid] = useState(false)
   const [fpAcquired, setFpAcquired] = useState(false)
   const [faceState, setFaceState] = useState<FaceState>('idle')
+  const [camDisconnected, setCamDisconnected] = useState(false)
+  const [fpReaderDisconnected, setFpReaderDisconnected] = useState(false)
+  const [camChecking, setCamChecking] = useState(false)
+  const [fpReaderChecking, setFpReaderChecking] = useState(false)
 
   // A verdict belongs to the exact input it was resolved for, so the displayed
   // status is DERIVED rather than stored: no ID → idle, an ID we have no
@@ -674,6 +711,25 @@ export const WizardAcquisitionPage: FC = () => {
     return () => window.clearTimeout(timer)
   }, [idInput, idKey, forceIdInvalid])
 
+  // Same convention as the step-1 ID check: status is derived from the dev
+  // toggle + a transient checking flag, not stored as its own verdict.
+  const camHwStatus = camChecking ? 'checking' : camDisconnected ? 'disconnected' : 'connected'
+  const fpHwStatus = fpReaderChecking
+    ? 'checking'
+    : fpReaderDisconnected
+      ? 'disconnected'
+      : 'connected'
+
+  function recheckCamHw() {
+    setCamChecking(true)
+    window.setTimeout(() => setCamChecking(false), HARDWARE_CHECK_DELAY)
+  }
+
+  function recheckFpHw() {
+    setFpReaderChecking(true)
+    window.setTimeout(() => setFpReaderChecking(false), HARDWARE_CHECK_DELAY)
+  }
+
   function handleNext() {
     if (step < 3) setStep((s) => (s + 1) as AcqStep)
     else navigate('/')
@@ -695,6 +751,8 @@ export const WizardAcquisitionPage: FC = () => {
     setIdVerdict(null)
     setFpAcquired(false)
     setFaceState('idle')
+    setCamDisconnected(false)
+    setFpReaderDisconnected(false)
   }
 
   const atStep3 = step === 3
@@ -748,6 +806,10 @@ export const WizardAcquisitionPage: FC = () => {
             onAcquireFp={() => setFpAcquired(true)}
             onCaptureFace={() => setFaceState('captured')}
             onRetakePhoto={() => setFaceState('idle')}
+            camHwStatus={camHwStatus}
+            fpHwStatus={fpHwStatus}
+            onRetryCamHw={recheckCamHw}
+            onRetryFpHw={recheckFpHw}
           />
         )}
 
@@ -815,7 +877,7 @@ export const WizardAcquisitionPage: FC = () => {
 
       {isDevMode && (
         <DevBar>
-          <DevBtn onClick={() => { setStep(1); setIdInput(''); setIdVerdict(null); setForceIdInvalid(false); setFpAcquired(false); setFaceState('idle') }}>
+          <DevBtn onClick={() => { setStep(1); setIdInput(''); setIdVerdict(null); setForceIdInvalid(false); setFpAcquired(false); setFaceState('idle'); setCamDisconnected(false); setFpReaderDisconnected(false) }}>
             reset
           </DevBtn>
           <DevBtn onClick={() => setForceIdInvalid((v) => !v)}>
@@ -825,6 +887,12 @@ export const WizardAcquisitionPage: FC = () => {
           <DevBtn onClick={() => setStep(3)}>step 3</DevBtn>
           <DevBtn onClick={() => setFpAcquired(true)}>fp done</DevBtn>
           <DevBtn onClick={() => setFaceState('captured')}>face done</DevBtn>
+          <DevBtn onClick={() => setCamDisconnected((d) => !d)}>
+            camera: {camDisconnected ? 'disconnected' : 'ok'}
+          </DevBtn>
+          <DevBtn onClick={() => setFpReaderDisconnected((d) => !d)}>
+            fp reader: {fpReaderDisconnected ? 'disconnected' : 'ok'}
+          </DevBtn>
         </DevBar>
       )}
     </PageRoot>

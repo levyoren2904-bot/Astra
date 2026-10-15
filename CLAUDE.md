@@ -59,6 +59,8 @@ src/
       WizardAcquisitionPage.tsx + .styles.ts + index.ts
   components/
     ui/                     # VideoBackground, Tooltip, Chip, IdCardPreview, PanelHeader
+    biometrics/             # BiometricsPrimitives.styles (shared by both biometrics screens),
+                            # HardwareDisconnectedOverlay (camera/FP-reader disconnected state)
     layout/                 # ErrorBoundary
   store/                    # Zustand stores (installed, no stores yet)
   assets/
@@ -141,6 +143,7 @@ The four combinations of `color` × `side` are the Figma component set כר״ח 
 - **FP panel** has 3 sets (`FP_SETS`): 4 fingers right / 4 fingers left / 2 thumbs. `FINGER_LEFTS_4 = [54, 249, 465, 694]`, `FINGER_LEFTS_2 = [249, 465]`. Finger name labels use `bottom: 76` (above action bar). Set label right-aligned (`right: 16`). Scanner image: `top: 107, height: 339`.
 - `FROSTED_STYLE` constant: `backdropFilter: blur(15.35px), background: rgba(255,255,255,0.6)` — used for inactive panel overlay and post-capture face overlay.
 - Dev toggles: `mockAngleFail` (angle check fail) and `fpError` (fingerprint scanner error), guarded by `import.meta.env.DEV`.
+- **Hardware disconnected state** (abnormal state 7): each panel independently blocks with `HardwareDisconnectedOverlay` (`src/components/biometrics/`) when its device is reported disconnected — camera and fingerprint reader are checked separately, so one can be down while the other keeps working. Status is derived the same way as the step-1 ID check: a dev toggle (`camDisconnected` / `fpReaderDisconnected`) is the ground truth, a transient `checking` flag drives the "בדוק שנית" retry spinner for `HARDWARE_CHECK_DELAY` (800ms, in `WizardPage/constants.ts`), and the retry just re-resolves against the current toggle. No real hardware integration exists yet — the toggle is the seam a real connectivity check replaces. Same component and same state shape are reused on `WizardAcquisitionPage` step 3.
 
 ### WizardBulkPage Architecture
 
@@ -161,7 +164,8 @@ The four combinations of `color` × `side` are the Figma component set כר״ח 
   - **Left (fingerprints)**: Scanner image (`BIO_FP_SCAN_BG`) + set label at `right:16, top:66`. Initially covered by frosted overlay + "בצע הרכשה" card. After acquisition: overlay lifts, scanner revealed, bottom action bar with "נעל ועבור לסט הבא" / "חזור לסט קודם".
   - **Right (face camera)**: Camera background (`BIO_CAM_BG`) + semi-transparent white overlay + header with cam/light/angle indicators + face circle (`BIO_FACE_GREEN`, 375×375 at `left:264, top:102`) + capture bar at bottom. After capture: frosted overlay + card with circular photo (`BIO_CAPTURED_PHOTO`, 138px) + "צלם שנית".
 - **Point of no return**: after face photo captured — "ביטול" disappears, "חזור" becomes a disabled gray button (`DisabledBtn`: `#f5f5f6` bg, `#8c8c8c` border/text).
-- **"סיום ומעבר לתושב הבא"**: resets all state back to step 1 for the next resident.
+- **"סיום ומעבר לתושב הבא"**: resets all state back to step 1 for the next resident, including the hardware-disconnected dev toggles.
+- Both panels carry the same hardware-disconnected overlay as `BiometricsContent` (see abnormal state 7 above) — `camHwStatus` / `fpHwStatus` passed into `Step3Content` as props rather than local state, since this page's step content is a plain function component, not a separate file.
 - Both pages import biometric assets from `@/pages/WizardPage/constants`.
 
 ## Fonts
@@ -243,6 +247,7 @@ ID field row (LTR flex order): [התחל תהליך btn] [TextField: icons + inp
 | 4 | Anywhere | Exclusion clicked | Admin code entry |
 | 5 | Anywhere | After admin code | Enter reason → proceed |
 | 6 | Step 4 | Fingerprint error | Exclusion / cancel only (no return to queue) |
+| 7 | Step 4 (+ הרכשה ייעודית step 3) | Camera or fingerprint-reader hardware disconnected | "בדוק שנית" retry — panel unblocks once the (mock) check reports connected |
 
 Abnormals 3→4→5 form a **shared exclusion flow** — implement as one reusable modal/overlay.
 

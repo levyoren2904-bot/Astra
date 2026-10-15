@@ -1,5 +1,6 @@
 import { useState, type FC } from 'react'
 import { isDevMode } from '@/utils/devtools'
+import { HardwareDisconnectedOverlay } from '@/components/biometrics/HardwareDisconnectedOverlay'
 import {
   BIO_HEADER_BG,
   BIO_FP_ICON,
@@ -15,6 +16,7 @@ import {
   FP_SETS,
   FINGER_LEFTS_4,
   FINGER_LEFTS_2,
+  HARDWARE_CHECK_DELAY,
 } from '@/pages/WizardPage/constants'
 import {
   BioRoot,
@@ -72,12 +74,36 @@ export const BiometricsContent: FC<BiometricsContentProps> = ({ onExclusion }) =
   const [currentSet, setCurrentSet] = useState(0)
   const [lockedSets, setLockedSets] = useState<Set<number>>(new Set())
   const [fpError, setFpError] = useState(false)
+  const [camDisconnected, setCamDisconnected] = useState(false)
+  const [fpReaderDisconnected, setFpReaderDisconnected] = useState(false)
+  const [camChecking, setCamChecking] = useState(false)
+  const [fpReaderChecking, setFpReaderChecking] = useState(false)
 
   const fpActive = faceCapState === 'captured'
   const allChecksOk = !mockAngleFail
   const setData = FP_SETS[currentSet]
   const isLastSet = currentSet === FP_SETS.length - 1
   const fingerLefts = setData.fingers.length === 4 ? FINGER_LEFTS_4 : FINGER_LEFTS_2
+
+  // Displayed status is derived from the dev toggle + a transient checking
+  // flag, same convention as the step-1 ID check: "בדוק שנית" re-runs the
+  // (mock) check against whatever the toggle currently says.
+  const camHwStatus = camChecking ? 'checking' : camDisconnected ? 'disconnected' : 'connected'
+  const fpHwStatus = fpReaderChecking
+    ? 'checking'
+    : fpReaderDisconnected
+      ? 'disconnected'
+      : 'connected'
+
+  function recheckCamera() {
+    setCamChecking(true)
+    window.setTimeout(() => setCamChecking(false), HARDWARE_CHECK_DELAY)
+  }
+
+  function recheckFpReader() {
+    setFpReaderChecking(true)
+    window.setTimeout(() => setFpReaderChecking(false), HARDWARE_CHECK_DELAY)
+  }
 
   function lockSet() {
     setLockedSets((prev) => new Set([...prev, currentSet]))
@@ -98,68 +124,85 @@ export const BiometricsContent: FC<BiometricsContentProps> = ({ onExclusion }) =
           <BioHeaderTitle dir="auto">טביעות אצבעות</BioHeaderTitle>
         </BioHeader>
 
-        <ScannerWrap>
-          <ScannerImg src={BIO_FP_SCAN_BG} alt="" loading="lazy" />
-        </ScannerWrap>
-
-        {fpActive && (
+        {fpHwStatus !== 'connected' ? (
+          <HardwareDisconnectedOverlay
+            device="fingerprint"
+            checking={fpHwStatus === 'checking'}
+            onRetry={recheckFpReader}
+          />
+        ) : (
           <>
-            <SetLabelRow>
-              <SetDot src={fpError ? BIO_DOT_RED : BIO_DOT_GREEN} alt="" loading="lazy" />
-              <SetLabelText dir="auto">{setData.label}</SetLabelText>
-            </SetLabelRow>
-            <SetInstruction dir="auto">{setData.instruction}</SetInstruction>
-          </>
-        )}
+            <ScannerWrap>
+              <ScannerImg src={BIO_FP_SCAN_BG} alt="" loading="lazy" />
+            </ScannerWrap>
 
-        {fpActive &&
-          setData.fingers.map((finger, i) => (
-            <FingerLabelWrap key={finger} $left={fingerLefts[i]}>
-              <FingerLabelText dir="auto">{finger}</FingerLabelText>
-            </FingerLabelWrap>
-          ))}
+            {fpActive && (
+              <>
+                <SetLabelRow>
+                  <SetDot src={fpError ? BIO_DOT_RED : BIO_DOT_GREEN} alt="" loading="lazy" />
+                  <SetLabelText dir="auto">{setData.label}</SetLabelText>
+                </SetLabelRow>
+                <SetInstruction dir="auto">{setData.instruction}</SetInstruction>
+              </>
+            )}
 
-        {fpActive && fpError && <FpErrorEllipse $left={fingerLefts[2]} />}
+            {fpActive &&
+              setData.fingers.map((finger, i) => (
+                <FingerLabelWrap key={finger} $left={fingerLefts[i]}>
+                  <FingerLabelText dir="auto">{finger}</FingerLabelText>
+                </FingerLabelWrap>
+              ))}
 
-        <BottomActionBar>
-          {fpActive && (
-            <ActionBtns>
-              <LockBtn $done={isDone} onClick={lockSet} disabled={isDone}>
-                {isLastSet && lockedSets.has(currentSet)
-                  ? 'ביומטריה הושלמה ✓'
-                  : 'נעל ועבור לסט הבא'}
-              </LockBtn>
-              {currentSet > 0 && (
-                <BackSetBtn onClick={() => setCurrentSet((s) => s - 1)}>חזור לסט קודם</BackSetBtn>
+            {fpActive && fpError && <FpErrorEllipse $left={fingerLefts[2]} />}
+
+            <BottomActionBar>
+              {fpActive && (
+                <ActionBtns>
+                  <LockBtn $done={isDone} onClick={lockSet} disabled={isDone}>
+                    {isLastSet && lockedSets.has(currentSet)
+                      ? 'ביומטריה הושלמה ✓'
+                      : 'נעל ועבור לסט הבא'}
+                  </LockBtn>
+                  {currentSet > 0 && (
+                    <BackSetBtn onClick={() => setCurrentSet((s) => s - 1)}>
+                      חזור לסט קודם
+                    </BackSetBtn>
+                  )}
+                  <ExcludeBtn $visible={fpError} onClick={onExclusion}>
+                    <span dir="auto">בצע החרגה</span>
+                    <svg
+                      width="20"
+                      height="20"
+                      viewBox="0 0 20 20"
+                      fill="none"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        d="M9.13 3.22 2.2 15.1A1 1 0 0 0 3.07 16.6h13.86a1 1 0 0 0 .87-1.5L10.87 3.22a1 1 0 0 0-1.74 0Z"
+                        stroke="#F44336"
+                        strokeWidth="1.5"
+                        strokeLinejoin="round"
+                      />
+                      <path
+                        d="M10 8v3.5"
+                        stroke="#F44336"
+                        strokeWidth="1.5"
+                        strokeLinecap="round"
+                      />
+                      <circle cx="10" cy="14" r="0.75" fill="#F44336" />
+                    </svg>
+                  </ExcludeBtn>
+                </ActionBtns>
               )}
-              <ExcludeBtn $visible={fpError} onClick={onExclusion}>
-                <span dir="auto">בצע החרגה</span>
-                <svg
-                  width="20"
-                  height="20"
-                  viewBox="0 0 20 20"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path
-                    d="M9.13 3.22 2.2 15.1A1 1 0 0 0 3.07 16.6h13.86a1 1 0 0 0 .87-1.5L10.87 3.22a1 1 0 0 0-1.74 0Z"
-                    stroke="#F44336"
-                    strokeWidth="1.5"
-                    strokeLinejoin="round"
-                  />
-                  <path d="M10 8v3.5" stroke="#F44336" strokeWidth="1.5" strokeLinecap="round" />
-                  <circle cx="10" cy="14" r="0.75" fill="#F44336" />
-                </svg>
-              </ExcludeBtn>
-            </ActionBtns>
-          )}
-        </BottomActionBar>
+            </BottomActionBar>
 
-        {!fpActive && (
-          <FrostedOverlay>
-            <FrostedLabel dir="auto">טביעות אצבעות</FrostedLabel>
-            <FpSymbolImg src={BIO_FP_SYMBOL} alt="" loading="lazy" />
-          </FrostedOverlay>
+            {!fpActive && (
+              <FrostedOverlay>
+                <FrostedLabel dir="auto">טביעות אצבעות</FrostedLabel>
+                <FpSymbolImg src={BIO_FP_SYMBOL} alt="" loading="lazy" />
+              </FrostedOverlay>
+            )}
+          </>
         )}
       </FpPanel>
 
@@ -178,56 +221,66 @@ export const BiometricsContent: FC<BiometricsContentProps> = ({ onExclusion }) =
           <BioHeaderTitle dir="auto">צילום פנים</BioHeaderTitle>
         </BioHeader>
 
-        <ResidentInstruction dir="auto">*לתושב - אנא עמוד מול המצלמה.</ResidentInstruction>
-
-        <FaceCircleWrap>
-          <FaceCircleImg
-            src={allChecksOk ? BIO_FACE_GREEN : BIO_FACE_RED}
-            alt=""
-            loading="lazy"
+        {camHwStatus !== 'connected' ? (
+          <HardwareDisconnectedOverlay
+            device="camera"
+            checking={camHwStatus === 'checking'}
+            onRetry={recheckCamera}
           />
-        </FaceCircleWrap>
+        ) : (
+          <>
+            <ResidentInstruction dir="auto">*לתושב - אנא עמוד מול המצלמה.</ResidentInstruction>
 
-        {!allChecksOk && (
-          <AngleErrorChip>
-            <AngleErrorText dir="auto">תקן את זווית הראש</AngleErrorText>
-          </AngleErrorChip>
-        )}
+            <FaceCircleWrap>
+              <FaceCircleImg
+                src={allChecksOk ? BIO_FACE_GREEN : BIO_FACE_RED}
+                alt=""
+                loading="lazy"
+              />
+            </FaceCircleWrap>
 
-        <CaptureBar>
-          <CaptureBtn
-            $ok={allChecksOk}
-            onClick={() => setFaceCapState('captured')}
-            disabled={!allChecksOk}
-            onMouseEnter={(e) => {
-              if (allChecksOk) {
-                e.currentTarget.style.opacity = '0.85'
-                e.currentTarget.style.transform = 'scale(1.05)'
-              }
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.opacity = allChecksOk ? '1' : '0.5'
-              e.currentTarget.style.transform = 'scale(1)'
-            }}
-          />
-        </CaptureBar>
+            {!allChecksOk && (
+              <AngleErrorChip>
+                <AngleErrorText dir="auto">תקן את זווית הראש</AngleErrorText>
+              </AngleErrorChip>
+            )}
 
-        {fpActive && (
-          <FrostedOverlay>
-            <FrostedLabel dir="auto">צילום פנים</FrostedLabel>
-            <CapturedThumb>
-              <CapturedThumbImg src={BIO_CAPTURED_PHOTO} alt="" loading="lazy" />
-            </CapturedThumb>
-            <RetakeBtn
-              onClick={() => {
-                setFaceCapState('waiting')
-                setLockedSets(new Set())
-                setCurrentSet(0)
-              }}
-            >
-              צלם שנית
-            </RetakeBtn>
-          </FrostedOverlay>
+            <CaptureBar>
+              <CaptureBtn
+                $ok={allChecksOk}
+                onClick={() => setFaceCapState('captured')}
+                disabled={!allChecksOk}
+                onMouseEnter={(e) => {
+                  if (allChecksOk) {
+                    e.currentTarget.style.opacity = '0.85'
+                    e.currentTarget.style.transform = 'scale(1.05)'
+                  }
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.opacity = allChecksOk ? '1' : '0.5'
+                  e.currentTarget.style.transform = 'scale(1)'
+                }}
+              />
+            </CaptureBar>
+
+            {fpActive && (
+              <FrostedOverlay>
+                <FrostedLabel dir="auto">צילום פנים</FrostedLabel>
+                <CapturedThumb>
+                  <CapturedThumbImg src={BIO_CAPTURED_PHOTO} alt="" loading="lazy" />
+                </CapturedThumb>
+                <RetakeBtn
+                  onClick={() => {
+                    setFaceCapState('waiting')
+                    setLockedSets(new Set())
+                    setCurrentSet(0)
+                  }}
+                >
+                  צלם שנית
+                </RetakeBtn>
+              </FrostedOverlay>
+            )}
+          </>
         )}
       </FacePanel>
 
@@ -242,6 +295,15 @@ export const BiometricsContent: FC<BiometricsContentProps> = ({ onExclusion }) =
               {fpError ? 'FP ERROR' : 'FP OK'}
             </DevBtnBio>
           )}
+          <DevBtnBio $active={camDisconnected} onClick={() => setCamDisconnected((d) => !d)}>
+            {camDisconnected ? 'camera DISCONNECTED' : 'camera OK'}
+          </DevBtnBio>
+          <DevBtnBio
+            $active={fpReaderDisconnected}
+            onClick={() => setFpReaderDisconnected((d) => !d)}
+          >
+            {fpReaderDisconnected ? 'FP reader DISCONNECTED' : 'FP reader OK'}
+          </DevBtnBio>
         </DevPanel>
       )}
     </BioRoot>

@@ -7,6 +7,10 @@ export const F = 'Rubik, sans-serif'
 export const CIRCUMFERENCE = 2 * Math.PI * 125
 export const SCAN_DURATION = 3000
 
+// ── Hardware connectivity (mock) ─────────────────────────────────────────────
+/** Delay for the "בדוק שנית" hardware recheck — same convention as ID_CHECK_DELAY. */
+export const HARDWARE_CHECK_DELAY = 800
+
 // ── ID card assets ────────────────────────────────────────────────────────────
 export const CARD_EMBLEM_LEFT = '/images/card-emblem-left.png'
 export const CARD_EMBLEM_RIGHT = '/images/card-emblem-right.png'
