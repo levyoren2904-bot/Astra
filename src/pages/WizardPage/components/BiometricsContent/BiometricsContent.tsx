@@ -1,6 +1,7 @@
 import { useState, type FC } from 'react'
 import { isDevMode } from '@/utils/devtools'
 import { HardwareDisconnectedOverlay } from '@/components/biometrics/HardwareDisconnectedOverlay'
+import { FaceCaptureErrorsOverlay } from '@/components/biometrics/FaceCaptureErrorsOverlay'
 import {
   BIO_HEADER_BG,
   BIO_FP_ICON,
@@ -17,6 +18,7 @@ import {
   FINGER_LEFTS_4,
   FINGER_LEFTS_2,
   HARDWARE_CHECK_DELAY,
+  MOCK_FACE_CAPTURE_ERRORS,
 } from '@/pages/WizardPage/constants'
 import {
   BioRoot,
@@ -71,6 +73,7 @@ interface BiometricsContentProps {
 export const BiometricsContent: FC<BiometricsContentProps> = ({ onExclusion }) => {
   const [faceCapState, setFaceCapState] = useState<FaceCapState>('waiting')
   const [mockAngleFail, setMockAngleFail] = useState(false)
+  const [mockFaceErrors, setMockFaceErrors] = useState(false)
   const [currentSet, setCurrentSet] = useState(0)
   const [lockedSets, setLockedSets] = useState<Set<number>>(new Set())
   const [fpError, setFpError] = useState(false)
@@ -263,7 +266,18 @@ export const BiometricsContent: FC<BiometricsContentProps> = ({ onExclusion }) =
               />
             </CaptureBar>
 
-            {fpActive && (
+            {fpActive && mockFaceErrors && (
+              <FaceCaptureErrorsOverlay
+                errors={MOCK_FACE_CAPTURE_ERRORS}
+                onRetake={() => {
+                  setFaceCapState('waiting')
+                  setLockedSets(new Set())
+                  setCurrentSet(0)
+                }}
+              />
+            )}
+
+            {fpActive && !mockFaceErrors && (
               <FrostedOverlay>
                 <FrostedLabel dir="auto">צילום פנים</FrostedLabel>
                 <CapturedThumb>
@@ -289,6 +303,9 @@ export const BiometricsContent: FC<BiometricsContentProps> = ({ onExclusion }) =
         <DevPanel>
           <DevBtnBio $active={mockAngleFail} onClick={() => setMockAngleFail((f) => !f)}>
             {mockAngleFail ? 'angle FAIL' : 'angle OK'}
+          </DevBtnBio>
+          <DevBtnBio $active={mockFaceErrors} onClick={() => setMockFaceErrors((f) => !f)}>
+            {mockFaceErrors ? 'face check FAIL' : 'face check OK'}
           </DevBtnBio>
           {fpActive && (
             <DevBtnBio $active={fpError} onClick={() => setFpError((f) => !f)}>
