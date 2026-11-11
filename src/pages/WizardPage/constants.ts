@@ -11,6 +11,9 @@ export const SCAN_DURATION = 3000
 /** Delay for the "בדוק שנית" hardware recheck — same convention as ID_CHECK_DELAY. */
 export const HARDWARE_CHECK_DELAY = 800
 
+/** Mock reasons the face-quality check returns after capture (the real SDK returns a named reason per failure). */
+export const MOCK_FACE_CAPTURE_ERRORS = ['זווית הראש', 'הפה פתוח', 'תאורה לא אחידה'] as const
+
 // ── ID card assets ────────────────────────────────────────────────────────────
 export const CARD_EMBLEM_LEFT = '/images/card-emblem-left.png'
 export const CARD_EMBLEM_RIGHT = '/images/card-emblem-right.png'

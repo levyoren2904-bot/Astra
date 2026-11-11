@@ -11,6 +11,7 @@ import { useNavigate } from 'react-router-dom'
 import { VideoBackground } from '@/components/ui/VideoBackground'
 import { CloseIcon } from '@/components/ui/CloseIcon'
 import { HardwareDisconnectedOverlay } from '@/components/biometrics/HardwareDisconnectedOverlay'
+import { FaceCaptureErrorsOverlay } from '@/components/biometrics/FaceCaptureErrorsOverlay'
 import {
   BIO_HEADER_BG,
   BIO_FP_ICON,
@@ -22,6 +23,7 @@ import {
   BIO_DOT_GREEN,
   BIO_CAPTURED_PHOTO,
   HARDWARE_CHECK_DELAY,
+  MOCK_FACE_CAPTURE_ERRORS,
 } from '@/pages/WizardPage/constants'
 import {
   PageRoot,
@@ -516,6 +518,8 @@ type HwStatus = 'connected' | 'disconnected' | 'checking'
 interface Step3ContentProps {
   fpAcquired: boolean
   faceState: FaceState
+  /** Reasons the face-quality check flagged after capture; empty = photo passed. */
+  faceErrors: readonly string[]
   onAcquireFp: () => void
   onCaptureFace: () => void
   onRetakePhoto: () => void
@@ -528,6 +532,7 @@ interface Step3ContentProps {
 const Step3Content: FC<Step3ContentProps> = ({
   fpAcquired,
   faceState,
+  faceErrors,
   onAcquireFp,
   onCaptureFace,
   onRetakePhoto,
@@ -647,7 +652,11 @@ const Step3Content: FC<Step3ContentProps> = ({
           </BioCaptureBar>
 
           {/* Captured overlay */}
-          {faceState === 'captured' && (
+          {faceState === 'captured' && faceErrors.length > 0 && (
+            <FaceCaptureErrorsOverlay errors={faceErrors} onRetake={onRetakePhoto} />
+          )}
+
+          {faceState === 'captured' && faceErrors.length === 0 && (
             <>
               <FpFrostedOverlay />
               <FpOverlayCard>
@@ -683,6 +692,7 @@ export const WizardAcquisitionPage: FC = () => {
   const [forceIdInvalid, setForceIdInvalid] = useState(false)
   const [fpAcquired, setFpAcquired] = useState(false)
   const [faceState, setFaceState] = useState<FaceState>('idle')
+  const [mockFaceErrors, setMockFaceErrors] = useState(false)
   const [camDisconnected, setCamDisconnected] = useState(false)
   const [fpReaderDisconnected, setFpReaderDisconnected] = useState(false)
   const [camChecking, setCamChecking] = useState(false)
@@ -803,6 +813,7 @@ export const WizardAcquisitionPage: FC = () => {
           <Step3Content
             fpAcquired={fpAcquired}
             faceState={faceState}
+            faceErrors={mockFaceErrors ? MOCK_FACE_CAPTURE_ERRORS : []}
             onAcquireFp={() => setFpAcquired(true)}
             onCaptureFace={() => setFaceState('captured')}
             onRetakePhoto={() => setFaceState('idle')}
@@ -892,6 +903,9 @@ export const WizardAcquisitionPage: FC = () => {
           </DevBtn>
           <DevBtn onClick={() => setFpReaderDisconnected((d) => !d)}>
             fp reader: {fpReaderDisconnected ? 'disconnected' : 'ok'}
+          </DevBtn>
+          <DevBtn onClick={() => setMockFaceErrors((v) => !v)}>
+            face check: {mockFaceErrors ? 'fail' : 'ok'}
           </DevBtn>
         </DevBar>
       )}

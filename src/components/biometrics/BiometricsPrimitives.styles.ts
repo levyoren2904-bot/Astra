@@ -312,3 +312,107 @@ export const BioHwRetryBtn = styled.button<{ $checking?: boolean }>(({ $checking
   color: '#fff',
   whiteSpace: 'nowrap',
 }))
+
+/* ── Face capture errors (post-capture quality check, Figma 800:5969) ── */
+
+/** Card listing what the face-quality check flagged after the photo was taken. */
+export const BioFaceErrCard = styled.div({
+  position: 'absolute',
+  left: '50%',
+  top: '50%',
+  transform: 'translate(-50%, -50%)',
+  zIndex: 10,
+  width: 529,
+  padding: 16,
+  gap: 16,
+  borderRadius: 8,
+  overflow: 'hidden',
+  // Figma: GLASS + DROP_SHADOW 0/0 30.8 spread 5 - same translation as the acquisition overlay card.
+  boxShadow: '0 0 30.8px 5px rgba(0,0,0,0.25)',
+  display: 'flex',
+  flexDirection: 'column',
+  alignItems: 'center',
+})
+
+export const BioFaceErrTitle = styled.h3({
+  margin: 0,
+  fontFamily: BF,
+  fontSize: 24,
+  fontWeight: 600,
+  lineHeight: 'normal',
+  color: '#242424',
+  whiteSpace: 'nowrap',
+})
+
+export const BioFaceErrSub = styled.p({
+  margin: 0,
+  fontFamily: BF,
+  fontSize: 16,
+  fontWeight: 400,
+  lineHeight: 'normal',
+  color: '#6e6e78',
+  whiteSpace: 'nowrap',
+})
+
+/** 160x161 slot the 138px photo sits centred in (Figma "Connectivity 05"). */
+export const BioFaceErrPhotoSlot = styled.div({
+  width: 160,
+  height: 161,
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  flexShrink: 0,
+})
+
+export const BioFaceErrList = styled.ul({
+  listStyle: 'none',
+  margin: 0,
+  padding: 0,
+  width: '100%',
+  display: 'flex',
+  flexDirection: 'column',
+  gap: 8,
+})
+
+export const BioFaceErrRow = styled.li({
+  display: 'flex',
+  alignItems: 'flex-start',
+  gap: 12,
+  padding: 12,
+  background: '#f5f5f6',
+  border: '1px solid #56565d',
+  borderRadius: 8,
+})
+
+export const BioFaceErrIcon = styled.img({
+  width: 24,
+  height: 24,
+  flexShrink: 0,
+})
+
+export const BioFaceErrText = styled.span({
+  flex: 1,
+  minWidth: 0,
+  fontFamily: BF,
+  fontSize: 16,
+  fontWeight: 500,
+  lineHeight: 'normal',
+  color: '#242424',
+  textAlign: 'right',
+})
+
+export const BioFaceErrRetakeBtn = styled.button({
+  background: '#5c5def',
+  height: 32,
+  padding: '0 16px',
+  borderRadius: 4,
+  border: 'none',
+  cursor: 'pointer',
+  boxShadow: '0px 2px 4px rgba(0,0,0,0.3)',
+  fontFamily: BF,
+  fontSize: 16,
+  fontWeight: 700,
+  color: '#fff',
+  whiteSpace: 'nowrap',
+  '&:hover': { opacity: 0.85 },
+})
