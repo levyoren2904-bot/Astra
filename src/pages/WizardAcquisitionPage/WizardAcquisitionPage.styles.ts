@@ -3,7 +3,7 @@ import {
   BioAngleChip,
   BioAngleDotImg,
   BioAngleIconImg,
-  BioCapturedThumb,
+  BioCapturedThumbLarge,
   BioCapturedThumbImg,
   BioCaptureBarArea,
   BioCaptureBtnSimple,
@@ -610,7 +610,7 @@ export const FaceAngleIconImg = BioAngleIconImg
 export const FaceHint = BioResidentHint
 export const FaceCircleWrap = BioFaceCircleWrap
 export const FaceCircleImage = BioFaceCircleImg
-export const FaceCapturedThumb = BioCapturedThumb
+export const FaceCapturedThumb = BioCapturedThumbLarge
 export const FaceCapturedThumbImg = BioCapturedThumbImg
 export const BioCaptureBar = BioCaptureBarArea
 export const CaptureBtnCircle = BioCaptureBtnSimple

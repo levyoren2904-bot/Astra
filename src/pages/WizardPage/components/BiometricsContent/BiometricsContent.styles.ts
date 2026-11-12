@@ -3,7 +3,7 @@ import {
   BioAngleChip,
   BioAngleDotImg,
   BioAngleIconImg,
-  BioCapturedThumb,
+  BioCapturedThumbLarge,
   BioCapturedThumbImg,
   BioCaptureBarArea,
   BioFaceCamImg,
@@ -204,7 +204,7 @@ export const CaptureBtn = styled.button<{ $ok: boolean }>(({ $ok }) => ({
   transition: 'opacity 0.15s, transform 0.15s',
 }))
 
-export const CapturedThumb = BioCapturedThumb
+export const CapturedThumb = BioCapturedThumbLarge
 export const CapturedThumbImg = BioCapturedThumbImg
 
 export const RetakeBtn = styled.button({

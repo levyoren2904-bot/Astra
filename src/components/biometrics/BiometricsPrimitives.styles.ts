@@ -231,6 +231,17 @@ export const BioCapturedThumb = styled.div({
   boxShadow: '0 0 30.8px 5px rgba(0,0,0,0.25)',
 })
 
+/**
+ * Captured-photo circle on the post-capture overlay, 1.5x the Figma 138px
+ * (Oren, 2026-11-12: make the captured photo more prominent). The errors
+ * overlay keeps the 138px thumb - it sits in a fixed 160px Figma slot.
+ */
+export const BioCapturedThumbLarge = styled(BioCapturedThumb)({
+  width: 207,
+  height: 207,
+  boxShadow: '0 0 46px 7.5px rgba(0,0,0,0.25)',
+})
+
 export const BioCapturedThumbImg = styled.img({
   width: '100%',
   height: '100%',
