@@ -427,3 +427,31 @@ export const BioFaceErrRetakeBtn = styled.button({
   whiteSpace: 'nowrap',
   '&:hover': { opacity: 0.85 },
 })
+
+/**
+ * Warning state only (Figma 819:6130): retake stays primary, accepting the
+ * borderline photo is secondary. RTL dialog rule - primary leftmost, secondary
+ * to its right - so the row is pinned LTR and the DOM order is [primary, secondary].
+ */
+export const BioFaceErrActions = styled.div({
+  display: 'flex',
+  direction: 'ltr',
+  alignItems: 'center',
+  justifyContent: 'center',
+  gap: 12,
+})
+
+export const BioFaceErrAcceptBtn = styled.button({
+  background: 'transparent',
+  height: 32,
+  padding: '0 16px',
+  borderRadius: 4,
+  border: '1px solid #5c5def',
+  cursor: 'pointer',
+  fontFamily: BF,
+  fontSize: 16,
+  fontWeight: 700,
+  color: '#5c5def',
+  whiteSpace: 'nowrap',
+  '&:hover': { background: 'rgba(92,93,239,0.08)' },
+})
