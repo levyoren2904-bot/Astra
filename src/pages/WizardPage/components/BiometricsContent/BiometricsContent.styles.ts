@@ -22,6 +22,7 @@ import {
   BioPanelHeader,
   BioPanelTitle,
   BioResidentHint,
+  BioResidentHintTranslit,
   BioScannerImage,
   BioScannerRegion,
   BioSetDotImg,
@@ -169,6 +170,7 @@ export const AngleChip = BioAngleChip
 export const AngleDot = BioAngleDotImg
 export const AngleIcon = BioAngleIconImg
 export const ResidentInstruction = BioResidentHint
+export const ResidentInstructionTranslit = BioResidentHintTranslit
 
 export const FaceCircleWrap = BioFaceCircleWrap
 export const FaceCircleImg = BioFaceCircleImg

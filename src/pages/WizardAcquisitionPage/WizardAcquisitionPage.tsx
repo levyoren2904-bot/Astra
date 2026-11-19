@@ -25,6 +25,8 @@ import {
   BIO_CAPTURED_PHOTO,
   HARDWARE_CHECK_DELAY,
   MOCK_FACE_CHECK,
+  FACE_HINT,
+  FACE_HINT_TRANSLIT,
   nextFaceCheckMock,
   type FaceCheckMock,
 } from '@/pages/WizardPage/constants'
@@ -106,6 +108,7 @@ import {
   CamOverlayDiv,
   FaceHeaderIconsLeft,
   FaceHint,
+  FaceHintTranslit,
   FaceCircleWrap,
   FaceCircleImage,
   FaceCapturedThumb,
@@ -645,7 +648,8 @@ const Step3Content: FC<Step3ContentProps> = ({
       ) : (
         <>
           {/* Resident instruction */}
-          <FaceHint dir="auto">*לתושב - אנא עמוד מול המצלמה.</FaceHint>
+          <FaceHint dir="auto">{FACE_HINT}</FaceHint>
+          <FaceHintTranslit dir="auto">{FACE_HINT_TRANSLIT}</FaceHintTranslit>
 
           {/* Face detection circle */}
           {faceState === 'idle' && (

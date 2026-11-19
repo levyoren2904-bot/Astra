@@ -20,6 +20,8 @@ import {
   FINGER_LEFTS_2,
   HARDWARE_CHECK_DELAY,
   MOCK_FACE_CHECK,
+  FACE_HINT,
+  FACE_HINT_TRANSLIT,
   nextFaceCheckMock,
   type FaceCheckMock,
 } from '@/pages/WizardPage/constants'
@@ -54,6 +56,7 @@ import {
   CamOverlay,
   FaceHeaderLeft,
   ResidentInstruction,
+  ResidentInstructionTranslit,
   FaceCircleWrap,
   FaceCircleImg,
   AngleErrorChip,
@@ -246,7 +249,8 @@ export const BiometricsContent: FC<BiometricsContentProps> = ({
           />
         ) : (
           <>
-            <ResidentInstruction dir="auto">*לתושב - אנא עמוד מול המצלמה.</ResidentInstruction>
+            <ResidentInstruction dir="auto">{FACE_HINT}</ResidentInstruction>
+            <ResidentInstructionTranslit dir="auto">{FACE_HINT_TRANSLIT}</ResidentInstructionTranslit>
 
             <FaceCircleWrap>
               <FaceCircleImg
