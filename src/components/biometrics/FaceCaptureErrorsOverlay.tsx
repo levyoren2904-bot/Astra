@@ -6,6 +6,7 @@ import {
   BioFaceErrThumb,
   BioCapturedThumbImg,
   BioFaceErrCard,
+  BioFaceErrHeader,
   BioFaceErrTitle,
   BioFaceErrSub,
   BioFaceErrPhotoSlot,
@@ -50,8 +51,10 @@ export const FaceCaptureErrorsOverlay: FC<FaceCaptureErrorsOverlayProps> = ({
     <>
       <BioFrostedBackdrop />
       <BioFaceErrCard dir="rtl" role="alert">
-        <BioFaceErrTitle>{copy.title}</BioFaceErrTitle>
-        <BioFaceErrSub>{copy.sub}</BioFaceErrSub>
+        <BioFaceErrHeader>
+          <BioFaceErrTitle>{copy.title}</BioFaceErrTitle>
+          <BioFaceErrSub>{copy.sub}</BioFaceErrSub>
+        </BioFaceErrHeader>
         <BioFaceErrPhotoSlot>
           <BioFaceErrThumb>
             <BioCapturedThumbImg src={BIO_CAPTURED_PHOTO} alt="" loading="lazy" />

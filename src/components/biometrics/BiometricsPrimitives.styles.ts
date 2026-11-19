@@ -247,10 +247,11 @@ export const BioCapturedThumbLarge = styled(BioCapturedThumb)({
   boxShadow: '0 0 46px 7.5px rgba(0,0,0,0.25)',
 })
 
-/** Photo on the face-check card: 168px (was 138), Shira 2026-11-19. */
+/** Photo on the face-check card: 168px at 1080p (was 138), Shira 2026-11-19; shrinks on short screens. */
+const FACE_ERR_PHOTO = 'clamp(130px, 18.5vh, 168px)'
 export const BioFaceErrThumb = styled(BioCapturedThumb)({
-  width: 168,
-  height: 168,
+  width: FACE_ERR_PHOTO,
+  height: FACE_ERR_PHOTO,
 })
 
 export const BioCapturedThumbImg = styled.img({
@@ -345,15 +346,30 @@ export const BioFaceErrCard = styled.div({
   transform: 'translate(-50%, -50%)',
   zIndex: 10,
   width: 529,
-  padding: 16,
-  gap: 16,
+  // Oren 2026-11-19: more air - 24 around and between groups (was 16/16) at 1080p,
+  // easing down on shorter screens (laptops) so the card still fits its panel.
+  padding: 'clamp(16px, 2.2vh, 24px)',
+  gap: 'clamp(12px, 2.2vh, 24px)',
+  // Last resort on very short screens: scroll inside the card rather than clip the buttons.
+  maxHeight: 'calc(100% - 24px)',
   borderRadius: 8,
-  overflow: 'hidden',
+  overflowX: 'hidden',
+  overflowY: 'auto',
+  // Children keep their height when the card scrolls instead of being squeezed.
+  '& > *': { flexShrink: 0 },
   // Figma: GLASS + DROP_SHADOW 0/0 30.8 spread 5 - same translation as the acquisition overlay card.
   boxShadow: '0 0 30.8px 5px rgba(0,0,0,0.25)',
   display: 'flex',
   flexDirection: 'column',
   alignItems: 'center',
+})
+
+/** Title + sub as one group, held closer than the card's section gap. */
+export const BioFaceErrHeader = styled.div({
+  display: 'flex',
+  flexDirection: 'column',
+  alignItems: 'center',
+  gap: 8,
 })
 
 export const BioFaceErrTitle = styled.h3({
@@ -378,11 +394,11 @@ export const BioFaceErrSub = styled.p({
 
 /**
  * Slot for the captured photo. Was Figma's 160x161 slot around a 138px thumb;
- * Shira 2026-11-19: bigger photo, shorter rows - the slot now hugs a 168px photo.
+ * Shira 2026-11-19: bigger photo, shorter rows - the slot now hugs the photo.
  */
 export const BioFaceErrPhotoSlot = styled.div({
-  width: 168,
-  height: 168,
+  width: FACE_ERR_PHOTO,
+  height: FACE_ERR_PHOTO,
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
@@ -396,7 +412,7 @@ export const BioFaceErrList = styled.ul({
   width: '100%',
   display: 'flex',
   flexDirection: 'column',
-  gap: 8,
+  gap: 12,
 })
 
 export const BioFaceErrRow = styled.li({
