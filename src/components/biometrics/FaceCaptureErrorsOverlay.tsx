@@ -13,6 +13,8 @@ import {
   BioFaceErrRow,
   BioFaceErrIcon,
   BioFaceErrText,
+  BioFaceErrTextCol,
+  BioFaceErrTranslit,
   BioFaceErrRetakeBtn,
   BioFaceErrActions,
   BioFaceErrAcceptBtn,
@@ -62,7 +64,12 @@ export const FaceCaptureErrorsOverlay: FC<FaceCaptureErrorsOverlayProps> = ({
                 src={ICON[issue.severity]}
                 alt={issue.severity === 'error' ? 'שגיאה' : 'אזהרה'}
               />
-              <BioFaceErrText>{issue.label}</BioFaceErrText>
+              <BioFaceErrTextCol>
+                <BioFaceErrText>{issue.label}</BioFaceErrText>
+                {issue.translit && (
+                  <BioFaceErrTranslit>{issue.translit}</BioFaceErrTranslit>
+                )}
+              </BioFaceErrTextCol>
             </BioFaceErrRow>
           ))}
         </BioFaceErrList>

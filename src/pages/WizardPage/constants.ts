@@ -22,12 +22,16 @@ export const FACE_CHECK_MOCK_ORDER: readonly FaceCheckMock[] = ['ok', 'error', '
 export const MOCK_FACE_CHECK: Record<FaceCheckMock, readonly FaceIssue[]> = {
   ok: [],
   error: [
-    { label: 'זווית הראש', severity: 'error' },
-    { label: 'הפה פתוח', severity: 'error' },
+    { label: 'התקרב למצלמה', severity: 'error', translit: 'אִקְתַרִבּ מִן אֶלְכַּאמֵרַא' },
+    {
+      label: 'הורד את המשקפיים/הכובע',
+      severity: 'error',
+      translit: 'אִנְזִע אֶלְנַטַּארַאת / אֶלְקֻבַּעַה',
+    },
     { label: 'תאורה לא אחידה', severity: 'warning' },
   ],
   warning: [
-    { label: 'תאורה לא אחידה', severity: 'warning' },
+    { label: 'התרחק מהמצלמה', severity: 'warning', translit: 'אִבְּתַעִד עַן אֶלְכַּאמֵרַא' },
     { label: 'רקע לא אחיד', severity: 'warning' },
   ],
 }
@@ -79,16 +83,19 @@ export const FP_SETS = [
     label: '4 אצבעות - יד ימין',
     fingers: ['מורה', 'אמה', 'קמיצה', 'זרת'],
     instruction: '*לתושב - הנח 4 אצבעות יד ימין על הסורק',
+    translit: '*תעתיק - דַע אַרְבַּעַת אַצַאבִּע אֶלְיַד אֶלְיַמְנַא עַלַא אֶלְמַאסִח אֶ-דַוְּוִי',
   },
   {
     label: '4 אצבעות - יד שמאל',
     fingers: ['זרת', 'קמיצה', 'אמה', 'מורה'],
     instruction: '*לתושב - הנח 4 אצבעות יד שמאל על הסורק',
+    translit: '*תעתיק - דַע אַרְבַּעַת אַצַאבִּע אֶלְיַד אֶלְיִסְרַא עַלַא אֶלְמַאסִח אֶ-דַוְּוִי',
   },
   {
     label: '2 אגודלים',
     fingers: ['אגודל שמאל', 'אגודל ימין'],
     instruction: '*לתושב - הנח 2 אגודלים על הסורק',
+    translit: '*תעתיק - דַע אִבְּהַאמַי אֶלְיַדֵין עַלַא אֶלְמַאסִח אֶ-דַוְּוִי',
   },
 ]
 
