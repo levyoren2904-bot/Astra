@@ -2,6 +2,7 @@ import { useState, type FC } from 'react'
 import { isDevMode } from '@/utils/devtools'
 import { HardwareDisconnectedOverlay } from '@/components/biometrics/HardwareDisconnectedOverlay'
 import { FaceCaptureErrorsOverlay } from '@/components/biometrics/FaceCaptureErrorsOverlay'
+import { faceCheckVerdict } from '@/lib/faceCheck'
 import {
   BIO_HEADER_BG,
   BIO_FP_ICON,
@@ -18,7 +19,9 @@ import {
   FINGER_LEFTS_4,
   FINGER_LEFTS_2,
   HARDWARE_CHECK_DELAY,
-  MOCK_FACE_CAPTURE_ERRORS,
+  MOCK_FACE_CHECK,
+  nextFaceCheckMock,
+  type FaceCheckMock,
 } from '@/pages/WizardPage/constants'
 import {
   BioRoot,
@@ -68,12 +71,21 @@ type FaceCapState = 'waiting' | 'captured'
 
 interface BiometricsContentProps {
   onExclusion: () => void
+  /** Reports whether a face-check ERROR is on screen, so the wizard can hold "הבא". */
+  onFaceBlockedChange: (blocked: boolean) => void
 }
 
-export const BiometricsContent: FC<BiometricsContentProps> = ({ onExclusion }) => {
+const isFaceBlocking = (captured: boolean, mock: FaceCheckMock) =>
+  captured && faceCheckVerdict(MOCK_FACE_CHECK[mock]) === 'error'
+
+export const BiometricsContent: FC<BiometricsContentProps> = ({
+  onExclusion,
+  onFaceBlockedChange,
+}) => {
   const [faceCapState, setFaceCapState] = useState<FaceCapState>('waiting')
   const [mockAngleFail, setMockAngleFail] = useState(false)
-  const [mockFaceErrors, setMockFaceErrors] = useState(false)
+  const [mockFaceCheck, setMockFaceCheck] = useState<FaceCheckMock>('ok')
+  const [faceAccepted, setFaceAccepted] = useState(false)
   const [currentSet, setCurrentSet] = useState(0)
   const [lockedSets, setLockedSets] = useState<Set<number>>(new Set())
   const [fpError, setFpError] = useState(false)
@@ -83,6 +95,8 @@ export const BiometricsContent: FC<BiometricsContentProps> = ({ onExclusion }) =
   const [fpReaderChecking, setFpReaderChecking] = useState(false)
 
   const fpActive = faceCapState === 'captured'
+  const faceIssues = MOCK_FACE_CHECK[mockFaceCheck]
+  const showFaceIssues = fpActive && faceIssues.length > 0 && !faceAccepted
   const allChecksOk = !mockAngleFail
   const setData = FP_SETS[currentSet]
   const isLastSet = currentSet === FP_SETS.length - 1
@@ -251,7 +265,10 @@ export const BiometricsContent: FC<BiometricsContentProps> = ({ onExclusion }) =
             <CaptureBar>
               <CaptureBtn
                 $ok={allChecksOk}
-                onClick={() => setFaceCapState('captured')}
+                onClick={() => {
+                  setFaceCapState('captured')
+                  onFaceBlockedChange(isFaceBlocking(true, mockFaceCheck))
+                }}
                 disabled={!allChecksOk}
                 onMouseEnter={(e) => {
                   if (allChecksOk) {
@@ -266,10 +283,13 @@ export const BiometricsContent: FC<BiometricsContentProps> = ({ onExclusion }) =
               />
             </CaptureBar>
 
-            {fpActive && mockFaceErrors && (
+            {showFaceIssues && (
               <FaceCaptureErrorsOverlay
-                errors={MOCK_FACE_CAPTURE_ERRORS}
+                issues={faceIssues}
+                onAccept={() => setFaceAccepted(true)}
                 onRetake={() => {
+                  onFaceBlockedChange(false)
+                  setFaceAccepted(false)
                   setFaceCapState('waiting')
                   setLockedSets(new Set())
                   setCurrentSet(0)
@@ -277,7 +297,7 @@ export const BiometricsContent: FC<BiometricsContentProps> = ({ onExclusion }) =
               />
             )}
 
-            {fpActive && !mockFaceErrors && (
+            {fpActive && !showFaceIssues && (
               <FrostedOverlay>
                 <FrostedLabel dir="auto">צילום פנים</FrostedLabel>
                 <CapturedThumb>
@@ -285,6 +305,8 @@ export const BiometricsContent: FC<BiometricsContentProps> = ({ onExclusion }) =
                 </CapturedThumb>
                 <RetakeBtn
                   onClick={() => {
+                    onFaceBlockedChange(false)
+                    setFaceAccepted(false)
                     setFaceCapState('waiting')
                     setLockedSets(new Set())
                     setCurrentSet(0)
@@ -304,8 +326,16 @@ export const BiometricsContent: FC<BiometricsContentProps> = ({ onExclusion }) =
           <DevBtnBio $active={mockAngleFail} onClick={() => setMockAngleFail((f) => !f)}>
             {mockAngleFail ? 'angle FAIL' : 'angle OK'}
           </DevBtnBio>
-          <DevBtnBio $active={mockFaceErrors} onClick={() => setMockFaceErrors((f) => !f)}>
-            {mockFaceErrors ? 'face check FAIL' : 'face check OK'}
+          <DevBtnBio
+            $active={mockFaceCheck !== 'ok'}
+            onClick={() => {
+              const next = nextFaceCheckMock(mockFaceCheck)
+              setMockFaceCheck(next)
+              setFaceAccepted(false)
+              onFaceBlockedChange(isFaceBlocking(fpActive, next))
+            }}
+          >
+            face check {mockFaceCheck.toUpperCase()}
           </DevBtnBio>
           {fpActive && (
             <DevBtnBio $active={fpError} onClick={() => setFpError((f) => !f)}>

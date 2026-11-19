@@ -1,4 +1,5 @@
 import type React from 'react'
+import type { FaceIssue } from '@/lib/faceCheck'
 
 // ── Font ──────────────────────────────────────────────────────────────────────
 export const F = 'Rubik, sans-serif'
@@ -11,8 +12,27 @@ export const SCAN_DURATION = 3000
 /** Delay for the "בדוק שנית" hardware recheck — same convention as ID_CHECK_DELAY. */
 export const HARDWARE_CHECK_DELAY = 800
 
-/** Mock reasons the face-quality check returns after capture (the real SDK returns a named reason per failure). */
-export const MOCK_FACE_CAPTURE_ERRORS = ['זווית הראש', 'הפה פתוח', 'תאורה לא אחידה'] as const
+/**
+ * Mock results of the post-capture face-quality check (the real SDK returns a
+ * named reason per issue). `error` is deliberately mixed - one warning among
+ * the errors - to show that an error wins. Dev toggle cycles ok -> error -> warning.
+ */
+export type FaceCheckMock = 'ok' | 'error' | 'warning'
+export const FACE_CHECK_MOCK_ORDER: readonly FaceCheckMock[] = ['ok', 'error', 'warning']
+export const MOCK_FACE_CHECK: Record<FaceCheckMock, readonly FaceIssue[]> = {
+  ok: [],
+  error: [
+    { label: 'זווית הראש', severity: 'error' },
+    { label: 'הפה פתוח', severity: 'error' },
+    { label: 'תאורה לא אחידה', severity: 'warning' },
+  ],
+  warning: [
+    { label: 'תאורה לא אחידה', severity: 'warning' },
+    { label: 'רקע לא אחיד', severity: 'warning' },
+  ],
+}
+export const nextFaceCheckMock = (m: FaceCheckMock): FaceCheckMock =>
+  FACE_CHECK_MOCK_ORDER[(FACE_CHECK_MOCK_ORDER.indexOf(m) + 1) % FACE_CHECK_MOCK_ORDER.length]
 
 // ── ID card assets ────────────────────────────────────────────────────────────
 export const CARD_EMBLEM_LEFT = '/images/card-emblem-left.png'

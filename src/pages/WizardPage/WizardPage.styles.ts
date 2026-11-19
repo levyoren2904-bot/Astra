@@ -87,12 +87,14 @@ export const DevBtnWizard = styled.button<{ $active: boolean; $activeBg: string 
   }),
 )
 
-export const NextBtn = styled.button({
+export const NextBtn = styled.button<{ $disabled?: boolean }>(({ $disabled }) => ({
   background: '#5c5def',
   height: 32,
   padding: '0 16px',
   minWidth: 109,
-})
+  opacity: $disabled ? 0.4 : 1,
+  cursor: $disabled ? 'not-allowed' : 'pointer',
+}))
 
 export const NextBtnLabel = styled.span({
   fontFamily: BF,

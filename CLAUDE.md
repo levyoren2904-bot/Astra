@@ -248,7 +248,7 @@ ID field row (LTR flex order): [התחל תהליך btn] [TextField: icons + inp
 | 5 | Anywhere | After admin code | Enter reason → proceed |
 | 6 | Step 4 | Fingerprint error | Exclusion / cancel only (no return to queue) |
 | 7 | Step 4 (+ הרכשה ייעודית step 3) | Camera or fingerprint-reader hardware disconnected | "בדוק שנית" retry — panel unblocks once the (mock) check reports connected |
-| 8 | Step 4 (+ הרכשה ייעודית step 3) | Face-quality check flags the photo AFTER capture (SDK returns a named reason per failure) | `FaceCaptureErrorsOverlay` lists the reasons, "צלם שנית" returns to live camera. Mock: dev toggle "face check" + `MOCK_FACE_CAPTURE_ERRORS`. Figma 800:5899 / card 800:5969 |
+| 8 | Step 4 (+ הרכשה ייעודית step 3) | Face-quality check flags the photo AFTER capture (SDK returns a named reason + severity per issue) | `FaceCaptureErrorsOverlay`. Any ERROR → "תמונה לא תקינה / יש לתקן ולצלם שנית", retake only. Warnings only → "תמונה גבולית / לתוצאה מיטבית צלם שנית", retake (primary) or "המשך עם תמונה זו" (secondary, keeps the photo). All issues listed, errors first: red triangle for an error, `#E65100` information circle for a warning (shape AND colour differ - colour alone failed the 11-19 gate). An open ERROR disables "הבא" (wizard) / "סיום תהליך" (acquisition); a warning does not. Logic in `src/lib/faceCheck.ts`. Mock: dev toggle "face check" cycles ok → error (mixed) → warning, `MOCK_FACE_CHECK`. Figma 800:5899 (error) / 819:5957 (warning) |
 
 Abnormals 3→4→5 form a **shared exclusion flow** — implement as one reusable modal/overlay.
 

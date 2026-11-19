@@ -51,6 +51,8 @@ export const WizardPage: FC = () => {
   const [showExclusion, setShowExclusion] = useState(false)
   const [showCardTypeWarning, setShowCardTypeWarning] = useState(false)
   const [printingDone, setPrintingDone] = useState(false)
+  /** Step 4: the face-check ERROR card is open - Shira: an error does not allow moving on. */
+  const [faceBlocked, setFaceBlocked] = useState(false)
 
   const idFromState = (location.state as { id?: string } | null)?.id ?? ''
   const displayId = idFromState || MOCK_RESIDENT.id
@@ -67,6 +69,7 @@ export const WizardPage: FC = () => {
       setPrintingDone(false)
       setCurrentStep(4)
     } else if (currentStep > 1) {
+      if (currentStep === 4) setFaceBlocked(false)
       setCurrentStep((s) => s - 1)
     } else {
       navigate('/')
@@ -77,6 +80,7 @@ export const WizardPage: FC = () => {
   }
 
   const atStep5 = currentStep === 5
+  const nextBlocked = currentStep === 4 && faceBlocked
 
   return (
     <PageRoot className="relative w-full overflow-hidden">
@@ -142,7 +146,12 @@ export const WizardPage: FC = () => {
         {currentStep === 3 && (
           <FeesContent onExclusion={() => setShowExclusion(true)} onClose={() => navigate('/')} />
         )}
-        {currentStep === 4 && <BiometricsContent onExclusion={() => setShowExclusion(true)} />}
+        {currentStep === 4 && (
+          <BiometricsContent
+            onExclusion={() => setShowExclusion(true)}
+            onFaceBlockedChange={setFaceBlocked}
+          />
+        )}
         {currentStep === 5 && !printingDone && (
           <PrintingContent onComplete={() => setPrintingDone(true)} />
         )}
@@ -197,6 +206,8 @@ export const WizardPage: FC = () => {
         {/* ── Action buttons — LTR: הבא(left) | חזור | ביטול ── */}
         <div className="flex gap-4 items-start shrink-0 w-full" dir="ltr">
           <NextBtn
+            $disabled={nextBlocked}
+            disabled={nextBlocked}
             onClick={atStep5 ? handleCancel : handleNext}
             className="flex items-center justify-center overflow-clip rounded shadow-[0px_2px_4px_0px_rgba(0,0,0,0.3)] shrink-0"
           >

@@ -12,6 +12,7 @@ import { VideoBackground } from '@/components/ui/VideoBackground'
 import { CloseIcon } from '@/components/ui/CloseIcon'
 import { HardwareDisconnectedOverlay } from '@/components/biometrics/HardwareDisconnectedOverlay'
 import { FaceCaptureErrorsOverlay } from '@/components/biometrics/FaceCaptureErrorsOverlay'
+import { faceCheckVerdict, type FaceIssue } from '@/lib/faceCheck'
 import {
   BIO_HEADER_BG,
   BIO_FP_ICON,
@@ -23,7 +24,9 @@ import {
   BIO_DOT_GREEN,
   BIO_CAPTURED_PHOTO,
   HARDWARE_CHECK_DELAY,
-  MOCK_FACE_CAPTURE_ERRORS,
+  MOCK_FACE_CHECK,
+  nextFaceCheckMock,
+  type FaceCheckMock,
 } from '@/pages/WizardPage/constants'
 import {
   PageRoot,
@@ -518,8 +521,11 @@ type HwStatus = 'connected' | 'disconnected' | 'checking'
 interface Step3ContentProps {
   fpAcquired: boolean
   faceState: FaceState
-  /** Reasons the face-quality check flagged after capture; empty = photo passed. */
-  faceErrors: readonly string[]
+  /** Issues the face-quality check flagged after capture; empty = photo passed. */
+  faceIssues: readonly FaceIssue[]
+  /** Operator kept a borderline (warning-only) photo. */
+  faceAccepted: boolean
+  onAcceptPhoto: () => void
   onAcquireFp: () => void
   onCaptureFace: () => void
   onRetakePhoto: () => void
@@ -532,7 +538,9 @@ interface Step3ContentProps {
 const Step3Content: FC<Step3ContentProps> = ({
   fpAcquired,
   faceState,
-  faceErrors,
+  faceIssues,
+  faceAccepted,
+  onAcceptPhoto,
   onAcquireFp,
   onCaptureFace,
   onRetakePhoto,
@@ -652,11 +660,15 @@ const Step3Content: FC<Step3ContentProps> = ({
           </BioCaptureBar>
 
           {/* Captured overlay */}
-          {faceState === 'captured' && faceErrors.length > 0 && (
-            <FaceCaptureErrorsOverlay errors={faceErrors} onRetake={onRetakePhoto} />
+          {faceState === 'captured' && faceIssues.length > 0 && !faceAccepted && (
+            <FaceCaptureErrorsOverlay
+              issues={faceIssues}
+              onRetake={onRetakePhoto}
+              onAccept={onAcceptPhoto}
+            />
           )}
 
-          {faceState === 'captured' && faceErrors.length === 0 && (
+          {faceState === 'captured' && (faceIssues.length === 0 || faceAccepted) && (
             <>
               <FpFrostedOverlay />
               <FpOverlayCard>
@@ -692,7 +704,8 @@ export const WizardAcquisitionPage: FC = () => {
   const [forceIdInvalid, setForceIdInvalid] = useState(false)
   const [fpAcquired, setFpAcquired] = useState(false)
   const [faceState, setFaceState] = useState<FaceState>('idle')
-  const [mockFaceErrors, setMockFaceErrors] = useState(false)
+  const [mockFaceCheck, setMockFaceCheck] = useState<FaceCheckMock>('ok')
+  const [faceAccepted, setFaceAccepted] = useState(false)
   const [camDisconnected, setCamDisconnected] = useState(false)
   const [fpReaderDisconnected, setFpReaderDisconnected] = useState(false)
   const [camChecking, setCamChecking] = useState(false)
@@ -761,12 +774,16 @@ export const WizardAcquisitionPage: FC = () => {
     setIdVerdict(null)
     setFpAcquired(false)
     setFaceState('idle')
+    setFaceAccepted(false)
     setCamDisconnected(false)
     setFpReaderDisconnected(false)
   }
 
   const atStep3 = step === 3
-  const step3Done = fpAcquired || faceState === 'captured'
+  // Shira: a face-check ERROR does not allow moving on; warnings do.
+  const faceBlocked =
+    faceState === 'captured' && faceCheckVerdict(MOCK_FACE_CHECK[mockFaceCheck]) === 'error'
+  const step3Done = (fpAcquired || faceState === 'captured') && !faceBlocked
   // Step 1 cannot be left until the check came back valid — an ID that failed
   // never reaches step 2.
   const nextBlocked = step === 1 && idStatus !== 'valid'
@@ -813,10 +830,15 @@ export const WizardAcquisitionPage: FC = () => {
           <Step3Content
             fpAcquired={fpAcquired}
             faceState={faceState}
-            faceErrors={mockFaceErrors ? MOCK_FACE_CAPTURE_ERRORS : []}
+            faceIssues={MOCK_FACE_CHECK[mockFaceCheck]}
+            faceAccepted={faceAccepted}
+            onAcceptPhoto={() => setFaceAccepted(true)}
             onAcquireFp={() => setFpAcquired(true)}
             onCaptureFace={() => setFaceState('captured')}
-            onRetakePhoto={() => setFaceState('idle')}
+            onRetakePhoto={() => {
+              setFaceAccepted(false)
+              setFaceState('idle')
+            }}
             camHwStatus={camHwStatus}
             fpHwStatus={fpHwStatus}
             onRetryCamHw={recheckCamHw}
@@ -888,7 +910,7 @@ export const WizardAcquisitionPage: FC = () => {
 
       {isDevMode && (
         <DevBar>
-          <DevBtn onClick={() => { setStep(1); setIdInput(''); setIdVerdict(null); setForceIdInvalid(false); setFpAcquired(false); setFaceState('idle'); setCamDisconnected(false); setFpReaderDisconnected(false) }}>
+          <DevBtn onClick={() => { setStep(1); setIdInput(''); setIdVerdict(null); setForceIdInvalid(false); setFpAcquired(false); setFaceState('idle'); setFaceAccepted(false); setCamDisconnected(false); setFpReaderDisconnected(false) }}>
             reset
           </DevBtn>
           <DevBtn onClick={() => setForceIdInvalid((v) => !v)}>
@@ -904,8 +926,13 @@ export const WizardAcquisitionPage: FC = () => {
           <DevBtn onClick={() => setFpReaderDisconnected((d) => !d)}>
             fp reader: {fpReaderDisconnected ? 'disconnected' : 'ok'}
           </DevBtn>
-          <DevBtn onClick={() => setMockFaceErrors((v) => !v)}>
-            face check: {mockFaceErrors ? 'fail' : 'ok'}
+          <DevBtn
+            onClick={() => {
+              setMockFaceCheck(nextFaceCheckMock)
+              setFaceAccepted(false)
+            }}
+          >
+            face check: {mockFaceCheck}
           </DevBtn>
         </DevBar>
       )}
