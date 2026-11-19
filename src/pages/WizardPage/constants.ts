@@ -34,6 +34,11 @@ export const MOCK_FACE_CHECK: Record<FaceCheckMock, readonly FaceIssue[]> = {
 export const nextFaceCheckMock = (m: FaceCheckMock): FaceCheckMock =>
   FACE_CHECK_MOCK_ORDER[(FACE_CHECK_MOCK_ORDER.indexOf(m) + 1) % FACE_CHECK_MOCK_ORDER.length]
 
+// ── Resident instructions ────────────────────────────────────────────────────
+/** Face panel: the Hebrew instruction and its transliteration, read aloud to the resident (Figma 13:5971). */
+export const FACE_HINT = '*לתושב - אנא עמוד מול המצלמה.'
+export const FACE_HINT_TRANSLIT = '*תעתיק - קִף מֻקַאבִּל אֶלְכַּאמֵרַא.'
+
 // ── ID card assets ────────────────────────────────────────────────────────────
 export const CARD_EMBLEM_LEFT = '/images/card-emblem-left.png'
 export const CARD_EMBLEM_RIGHT = '/images/card-emblem-right.png'

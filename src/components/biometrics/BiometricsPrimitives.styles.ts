@@ -170,6 +170,11 @@ export const BioResidentHint = styled.p({
   whiteSpace: 'nowrap',
 })
 
+/** Second line under the resident hint: the same instruction transliterated (Figma 804:5784, 22px below). */
+export const BioResidentHintTranslit = styled(BioResidentHint)({
+  top: 98,
+})
+
 export const BioFaceCircleWrap = styled.div({
   position: 'absolute',
   left: 264,
