@@ -65,6 +65,16 @@ export const SetInstruction = styled.span({
   whiteSpace: 'nowrap',
 })
 
+/**
+ * Transliteration of the set instruction (Figma 824:5860). Figma puts it 22px below,
+ * but this panel is ~40px tighter than Figma above the scanner (107 vs 167), so it
+ * sits 16px below with a 14px line box to clear the scanner's top edge.
+ */
+export const SetInstructionTranslit = styled(SetInstruction)({
+  top: 92,
+  lineHeight: 'normal',
+})
+
 export const FingerLabelWrap = styled.div<{ $left: number }>(({ $left }) => ({
   position: 'absolute',
   left: $left,

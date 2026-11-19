@@ -406,8 +406,25 @@ export const BioFaceErrIcon = styled.img({
   flexShrink: 0,
 })
 
-export const BioFaceErrText = styled.span({
+/** Label + optional transliteration line (Figma row "Text", vertical, gap 4). */
+export const BioFaceErrTextCol = styled.div({
   flex: 1,
+  minWidth: 0,
+  display: 'flex',
+  flexDirection: 'column',
+  gap: 4,
+})
+
+export const BioFaceErrTranslit = styled.span({
+  fontFamily: BF,
+  fontSize: 14,
+  fontWeight: 400,
+  lineHeight: 'normal',
+  color: '#6e6e78',
+  textAlign: 'right',
+})
+
+export const BioFaceErrText = styled.span({
   minWidth: 0,
   fontFamily: BF,
   fontSize: 16,

@@ -39,6 +39,7 @@ import {
   SetDot,
   SetLabelText,
   SetInstruction,
+  SetInstructionTranslit,
   FingerLabelWrap,
   FingerLabelText,
   FpErrorEllipse,
@@ -97,9 +98,12 @@ export const BiometricsContent: FC<BiometricsContentProps> = ({
   const [camChecking, setCamChecking] = useState(false)
   const [fpReaderChecking, setFpReaderChecking] = useState(false)
 
-  const fpActive = faceCapState === 'captured'
+  const faceCaptured = faceCapState === 'captured'
   const faceIssues = MOCK_FACE_CHECK[mockFaceCheck]
-  const showFaceIssues = fpActive && faceIssues.length > 0 && !faceAccepted
+  const showFaceIssues = faceCaptured && faceIssues.length > 0 && !faceAccepted
+  // The photo matters more than the prints: fingerprints open only once the photo
+  // passed the check, or the operator kept a warning-only photo (Oren, 2026-11-19).
+  const fpActive = faceCaptured && !showFaceIssues
   const allChecksOk = !mockAngleFail
   const setData = FP_SETS[currentSet]
   const isLastSet = currentSet === FP_SETS.length - 1
@@ -163,6 +167,7 @@ export const BiometricsContent: FC<BiometricsContentProps> = ({
                   <SetLabelText dir="auto">{setData.label}</SetLabelText>
                 </SetLabelRow>
                 <SetInstruction dir="auto">{setData.instruction}</SetInstruction>
+                <SetInstructionTranslit dir="auto">{setData.translit}</SetInstructionTranslit>
               </>
             )}
 
@@ -301,7 +306,7 @@ export const BiometricsContent: FC<BiometricsContentProps> = ({
               />
             )}
 
-            {fpActive && !showFaceIssues && (
+            {fpActive && (
               <FrostedOverlay>
                 <FrostedLabel dir="auto">צילום פנים</FrostedLabel>
                 <CapturedThumb>
@@ -336,7 +341,7 @@ export const BiometricsContent: FC<BiometricsContentProps> = ({
               const next = nextFaceCheckMock(mockFaceCheck)
               setMockFaceCheck(next)
               setFaceAccepted(false)
-              onFaceBlockedChange(isFaceBlocking(fpActive, next))
+              onFaceBlockedChange(isFaceBlocking(faceCaptured, next))
             }}
           >
             face check {mockFaceCheck.toUpperCase()}

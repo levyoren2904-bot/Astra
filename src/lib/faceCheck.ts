@@ -10,6 +10,8 @@ export type FaceIssueSeverity = 'error' | 'warning'
 export interface FaceIssue {
   label: string
   severity: FaceIssueSeverity
+  /** Transliteration the operator reads aloud, for issues the resident fixes himself. */
+  translit?: string
 }
 
 /** ok = nothing flagged. error wins over warning when both are present. */
