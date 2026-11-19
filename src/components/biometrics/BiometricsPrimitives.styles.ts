@@ -238,13 +238,19 @@ export const BioCapturedThumb = styled.div({
 
 /**
  * Captured-photo circle on the post-capture overlay, 1.5x the Figma 138px
- * (Oren, 2026-11-12: make the captured photo more prominent). The errors
- * overlay keeps the 138px thumb - it sits in a fixed 160px Figma slot.
+ * (Oren, 2026-11-12: make the captured photo more prominent). The
+ * face-check card uses its own 168px BioFaceErrThumb.
  */
 export const BioCapturedThumbLarge = styled(BioCapturedThumb)({
   width: 207,
   height: 207,
   boxShadow: '0 0 46px 7.5px rgba(0,0,0,0.25)',
+})
+
+/** Photo on the face-check card: 168px (was 138), Shira 2026-11-19. */
+export const BioFaceErrThumb = styled(BioCapturedThumb)({
+  width: 168,
+  height: 168,
 })
 
 export const BioCapturedThumbImg = styled.img({
@@ -370,10 +376,13 @@ export const BioFaceErrSub = styled.p({
   whiteSpace: 'nowrap',
 })
 
-/** 160x161 slot the 138px photo sits centred in (Figma "Connectivity 05"). */
+/**
+ * Slot for the captured photo. Was Figma's 160x161 slot around a 138px thumb;
+ * Shira 2026-11-19: bigger photo, shorter rows - the slot now hugs a 168px photo.
+ */
 export const BioFaceErrPhotoSlot = styled.div({
-  width: 160,
-  height: 161,
+  width: 168,
+  height: 168,
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
@@ -394,7 +403,8 @@ export const BioFaceErrRow = styled.li({
   display: 'flex',
   alignItems: 'flex-start',
   gap: 12,
-  padding: 12,
+  // 8px top/bottom (was 12) - Shira 2026-11-19: shorter rows, more room for the photo.
+  padding: '8px 12px',
   background: '#f5f5f6',
   border: '1px solid #56565d',
   borderRadius: 8,

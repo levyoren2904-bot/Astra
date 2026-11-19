@@ -3,7 +3,7 @@ import { BIO_CAPTURED_PHOTO } from '@/pages/WizardPage/constants'
 import { FACE_CHECK_COPY, faceCheckVerdict, sortFaceIssues, type FaceIssue } from '@/lib/faceCheck'
 import {
   BioFrostedBackdrop,
-  BioCapturedThumb,
+  BioFaceErrThumb,
   BioCapturedThumbImg,
   BioFaceErrCard,
   BioFaceErrTitle,
@@ -53,9 +53,9 @@ export const FaceCaptureErrorsOverlay: FC<FaceCaptureErrorsOverlayProps> = ({
         <BioFaceErrTitle>{copy.title}</BioFaceErrTitle>
         <BioFaceErrSub>{copy.sub}</BioFaceErrSub>
         <BioFaceErrPhotoSlot>
-          <BioCapturedThumb>
+          <BioFaceErrThumb>
             <BioCapturedThumbImg src={BIO_CAPTURED_PHOTO} alt="" loading="lazy" />
-          </BioCapturedThumb>
+          </BioFaceErrThumb>
         </BioFaceErrPhotoSlot>
         <BioFaceErrList>
           {sortFaceIssues(issues).map((issue) => (
