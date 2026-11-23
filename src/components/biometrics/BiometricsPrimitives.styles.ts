@@ -131,6 +131,21 @@ export const BioFaceCamTint = styled.div({
   background: 'rgba(255,255,255,0.2)',
 })
 
+/** White fade behind the face panel's title, hint and transliteration, so they stay
+ *  legible over whatever the live feed shows (Figma "Header Fade Strip", 2026-11-23).
+ *  Sits inside the camera wrap: above the feed, below the header text and the face circle.
+ *  Solid through the 68px title row, clear by 100px - before the face circle (top 102). */
+export const BioFaceHeaderFade = styled.div({
+  position: 'absolute',
+  top: 0,
+  left: 0,
+  right: 0,
+  height: 100,
+  background:
+    'linear-gradient(to bottom, rgba(255,255,255,0.92) 0%, rgba(255,255,255,0.92) 68%, rgba(255,255,255,0) 100%)',
+  pointerEvents: 'none',
+})
+
 export const BioFaceHeaderIcons = styled.div({
   position: 'relative',
   display: 'flex',
@@ -158,21 +173,37 @@ export const BioAngleIconImg = styled.img({
   height: 24,
 })
 
+/** Face-panel resident instruction. Sits IN the title row, left of the title and its
+ *  separator (Figma "Header Fade Strip" revision, Oren 2026-11-23): right edge 154px
+ *  from the panel's right edge = 16 padding + 106 title + 16 gap + 1 separator + 15 gap. */
 export const BioResidentHint = styled.p({
   position: 'absolute',
-  right: 16,
-  top: 76,
+  right: 154,
+  top: 15,
   fontFamily: BF,
-  fontSize: 12,
+  fontSize: 14,
+  lineHeight: 1.2, // Figma auto line-height for Rubik: 17px at 14, 19px at 16
   fontWeight: 400,
   color: '#242424',
   margin: 0,
   whiteSpace: 'nowrap',
 })
 
-/** Second line under the resident hint: the same instruction transliterated (Figma 804:5784, 22px below). */
+/** Second line under the resident hint: the same instruction transliterated (Figma 804:5784).
+ *  16px - it is the line the operator reads aloud, with niqqud (Oren, 2026-11-23). */
 export const BioResidentHintTranslit = styled(BioResidentHint)({
-  top: 98,
+  top: 34,
+  fontSize: 16,
+})
+
+/** 1px vertical divider between the "צילום פנים" title and the hint pair (Figma "Title Separator"). */
+export const BioTitleSeparator = styled.div({
+  position: 'absolute',
+  right: 137,
+  top: 16,
+  width: 1,
+  height: 36,
+  background: 'rgba(36,36,36,0.25)',
 })
 
 export const BioFaceCircleWrap = styled.div({

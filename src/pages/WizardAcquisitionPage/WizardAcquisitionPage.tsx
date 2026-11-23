@@ -106,6 +106,8 @@ import {
   CamBgWrapper,
   CamBgImage,
   CamOverlayDiv,
+  FaceHeaderFade,
+  FaceTitleSeparator,
   FaceHeaderIconsLeft,
   FaceHint,
   FaceHintTranslit,
@@ -628,11 +630,11 @@ const Step3Content: FC<Step3ContentProps> = ({
       <CamBgWrapper>
         <CamBgImage src={BIO_CAM_BG} alt="" loading="lazy" />
         <CamOverlayDiv />
+        <FaceHeaderFade />
       </CamBgWrapper>
 
       {/* Header */}
       <BioPanelHeaderRow>
-        <BioHeaderBgImg src={BIO_HEADER_BG} alt="" loading="lazy" />
         <FaceHeaderIconsLeft>
           <BioIconImg src={BIO_CAM_ICON} alt="" loading="lazy" />
         </FaceHeaderIconsLeft>
@@ -648,6 +650,7 @@ const Step3Content: FC<Step3ContentProps> = ({
       ) : (
         <>
           {/* Resident instruction */}
+          <FaceTitleSeparator />
           <FaceHint dir="auto">{FACE_HINT}</FaceHint>
           <FaceHintTranslit dir="auto">{FACE_HINT_TRANSLIT}</FaceHintTranslit>
 

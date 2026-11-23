@@ -8,6 +8,8 @@ import {
   BioCaptureBarArea,
   BioFaceCamImg,
   BioFaceCamTint,
+  BioFaceHeaderFade,
+  BioTitleSeparator,
   BioFaceCamWrap,
   BioFaceCircleImg,
   BioFaceCircleWrap,
@@ -175,6 +177,8 @@ export const FacePanel = BioPanel908
 export const CamBgWrap = BioFaceCamWrap
 export const CamBgImg = BioFaceCamImg
 export const CamOverlay = BioFaceCamTint
+export const FaceHeaderFade = BioFaceHeaderFade
+export const FaceTitleSeparator = BioTitleSeparator
 export const FaceHeaderLeft = BioFaceHeaderIcons
 export const AngleChip = BioAngleChip
 export const AngleDot = BioAngleDotImg
