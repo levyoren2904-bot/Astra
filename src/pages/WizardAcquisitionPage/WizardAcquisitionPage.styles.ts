@@ -12,6 +12,8 @@ import {
   BioFaceCamWrap,
   BioFaceCircleImg,
   BioFaceCircleWrap,
+  BioFaceHeaderFade,
+  BioTitleSeparator,
   BioFaceHeaderIcons,
   BioFpBottomBar,
   BioFpSymbolMuted,
@@ -604,6 +606,8 @@ export const FpOverlaySymbolImg = BioFpSymbolMuted
 export const CamBgWrapper = BioFaceCamWrap
 export const CamBgImage = BioFaceCamImg
 export const CamOverlayDiv = BioFaceCamTint
+export const FaceHeaderFade = BioFaceHeaderFade
+export const FaceTitleSeparator = BioTitleSeparator
 export const FaceHeaderIconsLeft = BioFaceHeaderIcons
 export const FaceAngleChip = BioAngleChip
 export const FaceAngleDotImg = BioAngleDotImg

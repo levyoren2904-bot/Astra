@@ -55,6 +55,8 @@ import {
   CamBgWrap,
   CamBgImg,
   CamOverlay,
+  FaceHeaderFade,
+  FaceTitleSeparator,
   FaceHeaderLeft,
   ResidentInstruction,
   ResidentInstructionTranslit,
@@ -236,10 +238,10 @@ export const BiometricsContent: FC<BiometricsContentProps> = ({
         <CamBgWrap>
           <CamBgImg src={BIO_CAM_BG} alt="" loading="lazy" />
           <CamOverlay />
+          <FaceHeaderFade />
         </CamBgWrap>
 
         <BioHeader>
-          <HeaderBgImg src={BIO_HEADER_BG} alt="" loading="lazy" />
           <FaceHeaderLeft>
             <BioIcon src={BIO_CAM_ICON} alt="" loading="lazy" />
           </FaceHeaderLeft>
@@ -254,6 +256,7 @@ export const BiometricsContent: FC<BiometricsContentProps> = ({
           />
         ) : (
           <>
+            <FaceTitleSeparator />
             <ResidentInstruction dir="auto">{FACE_HINT}</ResidentInstruction>
             <ResidentInstructionTranslit dir="auto">{FACE_HINT_TRANSLIT}</ResidentInstructionTranslit>
 
