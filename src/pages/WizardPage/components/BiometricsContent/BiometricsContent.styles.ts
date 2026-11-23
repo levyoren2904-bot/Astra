@@ -59,22 +59,24 @@ export const SetLabelText = BioSetTitleText
 
 export const SetInstruction = styled.span({
   position: 'absolute',
-  top: 74,
+  top: 72,
   left: 16,
   fontFamily: BF,
-  fontSize: 12,
+  fontSize: 14,
+  lineHeight: 1.2,
   color: '#242424',
   whiteSpace: 'nowrap',
 })
 
 /**
- * Transliteration of the set instruction (Figma 824:5860). Figma puts it 22px below,
+ * Transliteration of the set instruction (Figma 824:5860). Figma puts it 21px below,
  * but this panel is ~40px tighter than Figma above the scanner (107 vs 167), so it
- * sits 16px below with a 14px line box to clear the scanner's top edge.
+ * sits 18px below. At 16px it ends at 109; the fingerprint artwork (object-fit: cover)
+ * starts ~121, so it clears by ~12px.
  */
 export const SetInstructionTranslit = styled(SetInstruction)({
-  top: 92,
-  lineHeight: 'normal',
+  top: 90,
+  fontSize: 16, // same pair sizes as the face panel: instruction 14, transliteration 16 (Oren, 2026-11-23)
 })
 
 export const FingerLabelWrap = styled.div<{ $left: number }>(({ $left }) => ({
