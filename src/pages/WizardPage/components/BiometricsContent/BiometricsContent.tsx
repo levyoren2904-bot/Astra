@@ -4,7 +4,6 @@ import { HardwareDisconnectedOverlay } from '@/components/biometrics/HardwareDis
 import { FaceCaptureErrorsOverlay } from '@/components/biometrics/FaceCaptureErrorsOverlay'
 import { faceCheckVerdict } from '@/lib/faceCheck'
 import {
-  BIO_HEADER_BG,
   BIO_FP_ICON,
   BIO_FP_SCAN_BG,
   BIO_FP_SYMBOL,
@@ -26,7 +25,6 @@ import {
 import {
   BioRoot,
   BioHeader,
-  HeaderBgImg,
   BioHeaderTitle,
   FpPanel,
   FpIconWrap,
@@ -37,9 +35,9 @@ import {
   FP_STAGE_BOTTOM,
   FP_STAGE_BOTTOM_RESERVE,
   ScannerImg,
-  SetLabelRow,
-  SetLabelText,
-  SetInstructionTranslit,
+  FpTitleSeparator,
+  FpResidentInstruction,
+  FpResidentInstructionTranslit,
   FingerLabelWrap,
   FingerLabelText,
   FpErrorEllipse,
@@ -158,7 +156,6 @@ export const BiometricsContent: FC<BiometricsContentProps> = ({
       {/* ── Fingerprints panel (left) ── */}
       <FpPanel ref={fpPanelRef}>
         <BioHeader>
-          <HeaderBgImg src={BIO_HEADER_BG} alt="" loading="lazy" />
           <FpIconWrap>
             <BioIcon src={BIO_FP_ICON} alt="" loading="lazy" />
           </FpIconWrap>
@@ -175,10 +172,9 @@ export const BiometricsContent: FC<BiometricsContentProps> = ({
           <>
             {fpActive && (
               <>
-                <SetLabelRow>
-                  <SetLabelText dir="auto">{setData.instruction}</SetLabelText>
-                </SetLabelRow>
-                <SetInstructionTranslit dir="auto">{setData.translit}</SetInstructionTranslit>
+                <FpTitleSeparator />
+                <FpResidentInstruction dir="auto">{setData.instruction}</FpResidentInstruction>
+                <FpResidentInstructionTranslit dir="auto">{setData.translit}</FpResidentInstructionTranslit>
               </>
             )}
 

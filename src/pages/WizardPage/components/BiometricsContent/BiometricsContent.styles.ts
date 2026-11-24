@@ -25,10 +25,11 @@ import {
   BioPanelTitle,
   BioResidentHint,
   BioResidentHintTranslit,
+  BioFpTitleSeparator,
+  BioFpResidentHint,
+  BioFpResidentHintTranslit,
   BioScannerImage,
   BioScannerRegion,
-  BioSetLabelRow,
-  BioSetTitleText,
 } from '@/components/biometrics/BiometricsPrimitives.styles'
 
 const BF = 'Rubik, sans-serif'
@@ -50,11 +51,10 @@ export const BioHeaderTitle = BioPanelTitle
 export const FpPanel = BioPanel908
 export const FpIconWrap = BioHeaderIconRegion
 export const BioIcon = BioIconMedium
-/** FP heading block per Oren's Figma Wizard - 6 (2026-11-24): heading top 84 (16 under
- *  the 68px header), transliteration top 116, both flush 16px from the panel's right
- *  edge. The scanner and everything pinned to it sit FP_SHIFT lower than the shared
- *  primitive so the transliteration (ends 137) clears the artwork (starts ~151) by 14. */
-export const FP_SHIFT = 31
+/** The instruction pair lives in the title row now (same as the face panel), so the
+ *  scanner is back at the shared primitive's position. Kept as a named offset in case
+ *  the area above the scanner changes again. */
+export const FP_SHIFT = 0
 export const ScannerWrap = styled(BioScannerRegion)({ top: 107 + FP_SHIFT })
 
 /** Panel-relative top of the scanner and bottom of the finger names (24px text, 36px box). */
@@ -72,24 +72,10 @@ export const FpStage = styled.div({
   transformOrigin: `50% ${107 + FP_SHIFT}px`,
 })
 export const ScannerImg = BioScannerImage
-export const SetLabelRow = styled(BioSetLabelRow)({ top: 84 })
-export const SetLabelText = styled(BioSetTitleText)({ lineHeight: 1.2 })
 
-/**
- * Transliteration of the set instruction, directly under the heading (which is now the
- * Hebrew instruction itself, Oren 2026-11-24). Right-aligned with the heading text.
- * 18px - the line the operator reads aloud (was 16, "still small", Oren 2026-11-24).
- */
-export const SetInstructionTranslit = styled.span({
-  position: 'absolute',
-  top: 116,
-  right: 16, // flush with the heading text (no status dot since 2026-11-24 - Oren: the system cannot know it)
-  fontFamily: BF,
-  fontSize: 18,
-  lineHeight: 1.2,
-  color: '#242424',
-  whiteSpace: 'nowrap',
-})
+export const FpTitleSeparator = BioFpTitleSeparator
+export const FpResidentInstruction = BioFpResidentHint
+export const FpResidentInstructionTranslit = BioFpResidentHintTranslit
 
 export const FingerLabelWrap = styled.div<{ $left: number }>(({ $left }) => ({
   position: 'absolute',

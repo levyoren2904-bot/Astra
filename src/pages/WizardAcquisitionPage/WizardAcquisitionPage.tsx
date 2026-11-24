@@ -14,7 +14,6 @@ import { HardwareDisconnectedOverlay } from '@/components/biometrics/HardwareDis
 import { FaceCaptureErrorsOverlay } from '@/components/biometrics/FaceCaptureErrorsOverlay'
 import { faceCheckVerdict, type FaceIssue } from '@/lib/faceCheck'
 import {
-  BIO_HEADER_BG,
   BIO_FP_ICON,
   BIO_FP_SCAN_BG,
   BIO_FP_SYMBOL,
@@ -87,15 +86,14 @@ import {
   BioPanelsRow,
   BioPanel,
   BioPanelHeaderRow,
-  BioHeaderBgImg,
   BioPanelTitle,
   FpHeaderIconWrap,
   BioIconImg,
   FpScannerWrapper,
   FpScannerImage,
-  FpSetLabel,
-  FpSetTranslit,
-  FpSetText,
+  FpTitleSeparator,
+  FpHint,
+  FpHintTranslit,
   FpBottomBar,
   FpFrostedOverlay,
   FpOverlayCard,
@@ -559,7 +557,6 @@ const Step3Content: FC<Step3ContentProps> = ({
     <BioPanel>
       {/* Header */}
       <BioPanelHeaderRow>
-        <BioHeaderBgImg src={BIO_HEADER_BG} alt="" loading="lazy" />
         <FpHeaderIconWrap>
           <BioIconImg src={BIO_FP_ICON} alt="" loading="lazy" />
         </FpHeaderIconWrap>
@@ -581,10 +578,10 @@ const Step3Content: FC<Step3ContentProps> = ({
           </FpScannerWrapper>
 
           {/* Set label */}
-          <FpSetLabel>
-            <FpSetText dir="auto">{FP_SETS[0].instruction}</FpSetText>
-          </FpSetLabel>
-          <FpSetTranslit dir="auto">{FP_SETS[0].translit}</FpSetTranslit>
+          {/* Instruction pair in the title row, same layout as the face panel */}
+          <FpTitleSeparator />
+          <FpHint dir="auto">{FP_SETS[0].instruction}</FpHint>
+          <FpHintTranslit dir="auto">{FP_SETS[0].translit}</FpHintTranslit>
 
           {/* Bottom bar */}
           <FpBottomBar dir="ltr">
