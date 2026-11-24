@@ -56,6 +56,21 @@ export const BioIcon = BioIconMedium
  *  primitive so the transliteration (ends 137) clears the artwork (starts ~151) by 14. */
 export const FP_SHIFT = 31
 export const ScannerWrap = styled(BioScannerRegion)({ top: 107 + FP_SHIFT })
+
+/** Panel-relative top of the scanner and bottom of the finger names (24px text, 36px box). */
+export const FP_STAGE_TOP = 107 + FP_SHIFT
+export const FP_STAGE_BOTTOM = 456 + FP_SHIFT + 36
+/** Space kept clear under the stage: the 68px action bar + 8px air. */
+export const FP_STAGE_BOTTOM_RESERVE = 68 + 8
+
+/** Layer holding scanner, finger names and error ellipse at their panel coordinates, so
+ *  one transform scales them together from the scanner's top edge on short panels. */
+export const FpStage = styled.div({
+  position: 'absolute',
+  inset: 0,
+  pointerEvents: 'none',
+  transformOrigin: `50% ${107 + FP_SHIFT}px`,
+})
 export const ScannerImg = BioScannerImage
 export const SetLabelRow = styled(BioSetLabelRow)({ top: 84 })
 export const SetLabelText = styled(BioSetTitleText)({ lineHeight: 1.2 })
