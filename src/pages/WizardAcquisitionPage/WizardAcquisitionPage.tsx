@@ -21,12 +21,12 @@ import {
   BIO_CAM_BG,
   BIO_CAM_ICON,
   BIO_FACE_GREEN,
-  BIO_DOT_GREEN,
   BIO_CAPTURED_PHOTO,
   HARDWARE_CHECK_DELAY,
   MOCK_FACE_CHECK,
   FACE_HINT,
   FACE_HINT_TRANSLIT,
+  FP_SETS,
   nextFaceCheckMock,
   type FaceCheckMock,
 } from '@/pages/WizardPage/constants'
@@ -94,7 +94,7 @@ import {
   FpScannerWrapper,
   FpScannerImage,
   FpSetLabel,
-  FpSetDotImg,
+  FpSetTranslit,
   FpSetText,
   FpBottomBar,
   FpFrostedOverlay,
@@ -582,9 +582,9 @@ const Step3Content: FC<Step3ContentProps> = ({
 
           {/* Set label */}
           <FpSetLabel>
-            <FpSetDotImg src={BIO_DOT_GREEN} alt="" loading="lazy" />
-            <FpSetText dir="auto">4 אצבעות - יד ימין</FpSetText>
+            <FpSetText dir="auto">{FP_SETS[0].instruction}</FpSetText>
           </FpSetLabel>
+          <FpSetTranslit dir="auto">{FP_SETS[0].translit}</FpSetTranslit>
 
           {/* Bottom bar */}
           <FpBottomBar dir="ltr">

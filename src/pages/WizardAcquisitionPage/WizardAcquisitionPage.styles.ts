@@ -28,7 +28,6 @@ import {
   BioResidentHintTranslit,
   BioScannerImage,
   BioScannerRegion,
-  BioSetDotImg,
   BioSetLabelRow,
   BioSetTitleText,
 } from '@/components/biometrics/BiometricsPrimitives.styles'
@@ -544,11 +543,23 @@ export const BioPanelHeaderRow = BioPanelHeader
 export { BioHeaderBgImg, BioPanelTitle }
 export const FpHeaderIconWrap = BioHeaderIconRegion
 export const BioIconImg = BioIconMedium
-export const FpScannerWrapper = BioScannerRegion
+/** Same layout as the regular wizard's FP panel (2026-11-24): the heading is the Hebrew
+ *  instruction, the 18px transliteration sits under it, no status dot, and the scanner
+ *  is 14px lower than the shared primitive so the transliteration clears the artwork. */
+export const FpScannerWrapper = styled(BioScannerRegion)({ top: 107 + 14 })
 export const FpScannerImage = BioScannerImage
 export const FpSetLabel = BioSetLabelRow
-export const FpSetDotImg = BioSetDotImg
-export const FpSetText = BioSetTitleText
+export const FpSetText = styled(BioSetTitleText)({ lineHeight: 1.2 })
+export const FpSetTranslit = styled.span({
+  position: 'absolute',
+  top: 98,
+  right: 16,
+  fontFamily: 'Rubik, sans-serif',
+  fontSize: 18,
+  lineHeight: 1.2,
+  color: '#242424',
+  whiteSpace: 'nowrap',
+})
 
 export const FpBottomBar = styled(BioFpBottomBar)({
   gap: 16,
