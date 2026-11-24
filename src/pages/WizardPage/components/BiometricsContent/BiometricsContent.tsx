@@ -8,8 +8,6 @@ import {
   BIO_FP_ICON,
   BIO_FP_SCAN_BG,
   BIO_FP_SYMBOL,
-  BIO_DOT_GREEN,
-  BIO_DOT_RED,
   BIO_CAM_BG,
   BIO_CAM_ICON,
   BIO_FACE_GREEN,
@@ -36,7 +34,6 @@ import {
   ScannerWrap,
   ScannerImg,
   SetLabelRow,
-  SetDot,
   SetLabelText,
   SetInstructionTranslit,
   FingerLabelWrap,
@@ -164,7 +161,6 @@ export const BiometricsContent: FC<BiometricsContentProps> = ({
             {fpActive && (
               <>
                 <SetLabelRow>
-                  <SetDot src={fpError ? BIO_DOT_RED : BIO_DOT_GREEN} alt="" loading="lazy" />
                   <SetLabelText dir="auto">{setData.instruction}</SetLabelText>
                 </SetLabelRow>
                 <SetInstructionTranslit dir="auto">{setData.translit}</SetInstructionTranslit>
