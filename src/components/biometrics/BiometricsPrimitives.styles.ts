@@ -190,10 +190,10 @@ export const BioResidentHint = styled.p({
 })
 
 /** Second line under the resident hint: the same instruction transliterated (Figma 804:5784).
- *  16px - it is the line the operator reads aloud, with niqqud (Oren, 2026-11-23). */
+ *  18px - it is the line the operator reads aloud, with niqqud (16 on 2026-11-23, 18 on 2026-11-24: "still small"). */
 export const BioResidentHintTranslit = styled(BioResidentHint)({
   top: 34,
-  fontSize: 16,
+  fontSize: 18,
 })
 
 /** 1px vertical divider between the "צילום פנים" title and the hint pair (Figma "Title Separator"). */

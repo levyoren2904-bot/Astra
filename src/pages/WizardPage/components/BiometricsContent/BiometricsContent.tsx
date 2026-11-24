@@ -38,7 +38,6 @@ import {
   SetLabelRow,
   SetDot,
   SetLabelText,
-  SetInstruction,
   SetInstructionTranslit,
   FingerLabelWrap,
   FingerLabelText,
@@ -166,9 +165,8 @@ export const BiometricsContent: FC<BiometricsContentProps> = ({
               <>
                 <SetLabelRow>
                   <SetDot src={fpError ? BIO_DOT_RED : BIO_DOT_GREEN} alt="" loading="lazy" />
-                  <SetLabelText dir="auto">{setData.label}</SetLabelText>
+                  <SetLabelText dir="auto">{setData.instruction}</SetLabelText>
                 </SetLabelRow>
-                <SetInstruction dir="auto">{setData.instruction}</SetInstruction>
                 <SetInstructionTranslit dir="auto">{setData.translit}</SetInstructionTranslit>
               </>
             )}

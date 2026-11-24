@@ -51,38 +51,36 @@ export const BioHeaderTitle = BioPanelTitle
 export const FpPanel = BioPanel908
 export const FpIconWrap = BioHeaderIconRegion
 export const BioIcon = BioIconMedium
-export const ScannerWrap = BioScannerRegion
+/** Heading (24px instruction) + 18px transliteration need ~54px under the header, so in
+ *  this panel the scanner and everything pinned to it sit 14px lower than the shared
+ *  primitive (2026-11-24). Artwork now starts at ~134, translit ends ~120. */
+const FP_SHIFT = 14
+export const ScannerWrap = styled(BioScannerRegion)({ top: 107 + FP_SHIFT })
 export const ScannerImg = BioScannerImage
 export const SetLabelRow = BioSetLabelRow
 export const SetDot = BioSetDotImg
-export const SetLabelText = BioSetTitleText
+export const SetLabelText = styled(BioSetTitleText)({ lineHeight: 1.2 })
 
-export const SetInstruction = styled.span({
+/**
+ * Transliteration of the set instruction, directly under the heading (which is now the
+ * Hebrew instruction itself, Oren 2026-11-24). Right-aligned with the heading text.
+ * 18px - the line the operator reads aloud (was 16, "still small", Oren 2026-11-24).
+ */
+export const SetInstructionTranslit = styled.span({
   position: 'absolute',
-  top: 72,
-  left: 16,
+  top: 98,
+  right: 37, // 16 panel inset + 14 dot + 7 gap: aligns under the heading text, not the dot
   fontFamily: BF,
-  fontSize: 14,
+  fontSize: 18,
   lineHeight: 1.2,
   color: '#242424',
   whiteSpace: 'nowrap',
 })
 
-/**
- * Transliteration of the set instruction (Figma 824:5860). Figma puts it 21px below,
- * but this panel is ~40px tighter than Figma above the scanner (107 vs 167), so it
- * sits 18px below. At 16px it ends at 109; the fingerprint artwork (object-fit: cover)
- * starts ~121, so it clears by ~12px.
- */
-export const SetInstructionTranslit = styled(SetInstruction)({
-  top: 90,
-  fontSize: 16, // same pair sizes as the face panel: instruction 14, transliteration 16 (Oren, 2026-11-23)
-})
-
 export const FingerLabelWrap = styled.div<{ $left: number }>(({ $left }) => ({
   position: 'absolute',
   left: $left,
-  top: 456,
+  top: 456 + FP_SHIFT,
   width: 191,
   display: 'flex',
   alignItems: 'center',
@@ -100,7 +98,7 @@ export const FingerLabelText = styled.span({
 export const FpErrorEllipse = styled.div<{ $left: number }>(({ $left }) => ({
   position: 'absolute',
   left: $left,
-  top: 113,
+  top: 113 + FP_SHIFT,
   width: 192,
   height: 327,
   borderRadius: '50%',
