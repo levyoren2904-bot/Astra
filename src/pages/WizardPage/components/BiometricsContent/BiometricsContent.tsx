@@ -1,4 +1,4 @@
-import { useState, type FC } from 'react'
+import { useEffect, useRef, useState, type FC } from 'react'
 import { isDevMode } from '@/utils/devtools'
 import { HardwareDisconnectedOverlay } from '@/components/biometrics/HardwareDisconnectedOverlay'
 import { FaceCaptureErrorsOverlay } from '@/components/biometrics/FaceCaptureErrorsOverlay'
@@ -32,6 +32,10 @@ import {
   FpIconWrap,
   BioIcon,
   ScannerWrap,
+  FpStage,
+  FP_STAGE_TOP,
+  FP_STAGE_BOTTOM,
+  FP_STAGE_BOTTOM_RESERVE,
   ScannerImg,
   SetLabelRow,
   SetLabelText,
@@ -91,6 +95,21 @@ export const BiometricsContent: FC<BiometricsContentProps> = ({
   const [currentSet, setCurrentSet] = useState(0)
   const [lockedSets, setLockedSets] = useState<Set<number>>(new Set())
   const [fpError, setFpError] = useState(false)
+
+  // On short screens the finger names ran into the action buttons (2026-11-24).
+  // Measure the panel and scale the scanner stage so it ends above the bottom bar.
+  const fpPanelRef = useRef<HTMLDivElement>(null)
+  const [fpStageScale, setFpStageScale] = useState(1)
+  useEffect(() => {
+    const el = fpPanelRef.current
+    if (!el) return
+    const ro = new ResizeObserver(([entry]) => {
+      const room = entry.contentRect.height - FP_STAGE_BOTTOM_RESERVE - FP_STAGE_TOP
+      setFpStageScale(Math.min(1, Math.max(0.5, room / (FP_STAGE_BOTTOM - FP_STAGE_TOP))))
+    })
+    ro.observe(el)
+    return () => ro.disconnect()
+  }, [])
   const [camDisconnected, setCamDisconnected] = useState(false)
   const [fpReaderDisconnected, setFpReaderDisconnected] = useState(false)
   const [camChecking, setCamChecking] = useState(false)
@@ -137,7 +156,7 @@ export const BiometricsContent: FC<BiometricsContentProps> = ({
   return (
     <BioRoot>
       {/* ── Fingerprints panel (left) ── */}
-      <FpPanel>
+      <FpPanel ref={fpPanelRef}>
         <BioHeader>
           <HeaderBgImg src={BIO_HEADER_BG} alt="" loading="lazy" />
           <FpIconWrap>
@@ -154,10 +173,6 @@ export const BiometricsContent: FC<BiometricsContentProps> = ({
           />
         ) : (
           <>
-            <ScannerWrap>
-              <ScannerImg src={BIO_FP_SCAN_BG} alt="" loading="lazy" />
-            </ScannerWrap>
-
             {fpActive && (
               <>
                 <SetLabelRow>
@@ -167,14 +182,21 @@ export const BiometricsContent: FC<BiometricsContentProps> = ({
               </>
             )}
 
-            {fpActive &&
-              setData.fingers.map((finger, i) => (
-                <FingerLabelWrap key={finger} $left={fingerLefts[i]}>
-                  <FingerLabelText dir="auto">{finger}</FingerLabelText>
-                </FingerLabelWrap>
-              ))}
+            {/* Scanner + finger names + error ellipse scale together on short panels */}
+            <FpStage style={{ transform: fpStageScale < 1 ? `scale(${fpStageScale})` : undefined }}>
+              <ScannerWrap>
+                <ScannerImg src={BIO_FP_SCAN_BG} alt="" loading="lazy" />
+              </ScannerWrap>
 
-            {fpActive && fpError && <FpErrorEllipse $left={fingerLefts[2]} />}
+              {fpActive &&
+                setData.fingers.map((finger, i) => (
+                  <FingerLabelWrap key={finger} $left={fingerLefts[i]}>
+                    <FingerLabelText dir="auto">{finger}</FingerLabelText>
+                  </FingerLabelWrap>
+                ))}
+
+              {fpActive && fpError && <FpErrorEllipse $left={fingerLefts[2]} />}
+            </FpStage>
 
             <BottomActionBar>
               {fpActive && (
