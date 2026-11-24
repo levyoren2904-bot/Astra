@@ -78,23 +78,22 @@ export const BIO_FP_ICON = '/images/bio-fp-icon.svg'
 export const BIO_FP_SYMBOL = '/images/bio-fp-symbol.svg'
 export const BIO_CAPTURED_PHOTO = '/images/bio-captured-photo.svg'
 
+/** Fingerprint sets. `instruction` is the panel heading (what the resident is told, in Hebrew);
+ *  `translit` sits under it and is what the operator reads aloud (Oren, 2026-11-24). */
 export const FP_SETS = [
   {
-    label: '4 אצבעות - יד ימין',
     fingers: ['מורה', 'אמה', 'קמיצה', 'זרת'],
-    instruction: '*לתושב - הנח 4 אצבעות יד ימין על הסורק',
+    instruction: 'הנח 4 אצבעות יד ימין על הסורק',
     translit: '*תעתיק - דַע אַרְבַּעַת אַצַאבִּע אֶלְיַד אֶלְיַמְנַא עַלַא אֶלְמַאסִח אֶ-דַוְּוִי',
   },
   {
-    label: '4 אצבעות - יד שמאל',
     fingers: ['זרת', 'קמיצה', 'אמה', 'מורה'],
-    instruction: '*לתושב - הנח 4 אצבעות יד שמאל על הסורק',
+    instruction: 'הנח 4 אצבעות יד שמאל על הסורק',
     translit: '*תעתיק - דַע אַרְבַּעַת אַצַאבִּע אֶלְיַד אֶלְיִסְרַא עַלַא אֶלְמַאסִח אֶ-דַוְּוִי',
   },
   {
-    label: '2 אגודלים',
     fingers: ['אגודל שמאל', 'אגודל ימין'],
-    instruction: '*לתושב - הנח 2 אגודלים על הסורק',
+    instruction: 'הנח 2 אגודלים על הסורק',
     translit: '*תעתיק - דַע אִבְּהַאמַי אֶלְיַדֵין עַלַא אֶלְמַאסִח אֶ-דַוְּוִי',
   },
 ]
