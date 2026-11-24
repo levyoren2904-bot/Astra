@@ -14,6 +14,9 @@ import {
   BioFaceCircleWrap,
   BioFaceHeaderFade,
   BioTitleSeparator,
+  BioFpTitleSeparator,
+  BioFpResidentHint,
+  BioFpResidentHintTranslit,
   BioFaceHeaderIcons,
   BioFpBottomBar,
   BioFpSymbolMuted,
@@ -28,8 +31,6 @@ import {
   BioResidentHintTranslit,
   BioScannerImage,
   BioScannerRegion,
-  BioSetLabelRow,
-  BioSetTitleText,
 } from '@/components/biometrics/BiometricsPrimitives.styles'
 
 const F = 'Rubik, sans-serif'
@@ -543,24 +544,13 @@ export const BioPanelHeaderRow = BioPanelHeader
 export { BioHeaderBgImg, BioPanelTitle }
 export const FpHeaderIconWrap = BioHeaderIconRegion
 export const BioIconImg = BioIconMedium
-/** Same layout as the regular wizard's FP panel (2026-11-24): the heading is the Hebrew
- *  instruction, the 18px transliteration sits under it, no status dot, and the scanner
- *  is 31px lower than the shared primitive so the transliteration clears the artwork.
- *  Positions follow Oren's Figma Wizard - 6: heading top 84, transliteration top 116. */
-export const FpScannerWrapper = styled(BioScannerRegion)({ top: 107 + 31 })
+/** Fingerprint panel: instruction pair in the title row, the same layout as the face
+ *  panel (Oren, 2026-11-24); the scanner is at the shared primitive's position. */
+export const FpScannerWrapper = BioScannerRegion
 export const FpScannerImage = BioScannerImage
-export const FpSetLabel = styled(BioSetLabelRow)({ top: 84 })
-export const FpSetText = styled(BioSetTitleText)({ lineHeight: 1.2 })
-export const FpSetTranslit = styled.span({
-  position: 'absolute',
-  top: 116,
-  right: 16,
-  fontFamily: 'Rubik, sans-serif',
-  fontSize: 18,
-  lineHeight: 1.2,
-  color: '#242424',
-  whiteSpace: 'nowrap',
-})
+export const FpTitleSeparator = BioFpTitleSeparator
+export const FpHint = BioFpResidentHint
+export const FpHintTranslit = BioFpResidentHintTranslit
 
 export const FpBottomBar = styled(BioFpBottomBar)({
   gap: 16,

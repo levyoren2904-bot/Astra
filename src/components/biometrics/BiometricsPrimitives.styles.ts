@@ -206,6 +206,14 @@ export const BioTitleSeparator = styled.div({
   background: 'rgba(36,36,36,0.25)',
 })
 
+/** Fingerprint panel: the same title-row layout as the face panel (Oren, 2026-11-24:
+ *  "בדיוק בתצורה כמו שעשינו בצילום פנים"). The title "טביעות אצבעות" is 160px at 24px
+ *  (Figma 24:6767), so the separator sits 16 + 160 + 16 from the right, and the hint pair
+ *  17px past it - the same steps as the face panel (137 / 154 for a 105px title). */
+export const BioFpTitleSeparator = styled(BioTitleSeparator)({ right: 192 })
+export const BioFpResidentHint = styled(BioResidentHint)({ right: 209 })
+export const BioFpResidentHintTranslit = styled(BioResidentHintTranslit)({ right: 209 })
+
 export const BioFaceCircleWrap = styled.div({
   position: 'absolute',
   left: 264,
