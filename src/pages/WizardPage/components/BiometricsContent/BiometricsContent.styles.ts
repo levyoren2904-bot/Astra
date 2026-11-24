@@ -27,7 +27,6 @@ import {
   BioResidentHintTranslit,
   BioScannerImage,
   BioScannerRegion,
-  BioSetDotImg,
   BioSetLabelRow,
   BioSetTitleText,
 } from '@/components/biometrics/BiometricsPrimitives.styles'
@@ -58,7 +57,6 @@ const FP_SHIFT = 14
 export const ScannerWrap = styled(BioScannerRegion)({ top: 107 + FP_SHIFT })
 export const ScannerImg = BioScannerImage
 export const SetLabelRow = BioSetLabelRow
-export const SetDot = BioSetDotImg
 export const SetLabelText = styled(BioSetTitleText)({ lineHeight: 1.2 })
 
 /**
@@ -69,7 +67,7 @@ export const SetLabelText = styled(BioSetTitleText)({ lineHeight: 1.2 })
 export const SetInstructionTranslit = styled.span({
   position: 'absolute',
   top: 98,
-  right: 37, // 16 panel inset + 14 dot + 7 gap: aligns under the heading text, not the dot
+  right: 16, // flush with the heading text (no status dot since 2026-11-24 - Oren: the system cannot know it)
   fontFamily: BF,
   fontSize: 18,
   lineHeight: 1.2,
