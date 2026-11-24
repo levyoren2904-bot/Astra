@@ -50,13 +50,14 @@ export const BioHeaderTitle = BioPanelTitle
 export const FpPanel = BioPanel908
 export const FpIconWrap = BioHeaderIconRegion
 export const BioIcon = BioIconMedium
-/** Heading (24px instruction) + 18px transliteration need ~54px under the header, so in
- *  this panel the scanner and everything pinned to it sit 14px lower than the shared
- *  primitive (2026-11-24). Artwork now starts at ~134, translit ends ~120. */
-const FP_SHIFT = 14
+/** FP heading block per Oren's Figma Wizard - 6 (2026-11-24): heading top 84 (16 under
+ *  the 68px header), transliteration top 116, both flush 16px from the panel's right
+ *  edge. The scanner and everything pinned to it sit FP_SHIFT lower than the shared
+ *  primitive so the transliteration (ends 137) clears the artwork (starts ~151) by 14. */
+export const FP_SHIFT = 31
 export const ScannerWrap = styled(BioScannerRegion)({ top: 107 + FP_SHIFT })
 export const ScannerImg = BioScannerImage
-export const SetLabelRow = BioSetLabelRow
+export const SetLabelRow = styled(BioSetLabelRow)({ top: 84 })
 export const SetLabelText = styled(BioSetTitleText)({ lineHeight: 1.2 })
 
 /**
@@ -66,7 +67,7 @@ export const SetLabelText = styled(BioSetTitleText)({ lineHeight: 1.2 })
  */
 export const SetInstructionTranslit = styled.span({
   position: 'absolute',
-  top: 98,
+  top: 116,
   right: 16, // flush with the heading text (no status dot since 2026-11-24 - Oren: the system cannot know it)
   fontFamily: BF,
   fontSize: 18,

@@ -545,14 +545,15 @@ export const FpHeaderIconWrap = BioHeaderIconRegion
 export const BioIconImg = BioIconMedium
 /** Same layout as the regular wizard's FP panel (2026-11-24): the heading is the Hebrew
  *  instruction, the 18px transliteration sits under it, no status dot, and the scanner
- *  is 14px lower than the shared primitive so the transliteration clears the artwork. */
-export const FpScannerWrapper = styled(BioScannerRegion)({ top: 107 + 14 })
+ *  is 31px lower than the shared primitive so the transliteration clears the artwork.
+ *  Positions follow Oren's Figma Wizard - 6: heading top 84, transliteration top 116. */
+export const FpScannerWrapper = styled(BioScannerRegion)({ top: 107 + 31 })
 export const FpScannerImage = BioScannerImage
-export const FpSetLabel = BioSetLabelRow
+export const FpSetLabel = styled(BioSetLabelRow)({ top: 84 })
 export const FpSetText = styled(BioSetTitleText)({ lineHeight: 1.2 })
 export const FpSetTranslit = styled.span({
   position: 'absolute',
-  top: 98,
+  top: 116,
   right: 16,
   fontFamily: 'Rubik, sans-serif',
   fontSize: 18,
