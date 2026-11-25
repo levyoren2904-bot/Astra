@@ -78,6 +78,9 @@ export const WizardPage: FC = () => {
   function handleCancel() {
     navigate('/')
   }
+  function handleFinish() {
+    navigate('/', { state: { snackbar: 'התהליך הושלם בהצלחה' } })
+  }
 
   const atStep5 = currentStep === 5
   const nextBlocked = currentStep === 4 && faceBlocked
@@ -208,7 +211,7 @@ export const WizardPage: FC = () => {
           <NextBtn
             $disabled={nextBlocked}
             disabled={nextBlocked}
-            onClick={atStep5 ? handleCancel : handleNext}
+            onClick={atStep5 ? handleFinish : handleNext}
             className="flex items-center justify-center overflow-clip rounded shadow-[0px_2px_4px_0px_rgba(0,0,0,0.3)] shrink-0"
           >
             <NextBtnLabel dir="auto">{atStep5 ? 'סיום תהליך' : 'הבא'}</NextBtnLabel>
