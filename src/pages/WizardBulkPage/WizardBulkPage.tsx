@@ -600,7 +600,7 @@ export const WizardBulkPage: FC = () => {
 
   function handleNext() {
     if (currentStep < 3) setCurrentStep((s) => (s + 1) as 1 | 2 | 3)
-    else navigate('/')
+    else navigate('/', { state: { snackbar: 'התהליך הושלם בהצלחה' } })
   }
 
   function handleBack() {
