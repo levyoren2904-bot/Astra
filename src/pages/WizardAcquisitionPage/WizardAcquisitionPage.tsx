@@ -759,7 +759,7 @@ export const WizardAcquisitionPage: FC = () => {
 
   function handleNext() {
     if (step < 3) setStep((s) => (s + 1) as AcqStep)
-    else navigate('/')
+    else navigate('/', { state: { snackbar: 'ההרכשה בוצעה בהצלחה' } })
   }
 
   function handleBack() {

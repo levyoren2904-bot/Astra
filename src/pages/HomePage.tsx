@@ -1,7 +1,8 @@
 import { useState, useRef, type FC } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 import { VideoBackground } from '@/components/ui/VideoBackground'
 import { Tooltip } from '@/components/ui/Tooltip'
+import { Snackbar } from '@/components/ui/Snackbar'
 import { CardCheckModal } from './CardCheckModal'
 import {
   PageRoot,
@@ -141,6 +142,15 @@ function isValidId(value: string) {
 
 export const HomePage: FC = () => {
   const navigate = useNavigate()
+  const location = useLocation()
+  // A wizard that finished successfully hands its message over in router
+  // state. Read it once on arrival, then clear the history entry so a refresh
+  // or Back does not show it again.
+  const [snackbar, setSnackbar] = useState<string | null>(() => {
+    const msg = (location.state as { snackbar?: string } | null)?.snackbar ?? null
+    if (msg) window.history.replaceState({ ...window.history.state, usr: null }, '')
+    return msg
+  })
   const [menuOpen, setMenuOpen] = useState(false)
   const [cardCheckOpen, setCardCheckOpen] = useState(false)
   const [idValue, setIdValue] = useState('')
@@ -175,6 +185,8 @@ export const HomePage: FC = () => {
     <PageRoot className="relative w-full overflow-hidden">
       {/* Video background — crossfade loop to avoid visible jump */}
       <VideoBackground />
+
+      {snackbar && <Snackbar message={snackbar} onClose={() => setSnackbar(null)} />}
 
       {/* Card validity check modal */}
       {cardCheckOpen && <CardCheckModal onClose={() => setCardCheckOpen(false)} />}
